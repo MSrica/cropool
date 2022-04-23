@@ -15,6 +15,6 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         WelcomeFragment welcomeFragment = new WelcomeFragment();
-        getSupportFragmentManager().beginTransaction().add(R.id.main_activity_fragment_container, welcomeFragment).addToBackStack(null).commit();
+        getSupportFragmentManager().beginTransaction().add(R.id.main_activity_fragment_container, welcomeFragment).commit();
     }
 }
