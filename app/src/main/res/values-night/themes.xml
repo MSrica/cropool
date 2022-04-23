@@ -16,6 +16,6 @@
 
     <style name="Theme.Cropool.SplashTheme" parent="Theme.MaterialComponents.DayNight.NoActionBar">
         <item name="android:windowBackground">@drawable/splash_screen_v1_night</item>
-        <item name="android:statusBarColor">@color/cropool_main_night</item>
+        <item name="android:statusBarColor">@color/cropool_gray</item>
     </style>
 </resources>

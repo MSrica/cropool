@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <layer-list xmlns:android="http://schemas.android.com/apk/res/android">
-    <item android:drawable="@color/cropool_main_night" />
+    <item android:drawable="@color/cropool_gray" />
 
     <item android:drawable="@drawable/splash_screen_v1_night_grid_1" android:gravity="center"/>
     <item android:drawable="@drawable/splash_screen_v1_night_grid_2" android:gravity="center"/>

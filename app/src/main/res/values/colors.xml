@@ -9,5 +9,8 @@
     <color name="white">#FFFFFFFF</color>
 
     <color name="cropool_main">#FF4CD4CA</color>
-    <color name="cropool_main_night">#FF333333</color>
+    <color name="cropool_gray">#FF333333</color>
+
+    <color name="cropool_button_main">#FF4CD4CA</color>
+    <color name="cropool_button_gray">#FF333333</color>
 </resources>
