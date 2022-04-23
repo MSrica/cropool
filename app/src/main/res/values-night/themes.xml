@@ -1,9 +1,9 @@
 <resources xmlns:tools="http://schemas.android.com/tools">
     <!-- Base application theme. -->
-    <style name="Theme.Cropool" parent="Theme.MaterialComponents.DayNight.NoActionBar">
+    <style name="Theme.Cropool" parent="Theme.Material3.DayNight.NoActionBar">
         <!-- Primary brand color. -->
-        <item name="colorPrimary">@color/purple_200</item>
-        <item name="colorPrimaryVariant">@color/purple_700</item>
+        <item name="colorPrimary">@color/cropool_blue</item>
+        <item name="colorPrimaryVariant">@color/cropool_dark_blue</item>
         <item name="colorOnPrimary">@color/black</item>
         <!-- Secondary brand color. -->
         <item name="colorSecondary">@color/teal_200</item>
@@ -14,8 +14,8 @@
         <!-- Customize your theme here. -->
     </style>
 
-    <style name="Theme.Cropool.SplashTheme" parent="Theme.MaterialComponents.DayNight.NoActionBar">
-        <item name="android:windowBackground">@drawable/splash_screen_v1_night</item>
+    <style name="Theme.Cropool.SplashTheme" parent="Theme.Material3.DayNight.NoActionBar">
+        <item name="android:windowBackground">@drawable/splash_screen_v1</item>
         <item name="android:statusBarColor">@color/cropool_gray</item>
     </style>
 </resources>
