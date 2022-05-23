@@ -21,4 +21,10 @@
     <string name="ACCESS_TOKEN_KEY_NAME">ACCESS_TOKEN</string>
     <string name="REFRESH_TOKEN_KEY_NAME">REFRESH_TOKEN</string>
     <string name="hello_blank_fragment">Hello world.</string>
+    <string name="INPUT_ERROR_FIRST_NAME">Please enter your first name.</string>
+    <string name="INPUT_ERROR_LAST_NAME">Please enter your last name.</string>
+    <string name="INPUT_ERROR_EMAIL">Please enter a valid e-mail address.</string>
+    <string name="INPUT_ERROR_PASSWORD">Please enter a valid password. It should contain uppercase letter, lowercase letter, special character, a number and [8, 64] characters without whitespaces.</string>
+    <string name="INPUT_ERROR_PASSWORD_CONFIRM">Passwords do not match.</string>
+    <string name="INPUT_ERROR_PASSWORD_MISSING">Please enter the password.</string>
 </resources>

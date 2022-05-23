@@ -95,31 +95,31 @@ public class RegisterFragment extends Fragment {
         if (firstName.getTextInput() == null || Objects.requireNonNull(firstName.getTextInput().getText()).toString().isEmpty()) {
             valid = false;
             assert firstName.getInputLayout() != null;
-            firstName.getInputLayout().setError("Please enter your first name.");
+            firstName.getInputLayout().setError(getResources().getString(R.string.INPUT_ERROR_FIRST_NAME));
         }
 
         if (lastName.getTextInput() == null || Objects.requireNonNull(lastName.getTextInput().getText()).toString().isEmpty()) {
             valid = false;
             assert lastName.getInputLayout() != null;
-            lastName.getInputLayout().setError("Please enter your last name.");
+            lastName.getInputLayout().setError(getResources().getString(R.string.INPUT_ERROR_LAST_NAME));
         }
 
         if (email.getTextInput() == null || !Patterns.EMAIL_ADDRESS.matcher(Objects.requireNonNull(email.getTextInput().getText()).toString()).matches()) {
             valid = false;
             assert email.getInputLayout() != null;
-            email.getInputLayout().setError("Please enter a valid e-mail address.");
+            email.getInputLayout().setError(getResources().getString(R.string.INPUT_ERROR_EMAIL));
         }
 
         if (password.getTextInput() == null || !PASSWORD_PATTERN.matcher(Objects.requireNonNull(password.getTextInput().getText()).toString()).matches()) {
             valid = false;
             assert password.getInputLayout() != null;
-            password.getInputLayout().setError("Please enter a valid password. It should contain uppercase letter, lowercase letter, special character, a number and [8, 64] characters without whitespaces.");
+            password.getInputLayout().setError(getResources().getString(R.string.INPUT_ERROR_PASSWORD));
         }
 
         if (passwordConfirm.getTextInput() == null || !Objects.requireNonNull(password.getTextInput().getText()).toString().equals(Objects.requireNonNull(passwordConfirm.getTextInput().getText()).toString())) {
             valid = false;
             assert passwordConfirm.getInputLayout() != null;
-            passwordConfirm.getInputLayout().setError("Passwords do not match.");
+            passwordConfirm.getInputLayout().setError(getResources().getString(R.string.INPUT_ERROR_PASSWORD_CONFIRM));
         }
 
         return valid;
@@ -143,14 +143,13 @@ public class RegisterFragment extends Fragment {
                     // Not OK
                     Log.e("/register", "notSuccessful: Something went wrong. - " + response.code());
 
-                    if (response.code() == 409) {
+                    if (response.body() != null) {
+                        Toast.makeText(view.getContext(), "Sorry, there was an error. " + response.body().getFeedback(), Toast.LENGTH_LONG).show();
+                    } else if (response.code() == 409) {
                         Toast.makeText(view.getContext(), "Sorry, there was an error. " + getResources().getString(R.string.FEEDBACK_EMAIL_UNAVAILABLE), Toast.LENGTH_LONG).show();
                     } else {
                         Toast.makeText(view.getContext(), "Sorry, there was an error. " + response.code(), Toast.LENGTH_LONG).show();
                     }
-
-                    if (response.body() != null)
-                        Toast.makeText(view.getContext(), "Sorry, there was an error. " + response.body().getFeedback(), Toast.LENGTH_LONG).show();
 
                     signUp.setEnabled(true);
                     return;
