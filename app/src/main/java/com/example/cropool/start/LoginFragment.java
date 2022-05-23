@@ -1,14 +1,15 @@
-package com.example.cropool;
+package com.example.cropool.start;
 
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.TextView;
 
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
+
+import com.example.cropool.R;
 
 public class LoginFragment extends Fragment {
     public LoginFragment() {
@@ -32,7 +33,7 @@ public class LoginFragment extends Fragment {
             FragmentManager fragmentManager = requireActivity().getSupportFragmentManager();
 
             if(!"RegisterToLoginLink".equals(fragmentManager.getBackStackEntryAt(fragmentManager.getBackStackEntryCount() - 1).getName()))
-                fragmentManager.beginTransaction().add(R.id.main_activity_fragment_container, new RegisterFragment()).addToBackStack("LoginToRegisterLink").commit();
+                fragmentManager.beginTransaction().add(R.id.start_activity_fragment_container, new RegisterFragment()).addToBackStack("LoginToRegisterLink").commit();
             else
                 requireActivity().onBackPressed();
         });

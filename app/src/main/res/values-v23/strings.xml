@@ -11,4 +11,13 @@
     <string name="last_name">Last name</string>
     <string name="password_confirm">Confirm password</string>
     <string name="i_already_have_an_account">I already have an account</string>
+    <string name="FEEDBACK_DB_ERROR">Database error.</string>
+    <string name="FEEDBACK_EMAIL_UNAVAILABLE">Entered e-mail unavailable.</string>
+    <string name="FEEDBACK_CREDS_INVALID">Invalid credentials.</string>
+    <string name="FEEDBACK_USER_REGISTERED">User registered.</string>
+    <string name="FEEDBACK_USER_FOUND">User found.</string>
+    <string name="FEEDBACK_USER_NOT_FOUND">User not found.</string>
+    <string name="SHARED_PREFERENCES_NAME">SHAREDPREFERENCES</string>
+    <string name="ACCESS_TOKEN_KEY_NAME">ACCESS_TOKEN</string>
+    <string name="REFRESH_TOKEN_KEY_NAME">REFRESH_TOKEN</string>
 </resources>

@@ -5,7 +5,7 @@
     style="@style/WelcomeFragment"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".WelcomeFragment">
+    tools:context=".start.WelcomeFragment">
 
     <TextView
         android:layout_width="wrap_content"
