@@ -18,8 +18,8 @@ import androidx.fragment.app.FragmentManager;
 
 import com.example.cropool.R;
 import com.example.cropool.api.CropoolAPI;
+import com.example.cropool.api.Feedback;
 import com.example.cropool.api.RegisterReq;
-import com.example.cropool.api.RegisterRes;
 import com.example.cropool.custom.InputElement;
 import com.example.cropool.home.HomeActivity;
 
@@ -77,9 +77,8 @@ public class RegisterFragment extends Fragment {
                 registerUser(v, Objects.requireNonNull(firstName.getTextInput().getText()).toString(),
                         Objects.requireNonNull(lastName.getTextInput().getText()).toString(),
                         Objects.requireNonNull(email.getTextInput().getText()).toString(),
-                        Objects.requireNonNull(password.getTextInput().getText()).toString());
-
-            signUp.setEnabled(true);
+                        Objects.requireNonNull(password.getTextInput().getText()).toString(),
+                        signUp);
         });
 
         return view;
@@ -126,7 +125,7 @@ public class RegisterFragment extends Fragment {
         return valid;
     }
 
-    private void registerUser(View view, String firstName, String lastName, String email, String password) {
+    private void registerUser(View view, String firstName, String lastName, String email, String password, Button signUp) {
         // Hashing variable password and storing it to passwordHashed
         String passwordHash = BCrypt.withDefaults().hashToString(12, password.toCharArray());
 
@@ -135,11 +134,11 @@ public class RegisterFragment extends Fragment {
         Retrofit retrofit = CropoolAPI.getRetrofit();
         CropoolAPI cropoolAPI = retrofit.create(CropoolAPI.class);
 
-        Call<RegisterRes> call = cropoolAPI.register(registerReq);
+        Call<Feedback> call = cropoolAPI.register(registerReq);
 
-        call.enqueue(new Callback<RegisterRes>() {
+        call.enqueue(new Callback<Feedback>() {
             @Override
-            public void onResponse(@NotNull Call<RegisterRes> call, @NotNull Response<RegisterRes> response) {
+            public void onResponse(@NotNull Call<Feedback> call, @NotNull Response<Feedback> response) {
                 if (!response.isSuccessful()) {
                     // Not OK
                     Log.e("/register", "notSuccessful: Something went wrong. - " + response.code());
@@ -153,11 +152,13 @@ public class RegisterFragment extends Fragment {
                     if (response.body() != null)
                         Toast.makeText(view.getContext(), "Sorry, there was an error. " + response.body().getFeedback(), Toast.LENGTH_LONG).show();
 
+                    signUp.setEnabled(true);
                     return;
                 }
 
-                RegisterRes registerRes = response.body();
-                if (registerRes == null) {
+                Feedback feedback = response.body();
+                if (feedback == null) {
+                    signUp.setEnabled(true);
                     return;
                 }
 
@@ -179,15 +180,19 @@ public class RegisterFragment extends Fragment {
                     startActivity(new Intent(view.getContext(), HomeActivity.class));
                     requireActivity().finish();
                 } else {
-                    Toast.makeText(view.getContext(), "Sorry, there was an error. " + registerRes.getFeedback(), Toast.LENGTH_LONG).show();
+                    Toast.makeText(view.getContext(), "Sorry, there was an error. " + feedback.getFeedback(), Toast.LENGTH_LONG).show();
                 }
+
+                signUp.setEnabled(true);
             }
 
             @Override
-            public void onFailure(@NotNull Call<RegisterRes> call, @NotNull Throwable t) {
+            public void onFailure(@NotNull Call<Feedback> call, @NotNull Throwable t) {
                 Toast.makeText(view.getContext(), "Sorry, there was an error.", Toast.LENGTH_LONG).show();
 
                 Log.e("/register", "onFailure: Something went wrong. " + t.getMessage());
+
+                signUp.setEnabled(true);
             }
         });
     }

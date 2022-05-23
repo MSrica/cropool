@@ -4,16 +4,23 @@ import com.google.gson.annotations.SerializedName;
 
 public class RegisterReq {
     @SerializedName("first_name")
-    private String firstName;
+    private final String firstName;
 
     @SerializedName("last_name")
-    private String lastName;
+    private final String lastName;
 
     @SerializedName("e_mail")
-    private String email;
+    private final String email;
 
     @SerializedName("password")
-    private String password;
+    private final String password;
+
+    public RegisterReq(String firstName, String lastName, String email, String password) {
+        this.firstName = firstName;
+        this.lastName = lastName;
+        this.email = email;
+        this.password = password;
+    }
 
     public String getFirstName() {
         return firstName;
@@ -29,13 +36,6 @@ public class RegisterReq {
 
     public String getPassword() {
         return password;
-    }
-
-    public RegisterReq(String firstName, String lastName, String email, String password) {
-        this.firstName = firstName;
-        this.lastName = lastName;
-        this.email = email;
-        this.password = password;
     }
 
     @Override

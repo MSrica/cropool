@@ -2,7 +2,7 @@ package com.example.cropool.api;
 
 import com.google.gson.annotations.SerializedName;
 
-public class RegisterRes {
+public class Feedback {
     @SerializedName("feedback")
     private String feedback;
 

@@ -20,4 +20,5 @@
     <string name="SHARED_PREFERENCES_NAME">SHAREDPREFERENCES</string>
     <string name="ACCESS_TOKEN_KEY_NAME">ACCESS_TOKEN</string>
     <string name="REFRESH_TOKEN_KEY_NAME">REFRESH_TOKEN</string>
+    <string name="hello_blank_fragment">Hello world.</string>
 </resources>

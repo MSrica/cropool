@@ -1,7 +1,6 @@
 package com.example.cropool.api;
 
 import com.example.cropool.BuildConfig;
-import com.google.gson.Gson;
 
 import retrofit2.Call;
 import retrofit2.Retrofit;
@@ -16,11 +15,10 @@ public interface CropoolAPI {
                 .addConverterFactory(GsonConverterFactory.create())
                 .build();
     }
-//    @POST("login")
-//    Call<LoginPost> login(@Body LoginPost post);
+
+    @POST("login")
+    Call<Feedback> login(@Body LoginReq loginReq);
 
     @POST("register")
-    Call<RegisterRes> register(@Body RegisterReq post);
-
-
+    Call<Feedback> register(@Body RegisterReq registerReq);
 }
