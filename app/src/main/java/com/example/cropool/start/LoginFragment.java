@@ -1,8 +1,6 @@
 package com.example.cropool.start;
 
-import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Log;
 import android.util.Patterns;
@@ -20,6 +18,7 @@ import com.example.cropool.R;
 import com.example.cropool.api.CropoolAPI;
 import com.example.cropool.api.Feedback;
 import com.example.cropool.api.LoginReq;
+import com.example.cropool.api.Tokens;
 import com.example.cropool.custom.InputElement;
 import com.example.cropool.home.HomeActivity;
 
@@ -27,7 +26,6 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.Objects;
 
-import at.favre.lib.crypto.bcrypt.BCrypt;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -134,17 +132,8 @@ public class LoginFragment extends Fragment {
                 }
 
                 if (response.code() == 201) {   // User is logged in
-                    // TODO: Store in a more secure way?
-                    SharedPreferences sharedPreferences = requireActivity().getSharedPreferences(getResources().getString(R.string.SHARED_PREFERENCES_NAME), Context.MODE_PRIVATE);
-                    SharedPreferences.Editor editor = sharedPreferences.edit();
-
-                    try {
-                        editor.putString(getResources().getString(R.string.ACCESS_TOKEN_KEY_NAME), response.headers().get("access_token"));
-                        editor.putString(getResources().getString(R.string.REFRESH_TOKEN_KEY_NAME), response.headers().get("refresh_token"));
-                        editor.commit();
-                    } catch (Exception e) {
-                        Log.e("EXCEPTION", e.getMessage());
-                    }
+                    // SAVE TOKENS
+                    Tokens.save(view.getContext(), response.headers().get(getResources().getString(R.string.ACCESS_TOKEN_HEADER_KEY)), response.headers().get(getResources().getString(R.string.REFRESH_TOKEN_HEADER_KEY)));
 
                     startActivity(new Intent(view.getContext(), HomeActivity.class));
                     requireActivity().finish();

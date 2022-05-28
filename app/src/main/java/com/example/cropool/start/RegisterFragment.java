@@ -20,6 +20,7 @@ import com.example.cropool.R;
 import com.example.cropool.api.CropoolAPI;
 import com.example.cropool.api.Feedback;
 import com.example.cropool.api.RegisterReq;
+import com.example.cropool.api.Tokens;
 import com.example.cropool.custom.InputElement;
 import com.example.cropool.home.HomeActivity;
 
@@ -79,6 +80,7 @@ public class RegisterFragment extends Fragment {
                         Objects.requireNonNull(email.getTextInput().getText()).toString(),
                         Objects.requireNonNull(password.getTextInput().getText()).toString(),
                         signUp);
+            else signUp.setEnabled(true);
         });
 
         return view;
@@ -164,17 +166,8 @@ public class RegisterFragment extends Fragment {
                 if (response.code() == 201) {   // User is registered
                     Toast.makeText(view.getContext(), "Congratulations, you are successfully registered.", Toast.LENGTH_LONG).show();
 
-                    // TODO: Store in a more secure way?
-                    SharedPreferences sharedPreferences = requireActivity().getSharedPreferences(getResources().getString(R.string.SHARED_PREFERENCES_NAME), Context.MODE_PRIVATE);
-                    SharedPreferences.Editor editor = sharedPreferences.edit();
-
-                    try {
-                        editor.putString(getResources().getString(R.string.ACCESS_TOKEN_KEY_NAME), response.headers().get("access_token"));
-                        editor.putString(getResources().getString(R.string.REFRESH_TOKEN_KEY_NAME), response.headers().get("refresh_token"));
-                        editor.commit();
-                    } catch (Exception e) {
-                        Log.e("EXCEPTION", e.getMessage());
-                    }
+                    // SAVE TOKENS
+                    Tokens.save(view.getContext(), response.headers().get(getResources().getString(R.string.ACCESS_TOKEN_HEADER_KEY)), response.headers().get(getResources().getString(R.string.REFRESH_TOKEN_HEADER_KEY)));
 
                     startActivity(new Intent(view.getContext(), HomeActivity.class));
                     requireActivity().finish();

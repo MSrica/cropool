@@ -28,4 +28,6 @@
     <string name="INPUT_ERROR_PASSWORD">Please enter a valid password. It should contain uppercase letter, lowercase letter, special character, a number and [8, 64] characters without whitespaces.</string>
     <string name="INPUT_ERROR_PASSWORD_CONFIRM">Passwords do not match.</string>
     <string name="INPUT_ERROR_PASSWORD_MISSING">Please enter the password.</string>
+    <string name="ACCESS_TOKEN_HEADER_KEY">access_token</string>
+    <string name="REFRESH_TOKEN_HEADER_KEY">refresh_token</string>
 </resources>
