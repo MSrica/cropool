@@ -10,10 +10,17 @@
 
     <color name="cropool_main">#FF4CD4CA</color>
     <color name="cropool_gray">#FF333333</color>
+    <color name="cropool_purple">#FF9D8ECC</color>
+    <color name="cropool_gray_blue">#FF3A506B</color>
+    <color name="cropool_blue">#FF1D3272</color>
+    <color name="cropool_dark_blue">#FF1C2541</color>
 
     <color name="cropool_button_default">#FF4CD4CA</color>
     <color name="cropool_button_alternative">#FF333333</color>
 
     <color name="cropool_text_default">#FFFFFFFF</color>
     <color name="cropool_text_alternative">#FF4CD4CA</color>
+
+    <color name="cropool_bottom_navigation_view">#FF1C2541</color>
+    <color name="cropool_bottom_navigation_view_icon_text">#FFFFFFFF</color>
 </resources>

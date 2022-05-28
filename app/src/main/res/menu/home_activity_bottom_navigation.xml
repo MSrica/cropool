@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item
+        android:id="@+id/find_route"
+        android:icon="@drawable/ic_find_route"
+        android:title="@string/find_route" />
+
+    <item
+        android:id="@+id/add_route"
+        android:icon="@drawable/ic_add_route"
+        android:title="@string/add_route" />
+
+    <item
+        android:id="@+id/chat"
+        android:icon="@drawable/ic_chat"
+        android:title="@string/chat" />
+
+    <item
+        android:id="@+id/my_account"
+        android:icon="@drawable/ic_my_account"
+        android:title="@string/my_account" />
+</menu>
