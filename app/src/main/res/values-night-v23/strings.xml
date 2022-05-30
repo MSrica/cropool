@@ -29,4 +29,8 @@
     <string name="INPUT_ERROR_PASSWORD_MISSING">Please enter the password.</string>
     <string name="ACCESS_TOKEN_HEADER_KEY">access_token</string>
     <string name="REFRESH_TOKEN_HEADER_KEY">refresh_token</string>
+    <string name="add_route">Add route</string>
+    <string name="find_route">Find route</string>
+    <string name="my_account">My account</string>
+    <string name="chat">Chat</string>
 </resources>

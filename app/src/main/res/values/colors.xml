@@ -20,4 +20,7 @@
 
     <color name="cropool_text_default">#FF333333</color>
     <color name="cropool_text_alternative">#FF4CD4CA</color>
+
+    <color name="cropool_bottom_navigation_view">#FF333333</color>
+    <color name="cropool_bottom_navigation_view_icon_text">#FF9D8ECC</color>
 </resources>
