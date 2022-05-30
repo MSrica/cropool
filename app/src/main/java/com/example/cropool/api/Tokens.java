@@ -1,13 +1,18 @@
 package com.example.cropool.api;
 
 import android.annotation.SuppressLint;
+import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.util.Log;
+import android.view.View;
 
 import androidx.annotation.NonNull;
 
 import com.example.cropool.R;
+import com.example.cropool.home.HomeActivity;
+import com.example.cropool.start.StartActivity;
 
 @SuppressLint("ApplySharedPref")
 public abstract class Tokens {
@@ -20,6 +25,21 @@ public abstract class Tokens {
             editor.putString(context.getResources().getString(R.string.ACCESS_TOKEN_KEY_NAME), accessToken);
             editor.putString(context.getResources().getString(R.string.REFRESH_TOKEN_KEY_NAME), refreshToken);
             editor.putString(context.getResources().getString(R.string.FIREBASE_TOKEN_KEY_NAME), firebaseToken);
+            editor.commit();
+        } catch (Exception e) {
+            Log.e("EXCEPTION", e.getMessage());
+        }
+    }
+
+    public static void clearAllTokens(@NonNull Context context) {
+        SharedPreferences sharedPreferences = context.getSharedPreferences(context.getResources().getString(R.string.SHARED_PREFERENCES_NAME), Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+
+
+        try {
+            editor.remove(context.getResources().getString(R.string.ACCESS_TOKEN_KEY_NAME));
+            editor.remove(context.getResources().getString(R.string.REFRESH_TOKEN_KEY_NAME));
+            editor.remove(context.getResources().getString(R.string.FIREBASE_TOKEN_KEY_NAME));
             editor.commit();
         } catch (Exception e) {
             Log.e("EXCEPTION", e.getMessage());
@@ -97,5 +117,11 @@ public abstract class Tokens {
         SharedPreferences sharedPreferences = context.getSharedPreferences(context.getResources().getString(R.string.SHARED_PREFERENCES_NAME), Context.MODE_PRIVATE);
 
         return sharedPreferences.contains(context.getResources().getString(R.string.FIREBASE_TOKEN_KEY_NAME));
+    }
+
+    public static void loginRequiredProcedure(@NonNull Context context, @NonNull Activity activity){
+        Tokens.clearAllTokens(context);
+        context.startActivity(new Intent(context, StartActivity.class));
+        activity.finish();
     }
 }

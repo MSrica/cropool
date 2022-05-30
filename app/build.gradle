@@ -19,11 +19,13 @@ android {
     buildTypes {
         debug {
             buildConfigField("String", "BASE_URL", "\"http://192.168.5.14:3001/\"")
+            buildConfigField("String", "FIREBASE_DB_URL", "\"https://cropool-chat-default-rtdb.europe-west1.firebasedatabase.app/\"")
         }
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
             buildConfigField("String", "BASE_URL", "\"https://cropool.herokuapp.com/\"")
+            buildConfigField("String", "FIREBASE_DB_URL", "\"https://cropool-chat-default-rtdb.europe-west1.firebasedatabase.app/\"")
         }
     }
     compileOptions {
