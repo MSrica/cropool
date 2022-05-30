@@ -133,7 +133,10 @@ public class LoginFragment extends Fragment {
 
                 if (response.code() == 201) {   // User is logged in
                     // SAVE TOKENS
-                    Tokens.save(view.getContext(), response.headers().get(getResources().getString(R.string.ACCESS_TOKEN_HEADER_KEY)), response.headers().get(getResources().getString(R.string.REFRESH_TOKEN_HEADER_KEY)));
+                    Tokens.save(view.getContext(),
+                            response.headers().get(getResources().getString(R.string.ACCESS_TOKEN_HEADER_KEY)),
+                            response.headers().get(getResources().getString(R.string.REFRESH_TOKEN_HEADER_KEY)),
+                            response.headers().get(getResources().getString(R.string.FIREBASE_TOKEN_HEADER_KEY)));
 
                     startActivity(new Intent(view.getContext(), HomeActivity.class));
                     requireActivity().finish();

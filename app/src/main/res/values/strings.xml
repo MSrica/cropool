@@ -21,6 +21,7 @@
     <string name="SHARED_PREFERENCES_NAME">SHAREDPREFERENCES</string>
     <string name="ACCESS_TOKEN_KEY_NAME">ACCESS_TOKEN</string>
     <string name="REFRESH_TOKEN_KEY_NAME">REFRESH_TOKEN</string>
+    <string name="FIREBASE_TOKEN_KEY_NAME">FIREBASE_TOKEN</string>
     <string name="hello_blank_fragment">Hello world.</string>
     <string name="INPUT_ERROR_FIRST_NAME">Please enter your first name.</string>
     <string name="INPUT_ERROR_LAST_NAME">Please enter your last name.</string>
@@ -30,8 +31,5 @@
     <string name="INPUT_ERROR_PASSWORD_MISSING">Please enter the password.</string>
     <string name="ACCESS_TOKEN_HEADER_KEY">access_token</string>
     <string name="REFRESH_TOKEN_HEADER_KEY">refresh_token</string>
-    <string name="add_route">Add route</string>
-    <string name="find_route">Find route</string>
-    <string name="my_account">My account</string>
-    <string name="chat">Chat</string>
+    <string name="FIREBASE_TOKEN_HEADER_KEY">firebase_token</string>
 </resources>

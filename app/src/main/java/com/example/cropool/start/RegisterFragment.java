@@ -1,8 +1,6 @@
 package com.example.cropool.start;
 
-import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Log;
 import android.util.Patterns;
@@ -167,7 +165,10 @@ public class RegisterFragment extends Fragment {
                     Toast.makeText(view.getContext(), "Congratulations, you are successfully registered.", Toast.LENGTH_LONG).show();
 
                     // SAVE TOKENS
-                    Tokens.save(view.getContext(), response.headers().get(getResources().getString(R.string.ACCESS_TOKEN_HEADER_KEY)), response.headers().get(getResources().getString(R.string.REFRESH_TOKEN_HEADER_KEY)));
+                    Tokens.save(view.getContext(),
+                            response.headers().get(getResources().getString(R.string.ACCESS_TOKEN_HEADER_KEY)),
+                            response.headers().get(getResources().getString(R.string.REFRESH_TOKEN_HEADER_KEY)),
+                            response.headers().get(getResources().getString(R.string.FIREBASE_TOKEN_HEADER_KEY)));
 
                     startActivity(new Intent(view.getContext(), HomeActivity.class));
                     requireActivity().finish();

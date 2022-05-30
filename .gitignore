@@ -86,3 +86,5 @@ lint/tmp/
 
 # dotenv files
 .env
+
+/app/google-services.json
