@@ -10,6 +10,10 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.cropool.R;
 import com.example.cropool.api.Tokens;
+import com.example.cropool.home.navigation_fragments.AddRouteFragment;
+import com.example.cropool.home.navigation_fragments.ConversationListFragment;
+import com.example.cropool.home.navigation_fragments.FindRouteFragment;
+import com.example.cropool.home.navigation_fragments.MyAccountFragment;
 import com.example.cropool.start.StartActivity;
 import com.google.android.material.navigation.NavigationBarView;
 
@@ -47,7 +51,7 @@ public class HomeActivity extends AppCompatActivity implements NavigationBarView
             getSupportFragmentManager().beginTransaction().replace(R.id.home_activity_fragment_container, new AddRouteFragment()).commit();
             return true;
         } else if (itemId == R.id.chat) {
-            getSupportFragmentManager().beginTransaction().replace(R.id.home_activity_fragment_container, new ChatFragment()).commit();
+            getSupportFragmentManager().beginTransaction().replace(R.id.home_activity_fragment_container, new ConversationListFragment()).commit();
             return true;
         } else if (itemId == R.id.my_account) {
             getSupportFragmentManager().beginTransaction().replace(R.id.home_activity_fragment_container, new MyAccountFragment()).commit();

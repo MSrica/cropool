@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/chat_list_screen_background"
+    android:orientation="vertical"
+    tools:context=".home.navigation_fragments.ConversationListFragment">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <TextView
+            android:id="@+id/chat_list_label"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="25dp"
+            android:layout_marginTop="10dp"
+            android:fontFamily="@font/roboto_bold"
+            android:text="@string/chat"
+            android:textColor="@color/chat_list_title"
+            android:textSize="35sp" />
+
+        <EditText
+            android:id="@+id/search"
+            android:layout_width="match_parent"
+            android:layout_height="40dp"
+            android:layout_below="@id/chat_list_label"
+            android:layout_marginHorizontal="25dp"
+            android:layout_marginTop="10dp"
+            android:autofillHints="search"
+            android:background="@drawable/round_background"
+            android:drawableStart="@drawable/ic_search"
+            android:hint="@string/search"
+            android:inputType="text"
+            android:paddingHorizontal="15dp" />
+    </RelativeLayout>
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginTop="17dp"
+        android:id="@+id/message_list_recycler_view" />
+
+</LinearLayout>

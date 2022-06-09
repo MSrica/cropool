@@ -23,4 +23,16 @@
 
     <color name="cropool_bottom_navigation_view">#FF333333</color>
     <color name="cropool_bottom_navigation_view_icon_text">#FF9D8ECC</color>
+
+    <color name="chat_list_title">#FFFFFFFF</color>
+    <color name="chat_list_search_background">#80FFFFFF</color>
+    <color name="chat_list_name">#FF000000</color>
+    <color name="chat_list_text">#A6000000</color>
+    <color name="chat_list_time">#A6000000</color>
+    <color name="chat_name">#FF000000</color>
+    <color name="chat_send_background">#A04CD4CA</color>
+    <color name="chat_current_user_text">#FFFFFFFF</color>
+    <color name="chat_other_user_text">#DFFFFFFF</color>
+    <color name="chat_current_user_text_background">#FF4CD4CA</color>
+    <color name="chat_other_user_text_background">#FF333333</color>
 </resources>
