@@ -2,6 +2,7 @@ package com.example.cropool.home.messages;
 
 import android.os.Bundle;
 import android.util.Log;
+import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -29,8 +30,8 @@ import de.hdodenhof.circleimageview.CircleImageView;
 public class ChatActivity extends AppCompatActivity {
 
     private final DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReferenceFromUrl(BuildConfig.FIREBASE_RTDB_URL);
+    private final List<Text> textList = new ArrayList<>();
     private Conversation conversation;
-    private List<Text> textList = new ArrayList<>();
     private RecyclerView chatRecyclerView;
 
     @Override
@@ -42,8 +43,6 @@ public class ChatActivity extends AppCompatActivity {
         conversation = getIntent().hasExtra(getResources().getString(R.string.CHAT_ACTIVITY_INTENT_CONVERSATION_NAME))
                 ? getIntent().getParcelableExtra(getResources().getString(R.string.CHAT_ACTIVITY_INTENT_CONVERSATION_NAME))
                 : new Conversation(getResources().getString(R.string.name_surname), getResources().getString(R.string.message_content), getResources().getString(R.string.FB_RTDB_DEFAULT_PICTURE_VALUE), false, false, 0L, "-1", "-1", "-1");
-
-        Toast.makeText(getApplicationContext(), conversation.getName() + " " + conversation.getConversationID() + " " + conversation.getProfilePicture(), Toast.LENGTH_SHORT).show();
 
         ImageView backButton = findViewById(R.id.back);
         ImageView sendButton = findViewById(R.id.send);
@@ -64,6 +63,15 @@ public class ChatActivity extends AppCompatActivity {
 
         chatRecyclerView.setHasFixedSize(true);
         chatRecyclerView.setLayoutManager(new LinearLayoutManager(ChatActivity.this));
+        chatRecyclerView.addOnLayoutChangeListener(new View.OnLayoutChangeListener() {
+            @Override
+            public void onLayoutChange(View v, int left, int top, int right, int bottom, int oldLeft, int oldTop, int oldRight, int oldBottom) {
+                if (bottom < oldBottom) {
+                    // Keyboard appeared - scroll to bottom again
+                    chatRecyclerView.postDelayed(() -> chatRecyclerView.scrollToPosition(textList.size() - 1), 0);
+                }
+            }
+        });
 
         // Checking conversationID and initializing if needed
         if (!conversation.isConversationIDValid()) {
@@ -76,6 +84,9 @@ public class ChatActivity extends AppCompatActivity {
 
                     // conversationID is created and we can start the listener
                     startTextsListener();
+
+                    // conversationID is created and we can update user_seen_at timestamp
+                    updateCurrentUserLastSeen(System.currentTimeMillis());
                 }
 
                 @Override
@@ -85,10 +96,34 @@ public class ChatActivity extends AppCompatActivity {
         } else {
             // conversationID is valid, start the listener for (new) texts
             startTextsListener();
+
+            // conversationID is valid, update user_seen_at timestamp
+            updateCurrentUserLastSeen(System.currentTimeMillis());
         }
 
         sendButton.setOnClickListener(v -> sendText(messageText));
+    }
 
+    // Updating user_last_seen timestamp in conversation conversationID
+    private void updateCurrentUserLastSeen(long currentTimeMillis) {
+        databaseReference.child(getResources().getString(R.string.FB_RTDB_CHAT_TABLE_NAME)).child(conversation.getConversationID()).addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                Long user1UID = snapshot.child(getResources().getString(R.string.FB_RTDB_CHAT_USER_1_KEY)).getValue(Long.class);
+                Long user2UID = snapshot.child(getResources().getString(R.string.FB_RTDB_CHAT_USER_2_KEY)).getValue(Long.class);
+
+                if (user1UID != null && user1UID.toString().equals(conversation.getCurrentUserUID())) {
+                    databaseReference.child(getResources().getString(R.string.FB_RTDB_CHAT_TABLE_NAME)).child(conversation.getConversationID()).child(getResources().getString(R.string.FB_RTDB_CHAT_USER_1_SEEN_AT_KEY)).setValue(currentTimeMillis);
+                } else if (user2UID != null && user2UID.toString().equals(conversation.getCurrentUserUID())) {
+                    databaseReference.child(getResources().getString(R.string.FB_RTDB_CHAT_TABLE_NAME)).child(conversation.getConversationID()).child(getResources().getString(R.string.FB_RTDB_CHAT_USER_2_SEEN_AT_KEY)).setValue(currentTimeMillis);
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+
+            }
+        });
     }
 
     // (New) texts listener
@@ -100,8 +135,10 @@ public class ChatActivity extends AppCompatActivity {
                     return;
                 }
 
+                textList.clear();
+
                 for (DataSnapshot textSnapshot : snapshot.child(getResources().getString(R.string.FB_RTDB_CHAT_TEXTS_KEY)).getChildren()) {
-                    if (textSnapshot.getKey() == null){
+                    if (textSnapshot.getKey() == null) {
                         // Text doesn't have a key so we skip it (shouldn't happen)
                         continue;
                     }
@@ -109,8 +146,6 @@ public class ChatActivity extends AppCompatActivity {
                     String textTS = textSnapshot.getKey();
                     String message = textSnapshot.child(getResources().getString(R.string.FB_RTDB_CHAT_MESSAGE_KEY)).getValue(String.class);
                     Long sentByUID = textSnapshot.child(getResources().getString(R.string.FB_RTDB_CHAT_SENT_BY_KEY)).getValue(Long.class);
-
-                    Log.e("FIREBASELOG", textTS + " " + message + " " + sentByUID);
 
                     boolean sentByOtherUser = sentByUID != null && !sentByUID.toString().equals(conversation.getCurrentUserUID());
 
@@ -177,6 +212,9 @@ public class ChatActivity extends AppCompatActivity {
                     // Current user's key corresponds to user_2's key
                     databaseReference.child(getResources().getString(R.string.FB_RTDB_CHAT_TABLE_NAME)).child(conversation.getConversationID()).child(getResources().getString(R.string.FB_RTDB_CHAT_USER_2_SEEN_AT_KEY)).setValue(currentTS);
                 }
+
+                // Updating current_user_seen at for conversationList purposes
+                updateCurrentUserLastSeen(currentTS);
             }
 
             @Override

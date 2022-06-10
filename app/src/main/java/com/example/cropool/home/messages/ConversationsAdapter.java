@@ -1,18 +1,16 @@
 package com.example.cropool.home.messages;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Typeface;
-import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
-import androidx.fragment.app.FragmentActivity;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.cropool.R;
@@ -26,12 +24,12 @@ import de.hdodenhof.circleimageview.CircleImageView;
 public class ConversationsAdapter extends RecyclerView.Adapter<ConversationsAdapter.MyViewHolder> {
     private final List<Conversation> conversationList;
     private final Context context;
-    private final FragmentActivity fragmentActivity;
+    private final Activity activity;
 
-    public ConversationsAdapter(List<Conversation> conversationList, Context context, FragmentActivity fragmentActivity) {
+    public ConversationsAdapter(List<Conversation> conversationList, Context context, Activity activity) {
         this.conversationList = conversationList;
         this.context = context;
-        this.fragmentActivity = fragmentActivity;
+        this.activity = activity;
     }
 
     @NonNull
@@ -67,9 +65,9 @@ public class ConversationsAdapter extends RecyclerView.Adapter<ConversationsAdap
         }
 
         holder.rootLayout.setOnClickListener(v -> {
-            Intent goToChat = new Intent(fragmentActivity, ChatActivity.class);
+            Intent goToChat = new Intent(context, ChatActivity.class);
             goToChat.putExtra(context.getResources().getString(R.string.CHAT_ACTIVITY_INTENT_CONVERSATION_NAME), conversation);
-            fragmentActivity.startActivity(goToChat);
+            activity.startActivity(goToChat);
         });
     }
 

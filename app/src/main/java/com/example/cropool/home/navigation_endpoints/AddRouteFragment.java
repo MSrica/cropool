@@ -1,4 +1,4 @@
-package com.example.cropool.home.navigation_fragments;
+package com.example.cropool.home.navigation_endpoints;
 
 import android.os.Bundle;
 

@@ -1,22 +1,25 @@
-package com.example.cropool.home.navigation_fragments;
+package com.example.cropool.home.navigation_endpoints;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
+import android.view.MenuItem;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
-import androidx.fragment.app.Fragment;
+import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.cropool.BuildConfig;
 import com.example.cropool.R;
 import com.example.cropool.api.Tokens;
+import com.example.cropool.home.HomeActivity;
+import com.example.cropool.home.messages.ChatActivity;
 import com.example.cropool.home.messages.Conversation;
 import com.example.cropool.home.messages.ConversationsAdapter;
+import com.example.cropool.start.StartActivity;
+import com.google.android.material.navigation.NavigationBarView;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
@@ -32,61 +35,77 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class ConversationListFragment extends Fragment {
+public class ConversationListActivity extends AppCompatActivity implements NavigationBarView.OnItemSelectedListener {
     private final HashMap<String, Conversation> conversationMap = new HashMap<>();
     private final DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReferenceFromUrl(BuildConfig.FIREBASE_RTDB_URL);
-    private List<String> conversationIDs = new ArrayList<>();
+    private final List<String> conversationIDs = new ArrayList<>();
     private FirebaseAuth mAuth;
     private FirebaseUser currentUser;
     private RecyclerView messageListRecyclerView;
 
     @Override
-    public void onCreate(Bundle savedInstanceState) {
+    protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-    }
+        setContentView(R.layout.activity_conversation_list);
 
-    @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
-        View v = inflater.inflate(R.layout.fragment_conversation_list, container, false);
+        // Initialize bottom navigation view
+        NavigationBarView navigationBarView = findViewById(R.id.home_activity_bottom_navigation);
+        navigationBarView.setOnItemSelectedListener(this);
+        navigationBarView.setSelectedItemId(R.id.chat);
 
         // Set FB auth/user
         mAuth = FirebaseAuth.getInstance();
         currentUser = mAuth.getCurrentUser();
 
         // Check if user is signed in (non-null) and update UI accordingly.
-        updateUI(v);
+        updateUI();
 
-        messageListRecyclerView = v.findViewById(R.id.message_list_recycler_view);
+        messageListRecyclerView = findViewById(R.id.message_list_recycler_view);
         messageListRecyclerView.setHasFixedSize(true);
-        messageListRecyclerView.setLayoutManager(new LinearLayoutManager(requireContext()));
-
-        return v;
+        messageListRecyclerView.setLayoutManager(new LinearLayoutManager(getApplicationContext()));
     }
 
-    private void updateUI(View v) {
+    @Override
+    public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+        int itemId = item.getItemId();
+
+        if (itemId == R.id.chat) {
+            // Makes no sense to switch to this activity again
+            return true;
+        } else if (itemId == R.id.find_route || itemId == R.id.add_route || itemId == R.id.my_account) {
+            Intent intent = new Intent(getApplicationContext(), HomeActivity.class);
+            intent.putExtra(getResources().getString(R.string.HOME_ACTIVITY_NAVIGATION_EXTRA), itemId);
+            this.startActivity(intent);
+            overridePendingTransition(0, 0);
+            this.finish();
+            return true;
+        }
+
+        return false;
+    }
+
+    private void updateUI() {
         if (currentUser == null) {
             // User not signed in, sign him in, then update UI again
-            customSignIn(v);
+            customSignIn();
 
             return;
         }
 
         // Set listener for new/updated conversations
-        setConversationIDListener(v);
+        setConversationIDListener();
     }
 
     // Signs the user in if he has the Firebase token that is set when logging in or registering
-    private void customSignIn(View v) {
-        if (!Tokens.isFirebaseTokenSet(requireContext())) {
+    private void customSignIn() {
+        if (!Tokens.isFirebaseTokenSet(getApplicationContext())) {
             Log.e("firebaseLogin", "signInWithCustomToken: failed");
-            Toast.makeText(getContext(), "Text authentication failed. Please sign in again.", Toast.LENGTH_LONG).show();
-            Tokens.loginRequiredProcedure(requireContext(), requireActivity());
+            Toast.makeText(getApplicationContext(), "Text authentication failed. Please sign in again.", Toast.LENGTH_LONG).show();
+            Tokens.loginRequiredProcedure(getApplicationContext(), this);
         }
 
-        mAuth.signInWithCustomToken(Tokens.getFirebaseToken(requireContext()))
-                .addOnCompleteListener(requireActivity(), task -> {
+        mAuth.signInWithCustomToken(Tokens.getFirebaseToken(getApplicationContext()))
+                .addOnCompleteListener(ConversationListActivity.this, task -> {
                     if (task.isSuccessful()) {
                         // Sign in successful
                         Log.i("firebaseLogin", "signInWithCustomToken: success");
@@ -97,22 +116,22 @@ public class ConversationListFragment extends Fragment {
                         currentUser = firebaseUser;
 
                         // Check the user's record in RTDB
-                        checkUserRTDBRecord(v, firebaseUser);
+                        checkUserRTDBRecord(firebaseUser);
 
-                        updateUI(v);
+                        updateUI();
                     } else {
                         // Sign in failed
                         Log.e("firebaseLogin", "signInWithCustomToken: failed");
 
-                        Toast.makeText(getContext(), "Text authentication failed.", Toast.LENGTH_LONG).show();
+                        Toast.makeText(getApplicationContext(), "Chat authentication failed. Please sign in again.", Toast.LENGTH_LONG).show();
+                        Tokens.loginRequiredProcedure(getApplicationContext(), ConversationListActivity.this);
                     }
                 });
-
     }
 
     // Checks whether the signed in user has a record in the FB RTDB
     // If not, inserts him into the RTDB along with his email, display name and profile picture URL
-    private void checkUserRTDBRecord(View v, FirebaseUser firebaseUser) {
+    private void checkUserRTDBRecord(FirebaseUser firebaseUser) {
         databaseReference.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
@@ -120,10 +139,10 @@ public class ConversationListFragment extends Fragment {
                 if (!snapshot.child("user").hasChild(firebaseUser.getUid())) {
                     // User hasn't been inserted to FB RTDB yet
                     // Toast.makeText(requireContext(), "Creating user " + firebaseUser.getUid(), Toast.LENGTH_LONG).show();
-                    databaseReference.child(v.getResources().getString(R.string.FB_RTDB_USER_TABLE_NAME)).child(firebaseUser.getUid()).child(v.getResources().getString(R.string.FB_RTDB_E_MAIL_KEY)).setValue(firebaseUser.getEmail());
-                    databaseReference.child(v.getResources().getString(R.string.FB_RTDB_USER_TABLE_NAME)).child(firebaseUser.getUid()).child(v.getResources().getString(R.string.FB_RTDB_DISPLAY_NAME_KEY)).setValue(firebaseUser.getDisplayName());
-                    databaseReference.child(v.getResources().getString(R.string.FB_RTDB_USER_TABLE_NAME)).child(firebaseUser.getUid()).child(v.getResources().getString(R.string.FB_RTDB_PROFILE_PICTURE_KEY)).setValue(firebaseUser.getPhotoUrl() == null ? v.getResources().getString(R.string.FB_RTDB_DEFAULT_PICTURE_VALUE) : firebaseUser.getPhotoUrl().toString());
-                    // databaseReference.child(v.getResources().getString(R.string.FB_RTDB_USER_TABLE_NAME)).child(firebaseUser.getUid()).child(v.getResources().getString(R.string.FB_RTDB_CONVERSATIONS_KEY)).setValue("");
+                    databaseReference.child(getResources().getString(R.string.FB_RTDB_USER_TABLE_NAME)).child(firebaseUser.getUid()).child(getResources().getString(R.string.FB_RTDB_E_MAIL_KEY)).setValue(firebaseUser.getEmail());
+                    databaseReference.child(getResources().getString(R.string.FB_RTDB_USER_TABLE_NAME)).child(firebaseUser.getUid()).child(getResources().getString(R.string.FB_RTDB_DISPLAY_NAME_KEY)).setValue(firebaseUser.getDisplayName());
+                    databaseReference.child(getResources().getString(R.string.FB_RTDB_USER_TABLE_NAME)).child(firebaseUser.getUid()).child(getResources().getString(R.string.FB_RTDB_PROFILE_PICTURE_KEY)).setValue(firebaseUser.getPhotoUrl() == null ? getResources().getString(R.string.FB_RTDB_DEFAULT_PICTURE_VALUE) : firebaseUser.getPhotoUrl().toString());
+                    // databaseReference.child(getResources().getString(R.string.FB_RTDB_USER_TABLE_NAME)).child(firebaseUser.getUid()).child(getResources().getString(R.string.FB_RTDB_CONVERSATIONS_KEY)).setValue("");
                 }
             }
 
@@ -135,7 +154,7 @@ public class ConversationListFragment extends Fragment {
     }
 
     // Sets a RTDB listener that triggers on each conversations/texts change for currentUser in RTDB
-    private void setConversationIDListener(View v) {
+    private void setConversationIDListener() {
         if (currentUser == null) {
             Log.e("FIREBASE USER NULL", "setConvIDLstnr currentUser null");
             return;
@@ -144,7 +163,7 @@ public class ConversationListFragment extends Fragment {
         Log.e("FIREBASE USER NOT NULL", "setConvIDLstnr currentUser not null");
 
         // Listener for currentUser (listening for changes in his conversationsList)
-        databaseReference.child(v.getResources().getString(R.string.FB_RTDB_USER_TABLE_NAME)).child(currentUser.getUid()).child(v.getResources().getString(R.string.FB_RTDB_CONVERSATIONS_KEY)).addValueEventListener(new ValueEventListener() {
+        databaseReference.child(getResources().getString(R.string.FB_RTDB_USER_TABLE_NAME)).child(currentUser.getUid()).child(getResources().getString(R.string.FB_RTDB_CONVERSATIONS_KEY)).addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 // Clearing current conversation list (something has changed)
@@ -154,42 +173,6 @@ public class ConversationListFragment extends Fragment {
                     // dataSnapshot recorded for current user (his conversation field)
                     // Log.e("FB UID LSTNR", uid);
 
-//                    final String email = dataSnapshot.child(v.getResources().getString(R.string.FB_RTDB_E_MAIL_KEY)).getValue(String.class);
-//                    final String name = dataSnapshot.child(v.getResources().getString(R.string.FB_RTDB_DISPLAY_NAME_KEY)).getValue(String.class);
-//                    final String profilePicture = dataSnapshot.child(v.getResources().getString(R.string.FB_RTDB_PROFILE_PICTURE_KEY)).getValue(String.class);
-//                    String lastMessage = new String("");
-//                    int unseenMessages = 0;
-
-                    // getMobile = uid
-                    // mobile = currentuser.uid
-
-                    // Observing RTDB chat table
-//                        databaseReference.child("chat").addListenerForSingleValueEvent(new ValueEventListener() {
-//                            @Override
-//                            public void onDataChange(@NonNull DataSnapshot snapshot) {
-//                                int chatCount = (int) snapshot.getChildrenCount();
-//
-//                                if (chatCount > 0) {
-//                                    for (DataSnapshot dataSnapshot1 : snapshot.getChildren()) {
-//                                        final String key = dataSnapshot1.getKey();
-//                                        final String user1 = dataSnapshot1.child("user_1").getValue(String.class);
-//                                        final String user2 = dataSnapshot1.child("user_2").getValue(String.class);
-//
-//                                        if (user1 != null && user2 != null
-//                                                && ((user1.equals(uid) && user2.equals(currentUser.getUid())) || (user1.equals(currentUser.getUid()) && user2.equals(uid)))) {
-//                                            for (DataSnapshot chatDataSnapshot : dataSnapshot1.child("messages").getChildren()){
-//                                                final long getLastSeenMessage =
-//                                            }
-//                                        }
-//                                    }
-//                                }
-//                            }
-//
-//                            @Override
-//                            public void onCancelled(@NonNull DatabaseError error) {
-//
-//                            }
-//                        });
                     String conversationID = dataSnapshot.getKey();
 
                     if (conversationID == null || !("ACTIVE").equals(dataSnapshot.getValue(String.class)))
@@ -200,7 +183,7 @@ public class ConversationListFragment extends Fragment {
 
                     // Sets a listener for each conversation of currentUser
                     // (forwards conversationID and name and profile picture of the otherUser)
-                    setConversationListener(v, conversationID);
+                    setConversationListener(conversationID);
                 }
             }
 
@@ -212,21 +195,21 @@ public class ConversationListFragment extends Fragment {
     }
 
     // Listener for conversation "conversationID" (listening for new messages etc.)
-    private void setConversationListener(View v, String conversationID) {
-        databaseReference.child(v.getResources().getString(R.string.FB_RTDB_CHAT_TABLE_NAME)).child(conversationID).addValueEventListener(new ValueEventListener() {
+    private void setConversationListener(String conversationID) {
+        databaseReference.child(getResources().getString(R.string.FB_RTDB_CHAT_TABLE_NAME)).child(conversationID).addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 // Conversation conversationID snapshot (contains texts, user1, user2, user1SeenAt, user2SeenAt)
 
-                Long user1ID = snapshot.child(v.getResources().getString(R.string.FB_RTDB_CHAT_USER_1_KEY)).getValue(Long.class);
-                Long user2ID = snapshot.child(v.getResources().getString(R.string.FB_RTDB_CHAT_USER_2_KEY)).getValue(Long.class);
+                Long user1ID = snapshot.child(getResources().getString(R.string.FB_RTDB_CHAT_USER_1_KEY)).getValue(Long.class);
+                Long user2ID = snapshot.child(getResources().getString(R.string.FB_RTDB_CHAT_USER_2_KEY)).getValue(Long.class);
                 if (user1ID == null || user2ID == null) {
                     Log.e("FirebaseChatUserIDNull", "user1ID: " + user1ID + ", user2ID: " + user2ID);
                     return;
                 }
 
-                Long user1SeenAt = snapshot.child(v.getResources().getString(R.string.FB_RTDB_CHAT_USER_1_SEEN_AT_KEY)).getValue(Long.class);
-                Long user2SeenAt = snapshot.child(v.getResources().getString(R.string.FB_RTDB_CHAT_USER_2_SEEN_AT_KEY)).getValue(Long.class);
+                Long user1SeenAt = snapshot.child(getResources().getString(R.string.FB_RTDB_CHAT_USER_1_SEEN_AT_KEY)).getValue(Long.class);
+                Long user2SeenAt = snapshot.child(getResources().getString(R.string.FB_RTDB_CHAT_USER_2_SEEN_AT_KEY)).getValue(Long.class);
 
                 // User to which the currentUser is talking to
                 String otherUserUID = (!currentUser.getUid().equals(user1ID.toString())) ? user1ID.toString() : user2ID.toString();
@@ -234,7 +217,7 @@ public class ConversationListFragment extends Fragment {
                 // Timestamp when the currentUser last opened the conversation
                 Long currentUserSeenAt = (currentUser.getUid().equals(user1ID.toString())) ? user1SeenAt : user2SeenAt;
 
-                setOtherUserInfoListener(v, conversationID, otherUserUID, currentUserSeenAt);
+                setOtherUserInfoListener(conversationID, otherUserUID, currentUserSeenAt);
             }
 
             @Override
@@ -244,16 +227,16 @@ public class ConversationListFragment extends Fragment {
     }
 
     // Listener for otherUser account info (we need his name and profile picture to show the conversation)
-    private void setOtherUserInfoListener(View v, String conversationID, String otherUserUID, Long currentUserSeenAt) {
-        databaseReference.child(v.getResources().getString(R.string.FB_RTDB_USER_TABLE_NAME)).child(otherUserUID).addValueEventListener(new ValueEventListener() {
+    private void setOtherUserInfoListener(String conversationID, String otherUserUID, Long currentUserSeenAt) {
+        databaseReference.child(getResources().getString(R.string.FB_RTDB_USER_TABLE_NAME)).child(otherUserUID).addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
-                // final String otherUserEmail = snapshot.child(v.getResources().getString(R.string.FB_RTDB_E_MAIL_KEY)).getValue(String.class);
-                final String otherUserName = snapshot.child(v.getResources().getString(R.string.FB_RTDB_DISPLAY_NAME_KEY)).getValue(String.class);
-                final String otherUserProfilePicture = snapshot.child(v.getResources().getString(R.string.FB_RTDB_PROFILE_PICTURE_KEY)).getValue(String.class);
+                // final String otherUserEmail = snapshot.child(getResources().getString(R.string.FB_RTDB_E_MAIL_KEY)).getValue(String.class);
+                final String otherUserName = snapshot.child(getResources().getString(R.string.FB_RTDB_DISPLAY_NAME_KEY)).getValue(String.class);
+                final String otherUserProfilePicture = snapshot.child(getResources().getString(R.string.FB_RTDB_PROFILE_PICTURE_KEY)).getValue(String.class);
 
                 // Query in order to download only the last text
-                Query lastTextQuery = databaseReference.child(v.getResources().getString(R.string.FB_RTDB_CHAT_TABLE_NAME)).child(conversationID).child(v.getResources().getString(R.string.FB_RTDB_CHAT_TEXTS_KEY)).orderByKey().limitToLast(1);
+                Query lastTextQuery = databaseReference.child(getResources().getString(R.string.FB_RTDB_CHAT_TABLE_NAME)).child(conversationID).child(getResources().getString(R.string.FB_RTDB_CHAT_TEXTS_KEY)).orderByKey().limitToLast(1);
 
                 // Listener for last text in conversation conversationID
                 lastTextQuery.addValueEventListener(new ValueEventListener() {
@@ -272,8 +255,8 @@ public class ConversationListFragment extends Fragment {
                         // There should be just one child in the snapshot (limitToLast(1)) and its key should be a timestamp
                         for (DataSnapshot dataSnapshot : snapshot.getChildren()) {
                             lastTextTS = (dataSnapshot.getKey() != null) ? Long.parseLong(dataSnapshot.getKey()) : 0;
-                            lastMessage = dataSnapshot.child(v.getResources().getString(R.string.FB_RTDB_CHAT_MESSAGE_KEY)).getValue(String.class);
-                            lastTextSentByUID = dataSnapshot.child(v.getResources().getString(R.string.FB_RTDB_CHAT_SENT_BY_KEY)).getValue(Long.class);
+                            lastMessage = dataSnapshot.child(getResources().getString(R.string.FB_RTDB_CHAT_MESSAGE_KEY)).getValue(String.class);
+                            lastTextSentByUID = dataSnapshot.child(getResources().getString(R.string.FB_RTDB_CHAT_SENT_BY_KEY)).getValue(Long.class);
                         }
 
                         boolean someTextsUnseen = (lastTextSentByUID == null) || (!lastTextSentByUID.toString().equals(currentUser.getUid()) && currentUserSeenAt < lastTextTS);
@@ -295,7 +278,7 @@ public class ConversationListFragment extends Fragment {
                             // Sorting by conversation's last message timestamp
                             Collections.sort(conversationList);
 
-                            messageListRecyclerView.setAdapter(new ConversationsAdapter(conversationList, v.getContext(), requireActivity()));
+                            messageListRecyclerView.setAdapter(new ConversationsAdapter(conversationList, getApplicationContext(), ConversationListActivity.this));
                         }
                     }
 

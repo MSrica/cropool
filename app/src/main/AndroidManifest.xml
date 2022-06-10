@@ -17,9 +17,13 @@
         android:usesCleartextTraffic="true"
         tools:targetApi="m">
         <activity
+            android:name=".home.navigation_endpoints.ConversationListActivity"
+            android:exported="false" />
+        <activity
             android:name=".home.messages.ChatActivity"
             android:exported="false"
-            android:theme="@style/Theme.Cropool" />
+            android:theme="@style/Theme.Cropool"
+            android:windowSoftInputMode="adjustResize" />
         <activity
             android:name=".home.HomeActivity"
             android:exported="false"

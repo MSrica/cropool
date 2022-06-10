@@ -34,7 +34,7 @@ public class TextsAdapter extends RecyclerView.Adapter<TextsAdapter.MyViewHolder
     public void onBindViewHolder(@NonNull TextsAdapter.MyViewHolder holder, int position) {
         Text text = texts.get(position);
 
-        if(text.isSentByOtherUser()){
+        if (text.isSentByOtherUser()) {
             holder.currentUserLayout.setVisibility(View.GONE);
             holder.otherUserLayout.setVisibility(View.VISIBLE);
 
@@ -45,6 +45,20 @@ public class TextsAdapter extends RecyclerView.Adapter<TextsAdapter.MyViewHolder
 
             holder.otherUserDateTime.setVisibility(View.GONE);
             holder.otherUserDateTime.setText(DateFormat.getDateTimeInstance(DateFormat.SHORT, DateFormat.SHORT).format(Long.valueOf(text.getTimestamp())));
+
+            holder.otherUserLayout.setOnClickListener(v -> {
+                // holder.otherUserName.setVisibility((holder.otherUserName.getVisibility() == View.GONE) ? View.VISIBLE : View.GONE);
+                holder.otherUserDateTime.setVisibility((holder.otherUserDateTime.getVisibility() == View.GONE) ? View.VISIBLE : View.GONE);
+            });
+
+            // TODO: DOESN'T WORK GOOD WITH HORIZONTAL MARGINS
+            // RelativeLayout.LayoutParams otherUserLayoutParams = (RelativeLayout.LayoutParams) holder.otherUserLayout.getLayoutParams();
+            // if (position > 0 && texts.get(position - 1).isSentByOtherUser()){
+            //      otherUserLayoutParams.setMargins(20, 10, 100, 15); //otherUserLayoutParams.bottomMargin);
+            // } else if (position > 0)  {
+            //      otherUserLayoutParams.setMargins(20, 35, 100, 15); //otherUserLayoutParams.bottomMargin);
+            // }
+            // holder.otherUserLayout.setLayoutParams(otherUserLayoutParams);
         } else {
             holder.otherUserLayout.setVisibility(View.GONE);
             holder.currentUserLayout.setVisibility(View.VISIBLE);
@@ -56,6 +70,21 @@ public class TextsAdapter extends RecyclerView.Adapter<TextsAdapter.MyViewHolder
 
             holder.currentUserDateTime.setVisibility(View.GONE);
             holder.currentUserDateTime.setText(DateFormat.getDateTimeInstance(DateFormat.SHORT, DateFormat.SHORT).format(Long.valueOf(text.getTimestamp())));
+
+            holder.currentUserLayout.setOnClickListener(v -> {
+                // holder.currentUserName.setVisibility((holder.currentUserName.getVisibility() == View.GONE) ? View.VISIBLE : View.GONE);
+                holder.currentUserDateTime.setVisibility((holder.currentUserDateTime.getVisibility() == View.GONE) ? View.VISIBLE : View.GONE);
+            });
+
+
+            // TODO: DOESN'T WORK GOOD WITH HORIZONTAL MARGINS
+            // RelativeLayout.LayoutParams currentUserLayoutParams = (RelativeLayout.LayoutParams) holder.currentUserLayout.getLayoutParams();
+            // if (position > 0 && !texts.get(position - 1).isSentByOtherUser()){
+            //      currentUserLayoutParams.setMargins(100, 10, 20, 10); //otherUserLayoutParams.bottomMargin);
+            // } else if (position > 0) {
+            //      currentUserLayoutParams.setMargins(100, 35, 20, 10); //otherUserLayoutParams.bottomMargin);
+            // }
+            // holder.otherUserLayout.setLayoutParams(currentUserLayoutParams);
         }
     }
 
@@ -64,7 +93,7 @@ public class TextsAdapter extends RecyclerView.Adapter<TextsAdapter.MyViewHolder
         return texts.size();
     }
 
-    static class MyViewHolder extends RecyclerView.ViewHolder{
+    static class MyViewHolder extends RecyclerView.ViewHolder {
         private final LinearLayout currentUserLayout, otherUserLayout;
         private final TextView currentUserMessage, otherUserMessage, currentUserDateTime, otherUserDateTime;
 

@@ -63,4 +63,5 @@
     <string name="other_user_message">Other user message.</string>
     <string name="sample_date_time">01-01-2000 01:01</string>
     <string name="current_user_message">Current user message.</string>
+    <string name="HOME_ACTIVITY_NAVIGATION_EXTRA">navigation_item</string>
 </resources>

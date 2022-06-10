@@ -4,7 +4,7 @@
 
     <solid android:color="@color/chat_other_user_text_background" />
     <corners
-        android:bottomRightRadius="100dp"
-        android:topLeftRadius="100dp"
-        android:topRightRadius="100dp" />
+        android:bottomRightRadius="15dp"
+        android:topLeftRadius="15dp"
+        android:topRightRadius="15dp" />
 </shape>
