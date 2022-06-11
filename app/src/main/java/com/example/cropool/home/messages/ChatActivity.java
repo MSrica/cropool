@@ -22,8 +22,11 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.squareup.picasso.Picasso;
 
+import java.text.DateFormat;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Timer;
+import java.util.TimerTask;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
@@ -33,6 +36,17 @@ public class ChatActivity extends AppCompatActivity {
     private final List<Text> textList = new ArrayList<>();
     private Conversation conversation;
     private RecyclerView chatRecyclerView;
+
+    // Will be used for updating last_seen_at field in user table
+    // Not local because of cancel feature
+    private Timer t;
+    private final int LAST_SEEN_AT_UPDATE_INTERVAL = 3000;
+    private String currentUserUID;
+
+    // Time in seconds that separates "Online" status from "last seen at" status
+    private int ONLINE_STATUS_THRESHOLD = 120;
+    // Not local because it is used in listener for otherUser status
+    private TextView onlineStatus;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -47,7 +61,7 @@ public class ChatActivity extends AppCompatActivity {
         ImageView backButton = findViewById(R.id.back);
         ImageView sendButton = findViewById(R.id.send);
         TextView name = findViewById(R.id.chat_name);
-        TextView onlineStatus = findViewById(R.id.online_status);
+        onlineStatus = findViewById(R.id.online_status);
         EditText messageText = findViewById(R.id.message_text);
         CircleImageView profilePicture = findViewById(R.id.chat_profile_picture);
         chatRecyclerView = findViewById(R.id.chat_recycler_view);
@@ -86,7 +100,7 @@ public class ChatActivity extends AppCompatActivity {
                     startTextsListener();
 
                     // conversationID is created and we can update user_seen_at timestamp
-                    updateCurrentUserLastSeen(System.currentTimeMillis());
+                    updateCurrentUserLastSeenChatTable(System.currentTimeMillis());
                 }
 
                 @Override
@@ -97,37 +111,21 @@ public class ChatActivity extends AppCompatActivity {
             // conversationID is valid, start the listener for (new) texts
             startTextsListener();
 
+            // conversationID is valid, start the listener for otherUserLastSeenAt
+            startOtherUserStatusListener();
+
             // conversationID is valid, update user_seen_at timestamp
-            updateCurrentUserLastSeen(System.currentTimeMillis());
+            updateCurrentUserLastSeenChatTable(System.currentTimeMillis());
         }
 
         sendButton.setOnClickListener(v -> sendText(messageText));
     }
 
-    // Updating user_last_seen timestamp in conversation conversationID
-    private void updateCurrentUserLastSeen(long currentTimeMillis) {
-        databaseReference.child(getResources().getString(R.string.FB_RTDB_CHAT_TABLE_NAME)).child(conversation.getConversationID()).addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot snapshot) {
-                Long user1UID = snapshot.child(getResources().getString(R.string.FB_RTDB_CHAT_USER_1_KEY)).getValue(Long.class);
-                Long user2UID = snapshot.child(getResources().getString(R.string.FB_RTDB_CHAT_USER_2_KEY)).getValue(Long.class);
-
-                if (user1UID != null && user1UID.toString().equals(conversation.getCurrentUserUID())) {
-                    databaseReference.child(getResources().getString(R.string.FB_RTDB_CHAT_TABLE_NAME)).child(conversation.getConversationID()).child(getResources().getString(R.string.FB_RTDB_CHAT_USER_1_SEEN_AT_KEY)).setValue(currentTimeMillis);
-                } else if (user2UID != null && user2UID.toString().equals(conversation.getCurrentUserUID())) {
-                    databaseReference.child(getResources().getString(R.string.FB_RTDB_CHAT_TABLE_NAME)).child(conversation.getConversationID()).child(getResources().getString(R.string.FB_RTDB_CHAT_USER_2_SEEN_AT_KEY)).setValue(currentTimeMillis);
-                }
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError error) {
-
-            }
-        });
-    }
-
     // (New) texts listener
     private void startTextsListener() {
+        currentUserUID = conversation.getCurrentUserUID();
+        setRecurrentUpdateLastSeen(LAST_SEEN_AT_UPDATE_INTERVAL, currentUserUID);
+
         databaseReference.child(getResources().getString(R.string.FB_RTDB_CHAT_TABLE_NAME)).child(conversation.getConversationID()).addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
@@ -214,7 +212,10 @@ public class ChatActivity extends AppCompatActivity {
                 }
 
                 // Updating current_user_seen at for conversationList purposes
-                updateCurrentUserLastSeen(currentTS);
+                updateCurrentUserLastSeenChatTable(currentTS);
+
+                // Update current user's last_seen_at user table field
+                updateCurrentUserLastSeenUserTable(currentTS, conversation.getCurrentUserUID());
             }
 
             @Override
@@ -222,5 +223,118 @@ public class ChatActivity extends AppCompatActivity {
 
             }
         });
+    }
+
+    // Listener for other user's chat status
+    // Needs to be run manually (can't rely on onDataChange because if the user is offline, onDataChange won't be triggered)
+    private void startOtherUserStatusListener() {
+        if (conversation.getOtherUserUID() == null || conversation.getOtherUserUID().isEmpty()) {
+            return;
+        }
+
+        databaseReference.child(getResources().getString(R.string.FB_RTDB_USER_TABLE_NAME)).child(conversation.getOtherUserUID()).child(getResources().getString(R.string.FB_RTDB_LAST_SEEN_AT_KEY)).addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                // last_seen_at field in user table shouldn't have any children
+                Long otherUserLastSeenAt = snapshot.getValue(Long.class);
+
+                if (otherUserLastSeenAt != null){
+                    long differenceSeconds = (System.currentTimeMillis() - otherUserLastSeenAt) / 1000;
+
+                    if (differenceSeconds < ONLINE_STATUS_THRESHOLD) {
+                        // We can say that other user is now online
+                        onlineStatus.setText(getResources().getString(R.string.STATUS_ONLINE));
+                        onlineStatus.setTextColor(getResources().getColor(R.color.USER_ONLINE_COLOR));
+                    } else {
+                        // User is currently not online (2 or more minutes ago)
+                        String textToDisplay = getResources().getString(R.string.STATUS_LAST_SEEN_PREFIX) + " " + DateFormat.getDateTimeInstance(DateFormat.SHORT, DateFormat.SHORT).format(otherUserLastSeenAt);
+                        onlineStatus.setText(textToDisplay);
+                        onlineStatus.setTextColor(getResources().getColor(R.color.USER_LAST_SEEN_COLOR));
+                    }
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+
+            }
+        });
+    }
+
+    // Updating user_last_seen timestamp in conversation conversationID
+    private void updateCurrentUserLastSeenChatTable(long currentTimeMillis) {
+        databaseReference.child(getResources().getString(R.string.FB_RTDB_CHAT_TABLE_NAME)).child(conversation.getConversationID()).addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                Long user1UID = snapshot.child(getResources().getString(R.string.FB_RTDB_CHAT_USER_1_KEY)).getValue(Long.class);
+                Long user2UID = snapshot.child(getResources().getString(R.string.FB_RTDB_CHAT_USER_2_KEY)).getValue(Long.class);
+
+                if (user1UID != null && user1UID.toString().equals(conversation.getCurrentUserUID())) {
+                    databaseReference.child(getResources().getString(R.string.FB_RTDB_CHAT_TABLE_NAME)).child(conversation.getConversationID()).child(getResources().getString(R.string.FB_RTDB_CHAT_USER_1_SEEN_AT_KEY)).setValue(currentTimeMillis);
+                } else if (user2UID != null && user2UID.toString().equals(conversation.getCurrentUserUID())) {
+                    databaseReference.child(getResources().getString(R.string.FB_RTDB_CHAT_TABLE_NAME)).child(conversation.getConversationID()).child(getResources().getString(R.string.FB_RTDB_CHAT_USER_2_SEEN_AT_KEY)).setValue(currentTimeMillis);
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+
+            }
+        });
+    }
+
+    // Updating last_seen_at timestamp in user's user table record
+    // Could be redundant in this activity since user will probably always go back
+    // to conversationList activity which will also automatically update his last_seen_at timestamp
+    // Could be useful when user terminates the app from his system's task view
+    // after sending a text and before returning to conversationList activity, so we'll leave it here
+    private void updateCurrentUserLastSeenUserTable(long currentTimeMillis, String userUID){
+        databaseReference.child(getResources().getString(R.string.FB_RTDB_USER_TABLE_NAME)).child(userUID).child(getResources().getString(R.string.FB_RTDB_LAST_SEEN_AT_KEY)).setValue(currentTimeMillis);
+    }
+
+    // Recurrent updating of the user's last_seen_at field in user table and other user's online status
+    // (if the user is in the chat activity, but not sending any texts)
+    private void setRecurrentUpdateLastSeen (int interval, String userID){
+        // In case there is already an updater running
+        cancelRecurrentUpdateLastSeen();
+
+        if (interval < 0 || userID.isEmpty())
+            return;
+
+        // Update last_seen_at field in user table at some interval
+        t = new Timer();
+        t.scheduleAtFixedRate(new TimerTask() {
+            @Override
+            public void run() {
+                // Updating current user's last_seen_at field in the user table
+                databaseReference.child(getResources().getString(R.string.FB_RTDB_USER_TABLE_NAME)).child(userID).child(getResources().getString(R.string.FB_RTDB_LAST_SEEN_AT_KEY)).setValue(System.currentTimeMillis());
+
+                // Updating other user's online/offline status
+                startOtherUserStatusListener();
+            }
+        }, 0, interval);
+    }
+
+    // Cancel recurrent updating of the user's last_seen_at field in user table
+    // If the activity is running, but not shown
+    private void cancelRecurrentUpdateLastSeen() {
+        if (t != null)
+            t.cancel();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+
+        // Re-start the recurrent update
+        setRecurrentUpdateLastSeen(LAST_SEEN_AT_UPDATE_INTERVAL, currentUserUID);
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+
+        // Cancel updating last_seen_at field in user table if it is scheduled
+        cancelRecurrentUpdateLastSeen();
     }
 }

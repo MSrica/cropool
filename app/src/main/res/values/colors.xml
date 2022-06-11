@@ -35,4 +35,6 @@
     <color name="chat_other_user_text">#DFFFFFFF</color>
     <color name="chat_current_user_text_background">#FF4CD4CA</color>
     <color name="chat_other_user_text_background">#FF333333</color>
+    <color name="USER_ONLINE_COLOR">#05b714</color>
+    <color name="USER_LAST_SEEN_COLOR">#911B13</color>
 </resources>

@@ -18,10 +18,8 @@ import com.example.cropool.BuildConfig;
 import com.example.cropool.R;
 import com.example.cropool.api.Tokens;
 import com.example.cropool.home.HomeActivity;
-import com.example.cropool.home.messages.ChatActivity;
 import com.example.cropool.home.messages.Conversation;
 import com.example.cropool.home.messages.ConversationsAdapter;
-import com.example.cropool.start.StartActivity;
 import com.google.android.material.navigation.NavigationBarView;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -36,8 +34,9 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Locale;
 import java.util.Map;
+import java.util.Timer;
+import java.util.TimerTask;
 
 public class ConversationListActivity extends AppCompatActivity implements NavigationBarView.OnItemSelectedListener {
     private final HashMap<String, Conversation> conversationMap = new HashMap<>();
@@ -47,6 +46,11 @@ public class ConversationListActivity extends AppCompatActivity implements Navig
     private FirebaseUser currentUser;
     private RecyclerView messageListRecyclerView;
     private EditText search;
+
+    // Will be used for updating last_seen_at field in user table
+    // Not local because of cancel feature
+    private Timer t;
+    private final int LAST_SEEN_AT_UPDATE_INTERVAL = 3000;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -134,6 +138,9 @@ public class ConversationListActivity extends AppCompatActivity implements Navig
 
         // Set listener for new/updated conversations
         setConversationIDListener();
+
+        // Set recurrent updates for last_seen_at field in user table
+        setRecurrentUpdateLastSeen(LAST_SEEN_AT_UPDATE_INTERVAL, currentUser.getUid());
     }
 
     // Signs the user in if he has the Firebase token that is set when logging in or registering
@@ -182,7 +189,7 @@ public class ConversationListActivity extends AppCompatActivity implements Navig
                     databaseReference.child(getResources().getString(R.string.FB_RTDB_USER_TABLE_NAME)).child(firebaseUser.getUid()).child(getResources().getString(R.string.FB_RTDB_E_MAIL_KEY)).setValue(firebaseUser.getEmail());
                     databaseReference.child(getResources().getString(R.string.FB_RTDB_USER_TABLE_NAME)).child(firebaseUser.getUid()).child(getResources().getString(R.string.FB_RTDB_DISPLAY_NAME_KEY)).setValue(firebaseUser.getDisplayName());
                     databaseReference.child(getResources().getString(R.string.FB_RTDB_USER_TABLE_NAME)).child(firebaseUser.getUid()).child(getResources().getString(R.string.FB_RTDB_PROFILE_PICTURE_KEY)).setValue(firebaseUser.getPhotoUrl() == null ? getResources().getString(R.string.FB_RTDB_DEFAULT_PICTURE_VALUE) : firebaseUser.getPhotoUrl().toString());
-                    // databaseReference.child(getResources().getString(R.string.FB_RTDB_USER_TABLE_NAME)).child(firebaseUser.getUid()).child(getResources().getString(R.string.FB_RTDB_CONVERSATIONS_KEY)).setValue("");
+                    databaseReference.child(getResources().getString(R.string.FB_RTDB_USER_TABLE_NAME)).child(firebaseUser.getUid()).child(getResources().getString(R.string.FB_RTDB_LAST_SEEN_AT_KEY)).setValue(System.currentTimeMillis());
                 }
             }
 
@@ -338,5 +345,47 @@ public class ConversationListActivity extends AppCompatActivity implements Navig
 
             }
         });
+    }
+
+    // Recurrent updating of the user's last_seen_at field in user table
+    // (if the user is in the chat activity, but not sending any texts)
+    private void setRecurrentUpdateLastSeen (int interval, String userID){
+        // In case there is already an updater running
+        cancelRecurrentUpdateLastSeen();
+
+        if (interval < 0 || userID.isEmpty())
+            return;
+
+        // Update last_seen_at field in user table at some interval
+        t = new Timer();
+        t.scheduleAtFixedRate(new TimerTask() {
+            @Override
+            public void run() {
+                databaseReference.child(getResources().getString(R.string.FB_RTDB_USER_TABLE_NAME)).child(userID).child(getResources().getString(R.string.FB_RTDB_LAST_SEEN_AT_KEY)).setValue(System.currentTimeMillis());
+            }
+        }, 0, interval);
+    }
+
+    // Cancel recurrent updating of the user's last_seen_at field in user table
+    // If the activity is running, but not shown
+    private void cancelRecurrentUpdateLastSeen() {
+        if (t != null)
+            t.cancel();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+
+        // Re-start the recurrent update
+        setRecurrentUpdateLastSeen(LAST_SEEN_AT_UPDATE_INTERVAL, currentUser.getUid());
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+
+        // Cancel updating last_seen_at field in user table if it is scheduled
+        cancelRecurrentUpdateLastSeen();
     }
 }
