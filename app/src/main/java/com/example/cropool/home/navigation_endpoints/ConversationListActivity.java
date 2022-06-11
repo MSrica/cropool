@@ -2,8 +2,11 @@ package com.example.cropool.home.navigation_endpoints;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.view.MenuItem;
+import android.widget.EditText;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -33,6 +36,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 
 public class ConversationListActivity extends AppCompatActivity implements NavigationBarView.OnItemSelectedListener {
@@ -42,6 +46,7 @@ public class ConversationListActivity extends AppCompatActivity implements Navig
     private FirebaseAuth mAuth;
     private FirebaseUser currentUser;
     private RecyclerView messageListRecyclerView;
+    private EditText search;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -56,6 +61,25 @@ public class ConversationListActivity extends AppCompatActivity implements Navig
         // Set FB auth/user
         mAuth = FirebaseAuth.getInstance();
         currentUser = mAuth.getCurrentUser();
+
+        // Setting search listener
+        search = findViewById(R.id.search);
+        search.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+                filterConversationList(s.toString());
+            }
+        });
 
         // Check if user is signed in (non-null) and update UI accordingly.
         updateUI();
@@ -82,6 +106,22 @@ public class ConversationListActivity extends AppCompatActivity implements Navig
         }
 
         return false;
+    }
+
+    // Filters conversation list according to input text
+    private void filterConversationList(String filterText) {
+        List<Conversation> filteredConversationList = new ArrayList<>();
+
+        // Adding conversations which match the filter text, case doesn't matter
+        for (Map.Entry<String, Conversation> entry : conversationMap.entrySet())
+            if (entry.getValue().getName().toLowerCase().contains(filterText.toLowerCase()))
+                filteredConversationList.add(entry.getValue());
+
+        // Sorting by conversation's last message timestamp
+        Collections.sort(filteredConversationList);
+
+        // Displaying the filtered conversations
+        messageListRecyclerView.setAdapter(new ConversationsAdapter(filteredConversationList, getApplicationContext(), ConversationListActivity.this));
     }
 
     private void updateUI() {
@@ -279,6 +319,10 @@ public class ConversationListActivity extends AppCompatActivity implements Navig
                             Collections.sort(conversationList);
 
                             messageListRecyclerView.setAdapter(new ConversationsAdapter(conversationList, getApplicationContext(), ConversationListActivity.this));
+
+                            // Re-filter text if there is some filter set in search EditText
+                            if (search != null && !search.getText().toString().isEmpty())
+                                filterConversationList(search.getText().toString());
                         }
                     }
 
