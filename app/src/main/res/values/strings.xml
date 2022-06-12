@@ -68,4 +68,22 @@
     <string name="FB_RTDB_LAST_SEEN_AT_KEY">last_seen_at</string>
     <string name="STATUS_ONLINE">Online</string>
     <string name="STATUS_LAST_SEEN_PREFIX">Last seen on</string>
+    <string name="hi">Hi,</string>
+    <string name="route_qty_sample">4</string>
+    <string name="route_label">Routes</string>
+    <string name="membership_time_sample">1 year</string>
+    <string name="membership">Membership</string>
+    <string name="manage_routes">Manage routes</string>
+    <string name="routes_subscribed_to">Routes subscribed to</string>
+    <string name="my_routes">My routes</string>
+    <string name="personal_details">Personal details</string>
+    <string name="help_support">Help and support</string>
+    <string name="sign_out">Sign out</string>
+    <string name="copyright">cropool©2022</string>
+    <string name="routes_subscribed_to_icon">Routes subscribed to icon.</string>
+    <string name="next_icon">Next icon.</string>
+    <string name="personal_details_icon">Personal details icon.</string>
+    <string name="help_and_support_icon">Help and support icon.</string>
+    <string name="sign_out_icon">Sign out icon.</string>
+    <string name="my_routes_icon">My routes icon.</string>
 </resources>
