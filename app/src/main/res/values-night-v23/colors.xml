@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="USER_ONLINE_COLOR">#05b714</color>
+    <color name="USER_LAST_SEEN_COLOR">#911B13</color>
+</resources>
