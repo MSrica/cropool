@@ -34,13 +34,12 @@ public class ChatActivity extends AppCompatActivity {
 
     private final DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReferenceFromUrl(BuildConfig.FIREBASE_RTDB_URL);
     private final List<Text> textList = new ArrayList<>();
+    private final int LAST_SEEN_AT_UPDATE_INTERVAL = 3000;
     private Conversation conversation;
     private RecyclerView chatRecyclerView;
-
     // Will be used for updating last_seen_at field in user table
     // Not local because of cancel feature
     private Timer t;
-    private final int LAST_SEEN_AT_UPDATE_INTERVAL = 3000;
     private String currentUserUID;
 
     // Time in seconds that separates "Online" status from "last seen at" status
@@ -238,7 +237,7 @@ public class ChatActivity extends AppCompatActivity {
                 // last_seen_at field in user table shouldn't have any children
                 Long otherUserLastSeenAt = snapshot.getValue(Long.class);
 
-                if (otherUserLastSeenAt != null){
+                if (otherUserLastSeenAt != null) {
                     long differenceSeconds = (System.currentTimeMillis() - otherUserLastSeenAt) / 1000;
 
                     if (differenceSeconds < ONLINE_STATUS_THRESHOLD) {
@@ -288,13 +287,13 @@ public class ChatActivity extends AppCompatActivity {
     // to conversationList activity which will also automatically update his last_seen_at timestamp
     // Could be useful when user terminates the app from his system's task view
     // after sending a text and before returning to conversationList activity, so we'll leave it here
-    private void updateCurrentUserLastSeenUserTable(long currentTimeMillis, String userUID){
+    private void updateCurrentUserLastSeenUserTable(long currentTimeMillis, String userUID) {
         databaseReference.child(getResources().getString(R.string.FB_RTDB_USER_TABLE_NAME)).child(userUID).child(getResources().getString(R.string.FB_RTDB_LAST_SEEN_AT_KEY)).setValue(currentTimeMillis);
     }
 
     // Recurrent updating of the user's last_seen_at field in user table and other user's online status
     // (if the user is in the chat activity, but not sending any texts)
-    private void setRecurrentUpdateLastSeen (int interval, String userID){
+    private void setRecurrentUpdateLastSeen(int interval, String userID) {
         // In case there is already an updater running
         cancelRecurrentUpdateLastSeen();
 

@@ -24,6 +24,8 @@
     <color name="cropool_bottom_navigation_view">#FF333333</color>
     <color name="cropool_bottom_navigation_view_icon_text">#FF9D8ECC</color>
 
+    <color name="cropool_background_default">#FFFFFFFF</color>
+
     <color name="chat_list_title">#FFFFFFFF</color>
     <color name="chat_list_search_background">#80FFFFFF</color>
     <color name="chat_list_name">#FF000000</color>
@@ -43,4 +45,5 @@
     <color name="my_account_card_background">#FFFFFFFF</color>
     <color name="my_account_card_icon">#FF333333</color>
     <color name="my_account_card_icon_sign_out">#FFC51A0E</color>
+    <color name="MY_ACCOUNT_SCROLL_VIEW_BACKGROUND">#FFEFEFEF</color>
 </resources>

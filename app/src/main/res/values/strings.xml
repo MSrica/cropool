@@ -86,4 +86,14 @@
     <string name="help_and_support_icon">Help and support icon.</string>
     <string name="sign_out_icon">Sign out icon.</string>
     <string name="my_routes_icon">My routes icon.</string>
+    <string name="TOKEN_HEADER_PREFIX">"Bearer "</string>
+    <string name="n_a">N/A</string>
+    <string name="update_account">Update account</string>
+    <string name="update">Update</string>
+    <string name="update_password">I want to update my password</string>
+    <string name="change_password">Change password</string>
+    <string name="current_password">Current_password</string>
+    <string name="new_password">New password</string>
+    <string name="new_password_confirm">Confirm new password</string>
+    <string name="CANNOT_BE_EMPTY">Field cannot be empty.</string>
 </resources>
