@@ -94,4 +94,7 @@
     <string name="new_password">New password</string>
     <string name="new_password_confirm">Confirm new password</string>
     <string name="CANNOT_BE_EMPTY">Field cannot be empty.</string>
+    <string name="LOGOUT_FROM_ALL_DIALOG">Do you want to sign out from all devices?</string>
+    <string name="YES">Yes</string>
+    <string name="NO">No</string>
 </resources>

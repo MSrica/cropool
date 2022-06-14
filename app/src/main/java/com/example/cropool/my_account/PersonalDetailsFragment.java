@@ -17,11 +17,7 @@ import com.example.cropool.api.CropoolAPI;
 import com.example.cropool.api.Feedback;
 import com.example.cropool.api.Tokens;
 import com.example.cropool.custom.InputElement;
-import com.example.cropool.home.messages.Text;
 import com.example.cropool.home.navigation_endpoints.MyAccountFragment;
-import com.github.marlonlom.utilities.timeago.TimeAgo;
-import com.google.android.material.textfield.TextInputEditText;
-import com.squareup.picasso.Picasso;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -57,7 +53,7 @@ public class PersonalDetailsFragment extends Fragment {
 
     private void updateName(InputElement firstName, InputElement lastName) {
         if (firstName.getTextInput() == null || firstName.getInputLayout() == null
-            || lastName.getInputLayout() == null || lastName.getTextInput() == null)
+                || lastName.getInputLayout() == null || lastName.getTextInput() == null)
             return;
 
         if (!validateData(firstName, lastName))
@@ -80,7 +76,7 @@ public class PersonalDetailsFragment extends Fragment {
 
                     if (response.code() == 403) {
                         // Access or Firebase tokens invalid
-                        Toast.makeText(getContext(), "Refreshing tokens...", Toast.LENGTH_SHORT).show();
+                        // Toast.makeText(getContext(), "Refreshing tokens...", Toast.LENGTH_SHORT).show();
 
                         // Try to refresh tokens using refresh tokens and re-run updateUserData() if refreshing is successful
                         Tokens.refreshTokensOnServer(requireActivity(), requireContext(), () -> {
@@ -119,13 +115,13 @@ public class PersonalDetailsFragment extends Fragment {
             ie.getInputLayout().setErrorEnabled(false);
         }
 
-        for (InputElement ie : new InputElement[]{firstName, lastName}){
-            if (ie == null || ie.getTextInput() == null || ie.getInputLayout() == null){
+        for (InputElement ie : new InputElement[]{firstName, lastName}) {
+            if (ie == null || ie.getTextInput() == null || ie.getInputLayout() == null) {
                 isValid = false;
                 continue;
             }
 
-            if(ie.getTextInput().getText() == null || ie.getTextInput().getText().toString().isEmpty()){
+            if (ie.getTextInput().getText() == null || ie.getTextInput().getText().toString().isEmpty()) {
                 ie.getInputLayout().setError(requireContext().getResources().getString(R.string.CANNOT_BE_EMPTY));
                 isValid = false;
             }

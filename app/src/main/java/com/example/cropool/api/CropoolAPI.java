@@ -33,4 +33,7 @@ public interface CropoolAPI {
 
     @PATCH("updateInfo")
     Call<Feedback> updateInfo(@Header("access_token") String accessToken, @Header("firebase_token") String firebaseToken, @Body AccountInfo updateInfoReq);
+
+    @PATCH("changePassword")
+    Call<Feedback> changePassword(@Header("access_token") String accessToken, @Body UpdatePasswordReq updatePasswordReq);
 }
