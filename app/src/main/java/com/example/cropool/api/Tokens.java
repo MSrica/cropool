@@ -129,6 +129,7 @@ public abstract class Tokens {
 
     public static void loginRequiredProcedure(@NonNull Context context, @NonNull Activity activity) {
         Tokens.clearAllTokens(context);
+        HomeActivity.signOutCurrentFBUser();
         context.startActivity(new Intent(context, StartActivity.class));
         activity.finish();
     }
