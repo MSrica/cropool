@@ -45,13 +45,13 @@ public class PersonalDetailsFragment extends Fragment {
         Button update = view.findViewById(R.id.update_info);
         TextView updatePassword = view.findViewById(R.id.update_password_link);
 
-        update.setOnClickListener(v -> updateName(firstName, lastName));
+        update.setOnClickListener(v -> updateName(firstName, lastName, true));
         updatePassword.setOnClickListener(v -> requireActivity().getSupportFragmentManager().beginTransaction().add(R.id.home_activity_fragment_container, new ChangePasswordFragment()).addToBackStack(null).commit());
 
         return view;
     }
 
-    private void updateName(InputElement firstName, InputElement lastName) {
+    private void updateName(InputElement firstName, InputElement lastName, boolean refreshIfNeeded) {
         if (firstName.getTextInput() == null || firstName.getInputLayout() == null
                 || lastName.getInputLayout() == null || lastName.getTextInput() == null)
             return;
@@ -72,17 +72,22 @@ public class PersonalDetailsFragment extends Fragment {
             public void onResponse(@NotNull Call<Feedback> call, @NotNull Response<Feedback> response) {
                 if (!response.isSuccessful()) {
                     // Not OK
-                    Log.e("/accountInfo", "notSuccessful: Something went wrong. - " + response.code());
+                    Log.e("/updateInfo", "notSuccessful: Something went wrong. - " + response.code());
 
                     if (response.code() == 403) {
                         // Access or Firebase tokens invalid
                         // Toast.makeText(getContext(), "Refreshing tokens...", Toast.LENGTH_SHORT).show();
 
                         // Try to refresh tokens using refresh tokens and re-run updateUserData() if refreshing is successful
-                        Tokens.refreshTokensOnServer(requireActivity(), requireContext(), () -> {
-                            updateName(firstName, lastName);
-                            return null;
-                        });
+                        // Set refreshIfNeeded to false - we don't want to refresh tokens infinitely if that's not the problem
+                        if(refreshIfNeeded) {
+                            Tokens.refreshTokensOnServer(requireActivity(), requireContext(), () -> {
+                                updateName(firstName, lastName, false);
+                                return null;
+                            });
+                        } else {
+                            Toast.makeText(getContext(), "Sorry, there was an error. " + response.code(), Toast.LENGTH_LONG).show();
+                        }
                     } else {
                         Toast.makeText(getContext(), "Sorry, there was an error. " + response.code(), Toast.LENGTH_LONG).show();
                     }
@@ -104,7 +109,7 @@ public class PersonalDetailsFragment extends Fragment {
             public void onFailure(@NotNull Call<Feedback> call, @NotNull Throwable t) {
                 Toast.makeText(getContext(), "Sorry, there was an error.", Toast.LENGTH_LONG).show();
 
-                Log.e("/accountInfo", "onFailure: Something went wrong. " + t.getMessage());
+                Log.e("/updateInfo", "onFailure: Something went wrong. " + t.getMessage());
             }
         });
     }

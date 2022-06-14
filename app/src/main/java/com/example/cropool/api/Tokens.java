@@ -11,6 +11,7 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 
 import com.example.cropool.R;
+import com.example.cropool.home.HomeActivity;
 import com.example.cropool.start.StartActivity;
 
 import org.jetbrains.annotations.NotNull;
@@ -42,7 +43,6 @@ public abstract class Tokens {
     public static void clearAllTokens(@NonNull Context context) {
         SharedPreferences sharedPreferences = context.getSharedPreferences(context.getResources().getString(R.string.SHARED_PREFERENCES_NAME), Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = sharedPreferences.edit();
-
 
         try {
             editor.remove(context.getResources().getString(R.string.ACCESS_TOKEN_KEY_NAME));
@@ -134,6 +134,7 @@ public abstract class Tokens {
     }
 
     public static void logoutProcedure(@NonNull Context context, @NonNull Activity activity) {
+        HomeActivity.signOutCurrentFBUser();
         Tokens.loginRequiredProcedure(context, activity);
     }
 

@@ -21,6 +21,7 @@ android {
             buildConfigField("String", "BASE_URL", "\"http://192.168.5.14:3001/\"")
             buildConfigField("String", "FIREBASE_DB_URL", "\"https://cropool-chat-default-rtdb.europe-west1.firebasedatabase.app/\"")
             buildConfigField("String", "FIREBASE_RTDB_URL", "\"https://cropool-chat-default-rtdb.europe-west1.firebasedatabase.app/\"")
+            buildConfigField("String", "FIREBASE_STORAGE_URL", "\"gs://cropool-chat.appspot.com\"")
             buildConfigField("String", "HELP_AND_SUPPORT_URL", "\"https://github.com/MSrica/cropool\"")
         }
         release {
@@ -40,6 +41,7 @@ android {
 
 dependencies {
     implementation 'com.github.marlonlom:timeago:4.0.3'
+    implementation 'com.google.firebase:firebase-storage:20.0.1'
     implementation platform('com.google.firebase:firebase-bom:30.1.0')
     implementation 'com.google.firebase:firebase-database'
     implementation 'com.google.firebase:firebase-auth'

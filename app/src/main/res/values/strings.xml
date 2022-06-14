@@ -108,4 +108,7 @@
     <string name="route_driver">Driver: Michael Schumacher</string>
     <string name="route_edit">Edit</string>
     <string name="route_delete">Delete</string>
+    <string name="PROFILE_PICTURE_RESOURCE">How do you want to update your profile picture?</string>
+    <string name="DEVICE_IMAGES">Device images</string>
+    <string name="CAMERA">Camera</string>
 </resources>

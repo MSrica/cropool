@@ -2,7 +2,6 @@ package com.example.cropool.home.messages;
 
 import android.os.Bundle;
 import android.util.Log;
-import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -34,16 +33,15 @@ public class ChatActivity extends AppCompatActivity {
 
     private final DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReferenceFromUrl(BuildConfig.FIREBASE_RTDB_URL);
     private final List<Text> textList = new ArrayList<>();
-    private final int LAST_SEEN_AT_UPDATE_INTERVAL = 3000;
+    private final int LAST_SEEN_AT_UPDATE_INTERVAL = 10000;
+    // Time in seconds that separates "Online" status from "last seen at" status
+    private final int ONLINE_STATUS_THRESHOLD = 120;
     private Conversation conversation;
     private RecyclerView chatRecyclerView;
     // Will be used for updating last_seen_at field in user table
     // Not local because of cancel feature
     private Timer t;
     private String currentUserUID;
-
-    // Time in seconds that separates "Online" status from "last seen at" status
-    private int ONLINE_STATUS_THRESHOLD = 120;
     // Not local because it is used in listener for otherUser status
     private TextView onlineStatus;
 
@@ -76,13 +74,10 @@ public class ChatActivity extends AppCompatActivity {
 
         chatRecyclerView.setHasFixedSize(true);
         chatRecyclerView.setLayoutManager(new LinearLayoutManager(ChatActivity.this));
-        chatRecyclerView.addOnLayoutChangeListener(new View.OnLayoutChangeListener() {
-            @Override
-            public void onLayoutChange(View v, int left, int top, int right, int bottom, int oldLeft, int oldTop, int oldRight, int oldBottom) {
-                if (bottom < oldBottom) {
-                    // Keyboard appeared - scroll to bottom again
-                    chatRecyclerView.postDelayed(() -> chatRecyclerView.scrollToPosition(textList.size() - 1), 0);
-                }
+        chatRecyclerView.addOnLayoutChangeListener((v, left, top, right, bottom, oldLeft, oldTop, oldRight, oldBottom) -> {
+            if (bottom < oldBottom) {
+                // Keyboard appeared - scroll to bottom again
+                chatRecyclerView.postDelayed(() -> chatRecyclerView.scrollToPosition(textList.size() - 1), 0);
             }
         });
 
