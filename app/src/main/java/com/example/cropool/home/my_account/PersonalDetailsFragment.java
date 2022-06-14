@@ -1,4 +1,4 @@
-package com.example.cropool.my_account;
+package com.example.cropool.home.my_account;
 
 import android.os.Bundle;
 import android.util.Log;

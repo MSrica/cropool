@@ -46,4 +46,8 @@
     <color name="my_account_card_icon">#FFFFFFFF</color>
     <color name="my_account_card_icon_sign_out">#FFC51A0E</color>
     <color name="MY_ACCOUNT_SCROLL_VIEW_BACKGROUND">#FF2C3E54</color>
+
+    <color name="cropool_route_card_background">#FF3A506B</color>
+    <color name="route_delete">#D30E00</color>
+    <color name="my_routes_title">#FFFFFFFF</color>
 </resources>

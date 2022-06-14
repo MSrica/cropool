@@ -97,4 +97,13 @@
     <string name="LOGOUT_FROM_ALL_DIALOG">Do you want to sign out from all devices?</string>
     <string name="YES">Yes</string>
     <string name="NO">No</string>
+    <string name="route_name">Route name</string>
+    <string name="route_map">Route map.</string>
+    <string name="route_created_on">Route created on 2/6/22 at 15:33.</string>
+    <string name="route_schedule">Tuesdays at 2PM.</string>
+    <string name="route_passengers">Passengers: Sebastian Vettel, Fernando Alonso</string>
+    <string name="route_price_per_km">Price per kilometer: 0.15€</string>
+    <string name="route_driver">Driver: Michael Schumacher</string>
+    <string name="route_edit">Edit</string>
+    <string name="route_delete">Delete</string>
 </resources>

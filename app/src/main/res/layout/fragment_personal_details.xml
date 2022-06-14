@@ -9,8 +9,8 @@
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@drawable/oneline_title_screen_background"
-        tools:context=".my_account.PersonalDetailsFragment">
+        android:background="@drawable/one_line_title_screen_background"
+        tools:context=".home.my_account.PersonalDetailsFragment">
 
 
         <TextView

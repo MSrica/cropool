@@ -14,9 +14,9 @@ import com.example.cropool.R;
 import com.example.cropool.api.AccountInfo;
 import com.example.cropool.api.CropoolAPI;
 import com.example.cropool.api.Tokens;
-import com.example.cropool.my_account.MyRoutesFragment;
-import com.example.cropool.my_account.PersonalDetailsFragment;
-import com.example.cropool.my_account.RoutesSubscribedToFragment;
+import com.example.cropool.home.my_account.MyRoutesFragment;
+import com.example.cropool.home.my_account.PersonalDetailsFragment;
+import com.example.cropool.home.my_account.RoutesSubscribedToFragment;
 import com.github.marlonlom.utilities.timeago.TimeAgo;
 import com.google.android.material.card.MaterialCardView;
 import com.squareup.picasso.Picasso;
@@ -126,7 +126,8 @@ public class MyAccountFragment extends Fragment {
                     String displayName = accountInfo.getFirstName() + " " + accountInfo.getLastName() + "!";
                     name.setText(displayName);
 
-                    Picasso.get().load(accountInfo.getProfilePicture()).into(profilePicture);
+                    if (!accountInfo.getProfilePicture().equals(getResources().getString(R.string.FB_RTDB_DEFAULT_PICTURE_VALUE)))
+                        Picasso.get().load(accountInfo.getProfilePicture()).into(profilePicture);
 
                     // We don't want it to say '1 year ago' but '1 year'
                     String membershipTime = TimeAgo.using(accountInfo.getCreatedAt() * 1000L).replace(" ago", "");
