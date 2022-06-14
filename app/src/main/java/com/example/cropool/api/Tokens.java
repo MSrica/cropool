@@ -133,6 +133,10 @@ public abstract class Tokens {
         activity.finish();
     }
 
+    public static void logoutProcedure(@NonNull Context context, @NonNull Activity activity) {
+        Tokens.loginRequiredProcedure(context, activity);
+    }
+
     public static void refreshTokensOnServer(Activity activity, Context context, Callable<Void> postExecution) {
         Retrofit retrofit = CropoolAPI.getRetrofit();
         CropoolAPI cropoolAPI = retrofit.create(CropoolAPI.class);

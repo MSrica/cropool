@@ -21,6 +21,7 @@ android {
             buildConfigField("String", "BASE_URL", "\"http://192.168.5.14:3001/\"")
             buildConfigField("String", "FIREBASE_DB_URL", "\"https://cropool-chat-default-rtdb.europe-west1.firebasedatabase.app/\"")
             buildConfigField("String", "FIREBASE_RTDB_URL", "\"https://cropool-chat-default-rtdb.europe-west1.firebasedatabase.app/\"")
+            buildConfigField("String", "HELP_AND_SUPPORT_URL", "\"https://github.com/MSrica/cropool\"")
         }
         release {
             minifyEnabled false
@@ -28,6 +29,7 @@ android {
             buildConfigField("String", "BASE_URL", "\"https://cropool.herokuapp.com/\"")
             buildConfigField("String", "FIREBASE_DB_URL", "\"https://cropool-chat-default-rtdb.europe-west1.firebasedatabase.app/\"")
             buildConfigField("String", "FIREBASE_RTDB_URL", "\"https://cropool-chat-default-rtdb.europe-west1.firebasedatabase.app/\"")
+            buildConfigField("String", "HELP_AND_SUPPORT_URL", "\"https://github.com/MSrica/cropool\"")
         }
     }
     compileOptions {

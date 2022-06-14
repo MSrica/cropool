@@ -107,7 +107,7 @@ public class ChangePasswordFragment extends Fragment {
                         // First we'll refresh the tokens (if refreshIfNeeded is true)
 
                         if (refreshIfNeeded) {
-                            Toast.makeText(getContext(), "Refreshing tokens...", Toast.LENGTH_SHORT).show();
+                            // Toast.makeText(getContext(), "Refreshing tokens...", Toast.LENGTH_SHORT).show();
 
                             // Try to refresh tokens using refresh tokens and re-run updateUserData() if refreshing is successful
                             Tokens.refreshTokensOnServer(requireActivity(), requireContext(), () -> {

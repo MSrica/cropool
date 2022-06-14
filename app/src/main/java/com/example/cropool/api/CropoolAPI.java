@@ -36,4 +36,7 @@ public interface CropoolAPI {
 
     @PATCH("changePassword")
     Call<Feedback> changePassword(@Header("access_token") String accessToken, @Body UpdatePasswordReq updatePasswordReq);
+
+    @PATCH("logout")
+    Call<Feedback> signOut(@Header("access_token") String accessToken);
 }
