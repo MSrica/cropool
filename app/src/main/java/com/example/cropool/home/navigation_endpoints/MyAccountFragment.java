@@ -1,9 +1,11 @@
 package com.example.cropool.home.navigation_endpoints;
 
+import android.Manifest;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
@@ -18,6 +20,8 @@ import android.widget.Toast;
 
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 
 import com.example.cropool.BuildConfig;
@@ -188,6 +192,7 @@ public class MyAccountFragment extends Fragment {
 
         chooseImageActivityResultLauncher.launch(intent);
     }
+
     private void startWaitingUI() {
         profilePicture.setVisibility(View.GONE);
         waitingForUpload.setVisibility(View.VISIBLE);
@@ -237,7 +242,15 @@ public class MyAccountFragment extends Fragment {
             }
 
             // Create an upload task
-            uploadTask = uploadReference.putFile(imageURI);
+
+            if (ContextCompat.checkSelfPermission(requireContext(), Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
+                Toast.makeText(getContext(), "Permissions error. Profile picture not updated.", Toast.LENGTH_LONG).show();
+                ActivityCompat.requestPermissions(requireActivity(), new String[]{Manifest.permission.READ_EXTERNAL_STORAGE}, 1);
+                stopWaitingUI();
+                return;
+            } else {
+                uploadTask = uploadReference.putFile(imageURI);
+            }
         }
 
         // Create an URL task to get the URL of the uploaded photo
@@ -327,7 +340,7 @@ public class MyAccountFragment extends Fragment {
 
     // Populates account related TextViews and ImageView with content
     private void updateUserData(boolean refreshIfNeeded, boolean useWaitingUI) {
-        if(useWaitingUI)
+        if (useWaitingUI)
             startWaitingUI();
 
         Retrofit retrofit = CropoolAPI.getRetrofit();
@@ -359,7 +372,7 @@ public class MyAccountFragment extends Fragment {
                         Toast.makeText(getContext(), "Sorry, there was an error. " + response.code(), Toast.LENGTH_LONG).show();
                     }
 
-                    if(useWaitingUI)
+                    if (useWaitingUI)
                         stopWaitingUI();
                     return;
                 }
@@ -369,7 +382,7 @@ public class MyAccountFragment extends Fragment {
                 if (accountInfo == null) {
                     Toast.makeText(getContext(), "Sorry, there was an error.", Toast.LENGTH_LONG).show();
 
-                    if(useWaitingUI)
+                    if (useWaitingUI)
                         stopWaitingUI();
 
                     return;
@@ -389,7 +402,7 @@ public class MyAccountFragment extends Fragment {
                     Toast.makeText(getContext(), "Sorry, there was an error.", Toast.LENGTH_LONG).show();
                 }
 
-                if(useWaitingUI)
+                if (useWaitingUI)
                     stopWaitingUI();
             }
 
@@ -397,7 +410,7 @@ public class MyAccountFragment extends Fragment {
             public void onFailure(@NotNull Call<AccountInfo> call, @NotNull Throwable t) {
                 Toast.makeText(getContext(), "Sorry, there was an error.", Toast.LENGTH_LONG).show();
 
-                if(useWaitingUI)
+                if (useWaitingUI)
                     stopWaitingUI();
 
                 Log.e("/accountInfo", "onFailure: Something went wrong. " + t.getMessage());
