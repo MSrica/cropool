@@ -1,14 +1,483 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".home.navigation_endpoints.MyAccountFragment">
+    android:background="@color/MY_ACCOUNT_SCROLL_VIEW_BACKGROUND">
 
-    <!-- TODO: Update blank fragment layout -->
-    <TextView
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:text="Placeholder 4" />
+        android:layout_height="wrap_content"
+        android:background="@drawable/my_account_screen_background"
+        tools:context=".home.navigation_endpoints.MyAccountFragment">
 
-</FrameLayout>
+        <LinearLayout
+            android:id="@+id/account_header_layout"
+            android:layout_width="match_parent"
+            android:layout_height="200dp"
+            android:orientation="vertical"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="125dp"
+                android:baselineAligned="false"
+                android:gravity="center"
+                android:orientation="horizontal"
+                android:weightSum="1">
+
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="30dp"
+                    android:layout_marginEnd="10dp"
+                    android:layout_weight="0.775"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:id="@+id/hi_label"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/hi"
+                        android:textColor="@color/white"
+                        android:textSize="30sp" />
+
+                    <TextView
+                        android:id="@+id/account_name"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:autoSizeTextType="uniform"
+                        android:text="@string/n_a"
+                        android:textColor="@color/white"
+                        android:textSize="30sp"
+                        android:textStyle="bold" />
+                </LinearLayout>
+
+                <FrameLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="10dp"
+                    android:layout_marginEnd="30dp"
+                    android:layout_weight="0.225">
+
+                    <FrameLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent">
+
+                        <androidx.constraintlayout.widget.ConstraintLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content">
+
+                            <de.hdodenhof.circleimageview.CircleImageView
+                                android:id="@+id/account_profile_picture"
+                                android:layout_width="match_parent"
+                                android:layout_height="0dp"
+                                android:minWidth="85dp"
+                                android:minHeight="85dp"
+                                android:src="@drawable/ic_person"
+                                app:layout_constraintBottom_toBottomOf="parent"
+                                app:layout_constraintDimensionRatio="1:1"
+                                app:layout_constraintEnd_toEndOf="parent"
+                                app:layout_constraintStart_toStartOf="parent"
+                                app:layout_constraintTop_toTopOf="parent" />
+                        </androidx.constraintlayout.widget.ConstraintLayout>
+
+                        <ProgressBar
+                            android:id="@+id/loading_profile_picture"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center"
+                            android:indeterminateTint="@color/white"
+                            android:indeterminateTintMode="src_atop"
+                            android:visibility="gone" />
+                    </FrameLayout>
+
+
+                    <FrameLayout
+                        android:layout_width="22dp"
+                        android:layout_height="22dp"
+                        android:layout_gravity="start|bottom">
+
+                        <de.hdodenhof.circleimageview.CircleImageView
+                            android:id="@+id/edit"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:layout_gravity="center"
+                            android:background="@drawable/edit_profile_picture_round_background" />
+
+                        <de.hdodenhof.circleimageview.CircleImageView
+                            android:id="@+id/edit_icon"
+                            android:layout_width="16dp"
+                            android:layout_height="16dp"
+                            android:layout_gravity="center"
+                            android:src="@drawable/ic_edit" />
+                    </FrameLayout>
+                </FrameLayout>
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="75dp"
+                android:baselineAligned="false"
+                android:gravity="center"
+                android:orientation="horizontal"
+                android:paddingBottom="15dp"
+                android:weightSum="1">
+
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="0.25"
+                    android:gravity="bottom"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:id="@+id/route_qty"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:gravity="center"
+                        android:text="@string/n_a"
+                        android:textColor="@color/white"
+                        android:textSize="20sp"
+                        android:textStyle="bold" />
+
+                    <TextView
+                        android:id="@+id/route_label"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:gravity="center"
+                        android:text="@string/route_label"
+                        android:textColor="@color/white"
+                        android:textSize="12sp" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="0.25"
+                    android:gravity="bottom"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:id="@+id/membership_time"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:gravity="center"
+                        android:text="@string/n_a"
+                        android:textColor="@color/white"
+                        android:textSize="20sp"
+                        android:textStyle="bold" />
+
+                    <TextView
+                        android:id="@+id/membership_label"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:gravity="center"
+                        android:text="@string/membership"
+                        android:textColor="@color/white"
+                        android:textSize="12sp" />
+                </LinearLayout>
+            </LinearLayout>
+        </LinearLayout>
+
+        <RelativeLayout
+            android:id="@+id/options_layout"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_below="@id/account_header_layout"
+            android:layout_alignParentBottom="true"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/account_header_layout">
+
+            <ScrollView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:fillViewport="true">
+
+            </ScrollView>
+
+            <TextView
+                android:id="@+id/manage_routes_label"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="30dp"
+                android:layout_marginTop="30dp"
+                android:text="@string/manage_routes"
+                android:textColor="@color/account_labels"
+                android:textSize="16sp"
+                android:textStyle="bold" />
+
+            <com.google.android.material.card.MaterialCardView
+                android:id="@+id/routes_subscribed"
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:layout_below="@id/manage_routes_label"
+                android:layout_marginHorizontal="35dp"
+                android:layout_marginTop="10dp"
+                android:backgroundTint="@color/my_account_card_background"
+                android:checkable="false"
+                android:clickable="true"
+                android:focusable="true"
+                app:strokeWidth="0dp">
+
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:gravity="center_vertical">
+
+                    <ImageView
+                        android:id="@+id/routes_subscribed_ic_left"
+                        android:layout_width="24dp"
+                        android:layout_height="24dp"
+                        android:layout_gravity="start|center"
+                        android:layout_marginHorizontal="15dp"
+                        android:contentDescription="@string/routes_subscribed_to_icon"
+                        android:src="@drawable/ic_subscriptions"
+                        app:tint="@color/my_account_card_icon" />
+
+                    <TextView
+                        android:id="@+id/routes_subscribed_text"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="start|center"
+                        android:layout_toEndOf="@id/routes_subscribed_ic_left"
+                        android:text="@string/routes_subscribed_to"
+                        android:textColor="@color/cropool_text_default"
+                        android:textSize="16sp"
+                        android:textStyle="bold" />
+
+                    <ImageView
+                        android:id="@+id/routes_subscribed_ic_right"
+                        android:layout_width="24dp"
+                        android:layout_height="24dp"
+                        android:layout_alignParentEnd="true"
+                        android:layout_gravity="end|center"
+                        android:layout_marginHorizontal="15dp"
+                        android:contentDescription="@string/next_icon"
+                        android:src="@drawable/ic_next"
+                        app:tint="@color/my_account_card_icon" />
+                </RelativeLayout>
+            </com.google.android.material.card.MaterialCardView>
+
+            <com.google.android.material.card.MaterialCardView
+                android:id="@+id/my_routes"
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:layout_below="@id/routes_subscribed"
+                android:layout_marginHorizontal="35dp"
+                android:layout_marginTop="10dp"
+                android:backgroundTint="@color/my_account_card_background"
+                android:checkable="false"
+                android:clickable="true"
+                android:focusable="true"
+                app:strokeWidth="0dp">
+
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:gravity="center_vertical">
+
+                    <ImageView
+                        android:id="@+id/my_routes_ic_left"
+                        android:layout_width="24dp"
+                        android:layout_height="24dp"
+                        android:layout_gravity="start|center"
+                        android:layout_marginHorizontal="15dp"
+                        android:contentDescription="@string/my_routes_icon"
+                        android:src="@drawable/ic_route"
+                        app:tint="@color/my_account_card_icon" />
+
+                    <TextView
+                        android:id="@+id/my_routes_text"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="start|center"
+                        android:layout_toEndOf="@id/my_routes_ic_left"
+                        android:text="@string/my_routes"
+                        android:textColor="@color/cropool_text_default"
+                        android:textSize="16sp"
+                        android:textStyle="bold" />
+
+                    <ImageView
+                        android:id="@+id/my_routes_ic_right"
+                        android:layout_width="24dp"
+                        android:layout_height="24dp"
+                        android:layout_alignParentEnd="true"
+                        android:layout_gravity="end|center"
+                        android:layout_marginHorizontal="15dp"
+                        android:contentDescription="@string/next_icon"
+                        android:src="@drawable/ic_next"
+                        app:tint="@color/my_account_card_icon" />
+                </RelativeLayout>
+            </com.google.android.material.card.MaterialCardView>
+
+            <TextView
+                android:id="@+id/settings_label"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/my_routes"
+                android:layout_marginStart="30dp"
+                android:layout_marginTop="30dp"
+                android:text="@string/manage_routes"
+                android:textColor="@color/account_labels"
+                android:textSize="16sp"
+                android:textStyle="bold" />
+
+            <com.google.android.material.card.MaterialCardView
+                android:id="@+id/personal_details"
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:layout_below="@id/settings_label"
+                android:layout_marginHorizontal="35dp"
+                android:layout_marginTop="10dp"
+                android:backgroundTint="@color/my_account_card_background"
+                android:checkable="false"
+                android:clickable="true"
+                android:focusable="true"
+                app:strokeWidth="0dp">
+
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:gravity="center_vertical">
+
+                    <ImageView
+                        android:id="@+id/personal_details_ic_left"
+                        android:layout_width="24dp"
+                        android:layout_height="24dp"
+                        android:layout_gravity="start|center"
+                        android:layout_marginHorizontal="15dp"
+                        android:contentDescription="@string/personal_details_icon"
+                        android:src="@drawable/ic_personal_details"
+                        app:tint="@color/my_account_card_icon" />
+
+                    <TextView
+                        android:id="@+id/personal_details_text"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="start|center"
+                        android:layout_toEndOf="@id/personal_details_ic_left"
+                        android:text="@string/personal_details"
+                        android:textColor="@color/cropool_text_default"
+                        android:textSize="16sp"
+                        android:textStyle="bold" />
+
+                    <ImageView
+                        android:id="@+id/personal_details_ic_right"
+                        android:layout_width="24dp"
+                        android:layout_height="24dp"
+                        android:layout_alignParentEnd="true"
+                        android:layout_gravity="end|center"
+                        android:layout_marginHorizontal="15dp"
+                        android:contentDescription="@string/next_icon"
+                        android:src="@drawable/ic_next"
+                        app:tint="@color/my_account_card_icon" />
+                </RelativeLayout>
+            </com.google.android.material.card.MaterialCardView>
+
+            <com.google.android.material.card.MaterialCardView
+                android:id="@+id/help_support"
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:layout_below="@id/personal_details"
+                android:layout_marginHorizontal="35dp"
+                android:layout_marginTop="10dp"
+                android:backgroundTint="@color/my_account_card_background"
+                android:checkable="false"
+                android:clickable="true"
+                android:focusable="true"
+                app:strokeWidth="0dp">
+
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:gravity="center_vertical">
+
+                    <ImageView
+                        android:id="@+id/help_support_ic_left"
+                        android:layout_width="24dp"
+                        android:layout_height="24dp"
+                        android:layout_gravity="start|center"
+                        android:layout_marginHorizontal="15dp"
+                        android:contentDescription="@string/help_and_support_icon"
+                        android:src="@drawable/ic_help_support"
+                        app:tint="@color/my_account_card_icon" />
+
+                    <TextView
+                        android:id="@+id/help_support_text"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="start|center"
+                        android:layout_toEndOf="@id/help_support_ic_left"
+                        android:text="@string/help_support"
+                        android:textColor="@color/cropool_text_default"
+                        android:textSize="16sp"
+                        android:textStyle="bold" />
+                </RelativeLayout>
+            </com.google.android.material.card.MaterialCardView>
+
+            <com.google.android.material.card.MaterialCardView
+                android:id="@+id/sign_out"
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:layout_below="@id/help_support"
+                android:layout_marginHorizontal="35dp"
+                android:layout_marginTop="10dp"
+                android:backgroundTint="@color/my_account_card_background"
+                android:checkable="false"
+                android:clickable="true"
+                android:focusable="true"
+                app:strokeWidth="0dp">
+
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:gravity="center_vertical">
+
+                    <ImageView
+                        android:id="@+id/sign_out_ic_left"
+                        android:layout_width="24dp"
+                        android:layout_height="24dp"
+                        android:layout_gravity="start|center"
+                        android:layout_marginHorizontal="15dp"
+                        android:contentDescription="@string/sign_out_icon"
+                        android:src="@drawable/ic_sign_out"
+                        app:tint="@color/my_account_card_icon_sign_out" />
+
+                    <TextView
+                        android:id="@+id/sign_out_text"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="start|center"
+                        android:layout_toEndOf="@id/sign_out_ic_left"
+                        android:text="@string/sign_out"
+                        android:textColor="@color/cropool_text_default"
+                        android:textSize="16sp"
+                        android:textStyle="bold" />
+                </RelativeLayout>
+            </com.google.android.material.card.MaterialCardView>
+        </RelativeLayout>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="75dp"
+            android:layout_marginBottom="20dp"
+            android:fontFamily="@font/organo"
+            android:text="@string/copyright"
+            android:textSize="16sp"
+            android:textStyle="bold"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/options_layout" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</ScrollView>

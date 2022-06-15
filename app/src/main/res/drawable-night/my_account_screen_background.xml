@@ -9,7 +9,7 @@
                 android:startColor="#FF1D3272" />
         </shape>
     </item>
-    <item android:top="120dp">
+    <item android:top="200dp">
         <shape android:shape="rectangle">
             <corners
                 android:topLeftRadius="35dp"

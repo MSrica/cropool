@@ -2,6 +2,8 @@ package com.example.cropool.home.navigation_endpoints;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
@@ -16,7 +18,6 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.cropool.BuildConfig;
 import com.example.cropool.R;
-import com.example.cropool.api.Tokens;
 import com.example.cropool.home.HomeActivity;
 import com.example.cropool.home.messages.Conversation;
 import com.example.cropool.home.messages.ConversationsAdapter;
@@ -39,18 +40,18 @@ import java.util.Timer;
 import java.util.TimerTask;
 
 public class ConversationListActivity extends AppCompatActivity implements NavigationBarView.OnItemSelectedListener {
+
     private final HashMap<String, Conversation> conversationMap = new HashMap<>();
     private final DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReferenceFromUrl(BuildConfig.FIREBASE_RTDB_URL);
     private final List<String> conversationIDs = new ArrayList<>();
+    private final int LAST_SEEN_AT_UPDATE_INTERVAL = 10000;
     private FirebaseAuth mAuth;
     private FirebaseUser currentUser;
     private RecyclerView messageListRecyclerView;
     private EditText search;
-
     // Will be used for updating last_seen_at field in user table
     // Not local because of cancel feature
     private Timer t;
-    private final int LAST_SEEN_AT_UPDATE_INTERVAL = 3000;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -62,9 +63,7 @@ public class ConversationListActivity extends AppCompatActivity implements Navig
         navigationBarView.setOnItemSelectedListener(this);
         navigationBarView.setSelectedItemId(R.id.chat);
 
-        // Set FB auth/user
-        mAuth = FirebaseAuth.getInstance();
-        currentUser = mAuth.getCurrentUser();
+        currentUser = HomeActivity.getCurrentFBUser();
 
         // Setting search listener
         search = findViewById(R.id.search);
@@ -93,25 +92,6 @@ public class ConversationListActivity extends AppCompatActivity implements Navig
         messageListRecyclerView.setLayoutManager(new LinearLayoutManager(getApplicationContext()));
     }
 
-    @Override
-    public boolean onNavigationItemSelected(@NonNull MenuItem item) {
-        int itemId = item.getItemId();
-
-        if (itemId == R.id.chat) {
-            // Makes no sense to switch to this activity again
-            return true;
-        } else if (itemId == R.id.find_route || itemId == R.id.add_route || itemId == R.id.my_account) {
-            Intent intent = new Intent(getApplicationContext(), HomeActivity.class);
-            intent.putExtra(getResources().getString(R.string.HOME_ACTIVITY_NAVIGATION_EXTRA), itemId);
-            this.startActivity(intent);
-            overridePendingTransition(0, 0);
-            this.finish();
-            return true;
-        }
-
-        return false;
-    }
-
     // Filters conversation list according to input text
     private void filterConversationList(String filterText) {
         List<Conversation> filteredConversationList = new ArrayList<>();
@@ -130,74 +110,28 @@ public class ConversationListActivity extends AppCompatActivity implements Navig
 
     private void updateUI() {
         if (currentUser == null) {
-            // User not signed in, sign him in, then update UI again
-            customSignIn();
+            final Handler handler = new Handler(Looper.getMainLooper());
+            handler.postDelayed(() -> {
+                // Current user not signed in, try to get it again
+                currentUser = HomeActivity.getCurrentFBUser();
 
-            return;
+                if (currentUser == null) {
+                    // currentUser wasn't set to not-null in the meantime, return to home activity
+                    Toast.makeText(getApplicationContext(), "Chat not available. Try later or sign in again.", Toast.LENGTH_SHORT).show();
+                    this.startActivity(new Intent(getApplicationContext(), HomeActivity.class));
+                    overridePendingTransition(0, 0);
+                    this.finish();
+                }
+            }, 3000);
+
         }
 
         // Set listener for new/updated conversations
         setConversationIDListener();
 
         // Set recurrent updates for last_seen_at field in user table
-        setRecurrentUpdateLastSeen(LAST_SEEN_AT_UPDATE_INTERVAL, currentUser.getUid());
-    }
-
-    // Signs the user in if he has the Firebase token that is set when logging in or registering
-    private void customSignIn() {
-        if (!Tokens.isFirebaseTokenSet(getApplicationContext())) {
-            Log.e("firebaseLogin", "signInWithCustomToken: failed");
-            Toast.makeText(getApplicationContext(), "Text authentication failed. Please sign in again.", Toast.LENGTH_LONG).show();
-            Tokens.loginRequiredProcedure(getApplicationContext(), this);
-        }
-
-        mAuth.signInWithCustomToken(Tokens.getFirebaseToken(getApplicationContext()))
-                .addOnCompleteListener(ConversationListActivity.this, task -> {
-                    if (task.isSuccessful()) {
-                        // Sign in successful
-                        Log.i("firebaseLogin", "signInWithCustomToken: success");
-
-                        FirebaseUser firebaseUser = mAuth.getCurrentUser();
-
-                        // Set this class' current user to firebaseUser
-                        currentUser = firebaseUser;
-
-                        // Check the user's record in RTDB
-                        checkUserRTDBRecord(firebaseUser);
-
-                        updateUI();
-                    } else {
-                        // Sign in failed
-                        Log.e("firebaseLogin", "signInWithCustomToken: failed");
-
-                        Toast.makeText(getApplicationContext(), "Chat authentication failed. Please sign in again.", Toast.LENGTH_LONG).show();
-                        Tokens.loginRequiredProcedure(getApplicationContext(), ConversationListActivity.this);
-                    }
-                });
-    }
-
-    // Checks whether the signed in user has a record in the FB RTDB
-    // If not, inserts him into the RTDB along with his email, display name and profile picture URL
-    private void checkUserRTDBRecord(FirebaseUser firebaseUser) {
-        databaseReference.addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot snapshot) {
-                // Toast.makeText(requireContext(), "Deciding whether to create user " + firebaseUser.getUid(), Toast.LENGTH_LONG).show();
-                if (!snapshot.child("user").hasChild(firebaseUser.getUid())) {
-                    // User hasn't been inserted to FB RTDB yet
-                    // Toast.makeText(requireContext(), "Creating user " + firebaseUser.getUid(), Toast.LENGTH_LONG).show();
-                    databaseReference.child(getResources().getString(R.string.FB_RTDB_USER_TABLE_NAME)).child(firebaseUser.getUid()).child(getResources().getString(R.string.FB_RTDB_E_MAIL_KEY)).setValue(firebaseUser.getEmail());
-                    databaseReference.child(getResources().getString(R.string.FB_RTDB_USER_TABLE_NAME)).child(firebaseUser.getUid()).child(getResources().getString(R.string.FB_RTDB_DISPLAY_NAME_KEY)).setValue(firebaseUser.getDisplayName());
-                    databaseReference.child(getResources().getString(R.string.FB_RTDB_USER_TABLE_NAME)).child(firebaseUser.getUid()).child(getResources().getString(R.string.FB_RTDB_PROFILE_PICTURE_KEY)).setValue(firebaseUser.getPhotoUrl() == null ? getResources().getString(R.string.FB_RTDB_DEFAULT_PICTURE_VALUE) : firebaseUser.getPhotoUrl().toString());
-                    databaseReference.child(getResources().getString(R.string.FB_RTDB_USER_TABLE_NAME)).child(firebaseUser.getUid()).child(getResources().getString(R.string.FB_RTDB_LAST_SEEN_AT_KEY)).setValue(System.currentTimeMillis());
-                }
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError error) {
-
-            }
-        });
+        if(currentUser != null)
+            setRecurrentUpdateLastSeen(LAST_SEEN_AT_UPDATE_INTERVAL, currentUser.getUid());
     }
 
     // Sets a RTDB listener that triggers on each conversations/texts change for currentUser in RTDB
@@ -349,7 +283,7 @@ public class ConversationListActivity extends AppCompatActivity implements Navig
 
     // Recurrent updating of the user's last_seen_at field in user table
     // (if the user is in the chat activity, but not sending any texts)
-    private void setRecurrentUpdateLastSeen (int interval, String userID){
+    private void setRecurrentUpdateLastSeen(int interval, String userID) {
         // In case there is already an updater running
         cancelRecurrentUpdateLastSeen();
 
@@ -378,7 +312,8 @@ public class ConversationListActivity extends AppCompatActivity implements Navig
         super.onResume();
 
         // Re-start the recurrent update
-        setRecurrentUpdateLastSeen(LAST_SEEN_AT_UPDATE_INTERVAL, currentUser.getUid());
+        if (currentUser != null)
+            setRecurrentUpdateLastSeen(LAST_SEEN_AT_UPDATE_INTERVAL, currentUser.getUid());
     }
 
     @Override
@@ -387,5 +322,24 @@ public class ConversationListActivity extends AppCompatActivity implements Navig
 
         // Cancel updating last_seen_at field in user table if it is scheduled
         cancelRecurrentUpdateLastSeen();
+    }
+
+    @Override
+    public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+        int itemId = item.getItemId();
+
+        if (itemId == R.id.chat) {
+            // Makes no sense to switch to this activity again
+            return true;
+        } else if (itemId == R.id.find_route || itemId == R.id.add_route || itemId == R.id.my_account) {
+            Intent intent = new Intent(getApplicationContext(), HomeActivity.class);
+            intent.putExtra(getResources().getString(R.string.HOME_ACTIVITY_NAVIGATION_EXTRA), itemId);
+            this.startActivity(intent);
+            overridePendingTransition(0, 0);
+            this.finish();
+            return true;
+        }
+
+        return false;
     }
 }

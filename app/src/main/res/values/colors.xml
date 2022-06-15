@@ -24,6 +24,8 @@
     <color name="cropool_bottom_navigation_view">#FF333333</color>
     <color name="cropool_bottom_navigation_view_icon_text">#FF9D8ECC</color>
 
+    <color name="cropool_background_default">#FFFFFFFF</color>
+
     <color name="chat_list_title">#FFFFFFFF</color>
     <color name="chat_list_search_background">#80FFFFFF</color>
     <color name="chat_list_name">#FF000000</color>
@@ -35,6 +37,17 @@
     <color name="chat_other_user_text">#DFFFFFFF</color>
     <color name="chat_current_user_text_background">#FF4CD4CA</color>
     <color name="chat_other_user_text_background">#FF333333</color>
-    <color name="USER_ONLINE_COLOR">#05b714</color>
-    <color name="USER_LAST_SEEN_COLOR">#911B13</color>
+    <color name="USER_ONLINE_COLOR">#FF05B714</color>
+    <color name="USER_LAST_SEEN_COLOR">#FF911B13</color>
+
+    <color name="my_account_edit_icon">#FFFFFFFF</color>
+    <color name="account_labels">#59333333</color>
+    <color name="my_account_card_background">#FFFFFFFF</color>
+    <color name="my_account_card_icon">#FF333333</color>
+    <color name="my_account_card_icon_sign_out">#FFC51A0E</color>
+    <color name="MY_ACCOUNT_SCROLL_VIEW_BACKGROUND">#FFEFEFEF</color>
+
+    <color name="cropool_route_card_background">#FFFFFFFF</color>
+    <color name="route_delete">#D30E00</color>
+    <color name="my_routes_title">#FFFFFFFF</color>
 </resources>
