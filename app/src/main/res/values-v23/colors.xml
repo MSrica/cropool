@@ -1,5 +1,53 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="USER_ONLINE_COLOR">#05b714</color>
-    <color name="USER_LAST_SEEN_COLOR">#911B13</color>
+    <color name="purple_200">#FFBB86FC</color>
+    <color name="purple_500">#FF6200EE</color>
+    <color name="purple_700">#FF3700B3</color>
+    <color name="teal_200">#FF03DAC5</color>
+    <color name="teal_700">#FF018786</color>
+    <color name="black">#FF000000</color>
+    <color name="white">#FFFFFFFF</color>
+
+    <color name="cropool_main">#FF4CD4CA</color>
+    <color name="cropool_gray">#FF333333</color>
+    <color name="cropool_purple">#FF9D8ECC</color>
+    <color name="cropool_gray_blue">#FF3A506B</color>
+    <color name="cropool_blue">#FF1D3272</color>
+    <color name="cropool_dark_blue">#FF1C2541</color>
+
+    <color name="cropool_button_default">#FF333333</color>
+    <color name="cropool_button_alternative">#FF4CD4CA</color>
+
+    <color name="cropool_text_default">#FF333333</color>
+    <color name="cropool_text_alternative">#FF4CD4CA</color>
+
+    <color name="cropool_bottom_navigation_view">#FF333333</color>
+    <color name="cropool_bottom_navigation_view_icon_text">#FF9D8ECC</color>
+
+    <color name="cropool_background_default">#FFFFFFFF</color>
+
+    <color name="chat_list_title">#FFFFFFFF</color>
+    <color name="chat_list_search_background">#80FFFFFF</color>
+    <color name="chat_list_name">#FF000000</color>
+    <color name="chat_list_text">#A6000000</color>
+    <color name="chat_list_time">#A6000000</color>
+    <color name="chat_name">#FF000000</color>
+    <color name="chat_send_background">#A04CD4CA</color>
+    <color name="chat_current_user_text">#FFFFFFFF</color>
+    <color name="chat_other_user_text">#DFFFFFFF</color>
+    <color name="chat_current_user_text_background">#FF4CD4CA</color>
+    <color name="chat_other_user_text_background">#FF333333</color>
+    <color name="USER_ONLINE_COLOR">#FF05B714</color>
+    <color name="USER_LAST_SEEN_COLOR">#FF911B13</color>
+
+    <color name="my_account_edit_icon">#FFFFFFFF</color>
+    <color name="account_labels">#59333333</color>
+    <color name="my_account_card_background">#FFFFFFFF</color>
+    <color name="my_account_card_icon">#FF333333</color>
+    <color name="my_account_card_icon_sign_out">#FFC51A0E</color>
+    <color name="MY_ACCOUNT_SCROLL_VIEW_BACKGROUND">#FFEFEFEF</color>
+
+    <color name="cropool_route_card_background">#FFFFFFFF</color>
+    <color name="route_delete">#D30E00</color>
+    <color name="my_routes_title">#FFFFFFFF</color>
 </resources>

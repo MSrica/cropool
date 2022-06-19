@@ -151,7 +151,7 @@ public class LoginFragment extends Fragment {
             public void onFailure(@NotNull Call<Feedback> call, @NotNull Throwable t) {
                 Toast.makeText(view.getContext(), "Sorry, there was an error.", Toast.LENGTH_LONG).show();
 
-                Log.e("/register", "onFailure: Something went wrong. " + t.getMessage());
+                Log.e("/login", "onFailure: Something went wrong. " + t.getMessage());
 
                 signIn.setEnabled(true);
             }

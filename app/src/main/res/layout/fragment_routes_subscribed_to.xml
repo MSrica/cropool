@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/one_line_title_screen_background"
+    android:orientation="vertical"
+    tools:context=".home.my_account.RoutesSubscribedToFragment">
+
+    <TextView
+        android:id="@+id/routes_subscribed_to_label"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="25dp"
+        android:layout_marginTop="35dp"
+        android:autoSizeTextType="uniform"
+        android:fontFamily="@font/roboto_bold"
+        android:text="@string/routes_subscribed_to"
+        android:textColor="@color/white"
+        android:textSize="35sp" />
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/routes_subscribed_to_recycler_view"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginTop="18dp"
+        android:layout_below="@id/routes_subscribed_to_label" />
+</RelativeLayout>
