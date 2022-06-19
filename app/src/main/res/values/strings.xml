@@ -68,4 +68,6 @@
     <string name="FB_RTDB_LAST_SEEN_AT_KEY">last_seen_at</string>
     <string name="STATUS_ONLINE">Online</string>
     <string name="STATUS_LAST_SEEN_PREFIX">Last seen on</string>
+    <string name="default_notification_channel_id">notifications</string>
+    <string name="REGISTRATION_TOKEN_KEY_NAME" />
 </resources>

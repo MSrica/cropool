@@ -1,6 +1,8 @@
 package com.example.cropool.start;
 
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Log;
 import android.util.Patterns;
@@ -21,6 +23,8 @@ import com.example.cropool.api.RegisterReq;
 import com.example.cropool.api.Tokens;
 import com.example.cropool.custom.InputElement;
 import com.example.cropool.home.HomeActivity;
+import com.example.cropool.notifications.RegistrationToken;
+import com.example.cropool.notifications.TokenActions;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -57,6 +61,9 @@ public class RegisterFragment extends Fragment {
         email = new InputElement(view.findViewById(R.id.e_mail_layout), view.findViewById(R.id.e_mail));
         password = new InputElement(view.findViewById(R.id.password_layout), view.findViewById(R.id.password));
         passwordConfirm = new InputElement(view.findViewById(R.id.password_confirm_layout), view.findViewById(R.id.password_confirm));
+
+        TokenActions.getRegistrationToken(view.getContext());
+
         Button signUp = view.findViewById(R.id.sign_up);
         TextView loginLink = view.findViewById(R.id.login_link);
 
@@ -77,6 +84,7 @@ public class RegisterFragment extends Fragment {
                         Objects.requireNonNull(lastName.getTextInput().getText()).toString(),
                         Objects.requireNonNull(email.getTextInput().getText()).toString(),
                         Objects.requireNonNull(password.getTextInput().getText()).toString(),
+                        TokenActions.getLocalRegistrationToken(v.getContext()),
                         signUp);
             else signUp.setEnabled(true);
         });
@@ -125,11 +133,11 @@ public class RegisterFragment extends Fragment {
         return valid;
     }
 
-    private void registerUser(View view, String firstName, String lastName, String email, String password, Button signUp) {
+    private void registerUser(View view, String firstName, String lastName, String email, String password, String registrationId, Button signUp) {
         // Hashing variable password and storing it to passwordHashed
         String passwordHash = BCrypt.withDefaults().hashToString(12, password.toCharArray());
 
-        RegisterReq registerReq = new RegisterReq(firstName, lastName, email, passwordHash);
+        RegisterReq registerReq = new RegisterReq(firstName, lastName, email, passwordHash, registrationId);
 
         Retrofit retrofit = CropoolAPI.getRetrofit();
         CropoolAPI cropoolAPI = retrofit.create(CropoolAPI.class);
