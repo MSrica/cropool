@@ -10,6 +10,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import com.example.cropool.R;
 import com.example.cropool.api.Tokens;
 import com.example.cropool.home.HomeActivity;
+import com.example.cropool.notifications.TokenActions;
 
 public class StartActivity extends AppCompatActivity {
 
@@ -28,5 +29,8 @@ public class StartActivity extends AppCompatActivity {
 
         WelcomeFragment welcomeFragment = new WelcomeFragment();
         getSupportFragmentManager().beginTransaction().add(R.id.start_activity_fragment_container, welcomeFragment).commit();
+
+        String token = TokenActions.getLocalRegistrationToken(getApplicationContext());
+
     }
 }

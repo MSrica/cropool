@@ -1,6 +1,7 @@
 package com.example.cropool.start;
 
 import android.content.Intent;
+import android.media.session.MediaSession;
 import android.os.Bundle;
 import android.util.Log;
 import android.util.Patterns;
@@ -21,6 +22,7 @@ import com.example.cropool.api.LoginReq;
 import com.example.cropool.api.Tokens;
 import com.example.cropool.custom.InputElement;
 import com.example.cropool.home.HomeActivity;
+import com.example.cropool.notifications.TokenActions;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -64,9 +66,11 @@ public class LoginFragment extends Fragment {
         signIn.setOnClickListener(v -> {
             signIn.setEnabled(false);
 
-            if (informationValid(email, password))
+            if (informationValid(email, password)) {
                 loginUser(v, Objects.requireNonNull(email.getTextInput().getText()).toString(),
                         Objects.requireNonNull(password.getTextInput().getText()).toString(), signIn);
+                TokenActions.changeDatabaseRegistrationToken(getContext());
+            }
         });
 
         return view;

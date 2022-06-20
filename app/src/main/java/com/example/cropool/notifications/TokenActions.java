@@ -7,17 +7,33 @@ import android.os.Bundle;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.fragment.app.FragmentActivity;
+
 import android.util.Log;
 import android.widget.Toast;
 
 import com.example.cropool.R;
+import com.example.cropool.api.CropoolAPI;
+import com.example.cropool.api.Feedback;
+import com.example.cropool.api.RegIdReq;
+import com.example.cropool.api.Tokens;
+import com.example.cropool.api.UpdatePasswordReq;
+import com.example.cropool.home.navigation_endpoints.MyAccountFragment;
 import com.example.cropool.start.RegisterFragment;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.messaging.FirebaseMessaging;
 import com.google.firebase.messaging.RemoteMessage;
 
+import org.jetbrains.annotations.NotNull;
+
+import java.util.Objects;
 import java.util.concurrent.atomic.AtomicInteger;
+
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
+import retrofit2.Retrofit;
 
 @SuppressLint("MissingPermission")
 public class TokenActions {
@@ -49,13 +65,9 @@ public class TokenActions {
                     }
 
                     String token = task.getResult();
-
                     changeLocalRegistrationToken(context, token);
-                    // TODO
-                    changeDatabaseRegistrationToken(token);
                 }
             });
-        //Log.d(TAG, "FCM Registration token in getToken: " + RegisterFragment.registrationId);
     }
 
     public static void changeLocalRegistrationToken(Context context, String token){
@@ -75,7 +87,41 @@ public class TokenActions {
         return sharedPreferences.getString(context.getResources().getString(R.string.REGISTRATION_TOKEN_KEY_NAME), null);
     }
 
-    public static void changeDatabaseRegistrationToken(String id){
+    public static void changeDatabaseRegistrationToken(Context context){
+        String token = getLocalRegistrationToken(context);
 
+        RegIdReq regIdReq = new RegIdReq(token);
+
+        Retrofit retrofit = CropoolAPI.getRetrofit();
+        CropoolAPI cropoolAPI = retrofit.create(CropoolAPI.class);
+
+        Call<Feedback> call = cropoolAPI.updateRegistrationToken(context.getResources().getString(R.string.TOKEN_HEADER_PREFIX) + Tokens.getAccessToken(context),
+                regIdReq);
+
+        call.enqueue(new Callback<Feedback>() {
+            @Override
+            public void onResponse(@NotNull Call<Feedback> call, @NotNull Response<Feedback> response) {
+                if (!response.isSuccessful()) {
+                    // Not OK
+                    Log.e("/updateRegToken", "notSuccessful: Something went wrong. - " + response.code());
+                    return;
+                }
+
+                Feedback feedback = response.body();
+
+                if (response.code() == 201) {   // User registration token updated
+                    Toast.makeText(context, (feedback != null) ? feedback.getFeedback() : "User registration token updated.", Toast.LENGTH_LONG).show();
+                } else {
+                    Toast.makeText(context, "Sorry, there was an error.", Toast.LENGTH_LONG).show();
+                }
+            }
+
+            @Override
+            public void onFailure(@NotNull Call<Feedback> call, @NotNull Throwable t) {
+                Toast.makeText(context, "Sorry, there was an error.", Toast.LENGTH_LONG).show();
+
+                Log.e("/updateRegToken", "onFailure: Something went wrong. " + t.getMessage());
+            }
+        });
     }
 }

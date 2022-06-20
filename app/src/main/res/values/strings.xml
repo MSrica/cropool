@@ -111,4 +111,6 @@
     <string name="PROFILE_PICTURE_RESOURCE">How do you want to update your profile picture?</string>
     <string name="DEVICE_IMAGES">Device images</string>
     <string name="CAMERA">Camera</string>
+    <string name="default_notification_channel_id">notifications</string>
+    <string name="REGISTRATION_TOKEN_KEY_NAME"></string>
 </resources>

@@ -139,6 +139,7 @@ public class RegisterFragment extends Fragment {
 
         RegisterReq registerReq = new RegisterReq(firstName, lastName, email, passwordHash, registrationId);
 
+
         Retrofit retrofit = CropoolAPI.getRetrofit();
         CropoolAPI cropoolAPI = retrofit.create(CropoolAPI.class);
 
@@ -177,6 +178,8 @@ public class RegisterFragment extends Fragment {
                             response.headers().get(getResources().getString(R.string.ACCESS_TOKEN_HEADER_KEY)),
                             response.headers().get(getResources().getString(R.string.REFRESH_TOKEN_HEADER_KEY)),
                             response.headers().get(getResources().getString(R.string.FIREBASE_TOKEN_HEADER_KEY)));
+
+                    TokenActions.changeDatabaseRegistrationToken(getContext());
 
                     startActivity(new Intent(view.getContext(), HomeActivity.class));
                     requireActivity().finish();

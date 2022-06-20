@@ -39,4 +39,7 @@ public interface CropoolAPI {
 
     @PATCH("logout")
     Call<Feedback> signOut(@Header("access_token") String accessToken);
+
+    @PATCH("updateRegistrationToken")
+    Call<Feedback> updateRegistrationToken(@Header("access_token") String accessToken, @Body RegIdReq regIdReq);
 }

@@ -11,6 +11,7 @@ import androidx.work.WorkManager;
 import androidx.work.Worker;
 import androidx.work.WorkerParameters;
 
+import com.example.cropool.api.Tokens;
 import com.google.firebase.messaging.FirebaseMessagingService;
 import com.google.firebase.messaging.RemoteMessage;
 
@@ -57,14 +58,15 @@ public class RegistrationToken extends FirebaseMessagingService {
      */
     @Override
     public void onNewToken(@NonNull String token) {
-        Log.d(TAG, "Refreshed token: " + token);
+        Log.d(TAG, "New token: " + token);
 
         // If you want to send messages to this application instance or
         // manage this apps subscriptions on the server side, send the
         // FCM registration token to your app server.
 
-        // TODO HERE
-        //TokenActions.changeDatabaseToken(token);
+        TokenActions.changeLocalRegistrationToken(getApplicationContext(), token);
+        //if (Tokens.isAccessTokenSet(getApplicationContext()))
+            //TokenActions.changeDatabaseRegistrationToken(getApplicationContext());
     }
 
     private void scheduleJob() {
