@@ -6,14 +6,20 @@ import android.util.Log;
 
 // TODO maybe remove only androidx support
 import androidx.annotation.NonNull;
+import androidx.core.app.NotificationCompat;
+import androidx.core.app.NotificationManagerCompat;
 import androidx.work.OneTimeWorkRequest;
 import androidx.work.WorkManager;
 import androidx.work.Worker;
 import androidx.work.WorkerParameters;
 
+import com.example.cropool.R;
 import com.example.cropool.api.Tokens;
 import com.google.firebase.messaging.FirebaseMessagingService;
 import com.google.firebase.messaging.RemoteMessage;
+
+import java.util.Objects;
+import java.util.Random;
 
 public class RegistrationToken extends FirebaseMessagingService {
 
@@ -23,7 +29,22 @@ public class RegistrationToken extends FirebaseMessagingService {
     public void onMessageReceived(RemoteMessage remoteMessage) {
         // TODO(developer): Handle FCM messages here.
         // Not getting messages here? See why this may be: https://goo.gl/39bRNJ
-        Log.d(TAG, "From: " + remoteMessage.getFrom());
+        NotificationCompat.Builder builder = new NotificationCompat.Builder(this, "notifications")
+                .setSmallIcon(R.drawable.ic_logo)
+                .setContentTitle(Objects.requireNonNull(remoteMessage.getNotification()).getTitle())
+                .setContentText(remoteMessage.getNotification().getBody())
+                .setPriority(NotificationCompat.PRIORITY_HIGH)
+                .setAutoCancel(true);
+                // Set the intent that will fire when the user taps the notification
+                //.setContentIntent(pendingIntent)
+
+        NotificationManagerCompat notificationManager = NotificationManagerCompat.from(this);
+
+        // notificationId is a unique int for each notification that you must define
+        Random random = new Random();
+        int notificationId = random.nextInt(1000);
+        notificationManager.notify(notificationId, builder.build());
+
 
         // Check if message contains a data payload.
         if (remoteMessage.getData().size() > 0) {
