@@ -1,8 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <style name="WelcomeFragment" parent="Theme.AppCompat.NoActionBar">
-        <item name="android:background">@drawable/welcome_screen_background</item>
-    </style>
 
     <style name="ChipCustomStyle" parent="Widget.MaterialComponents.Chip.Action">
         <item name="checkedIconEnabled">false</item>

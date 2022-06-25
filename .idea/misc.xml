@@ -10,6 +10,7 @@
         <entry key="..\:/Users/Ivan/Documents/cropool/app/src/main/res/drawable-night/chat_list_scren_background_mask.xml" value="0.19273504273504274" />
         <entry key="..\:/Users/Ivan/Documents/cropool/app/src/main/res/drawable-night/chat_list_scren_background_try.xml" value="0.19273504273504274" />
         <entry key="..\:/Users/Ivan/Documents/cropool/app/src/main/res/drawable-night/my_account_screen_background.xml" value="0.1905982905982906" />
+        <entry key="..\:/Users/Ivan/Documents/cropool/app/src/main/res/drawable-night/one_line_title_screen_background.xml" value="0.30128205128205127" />
         <entry key="..\:/Users/Ivan/Documents/cropool/app/src/main/res/drawable-night/personal_details_screen_background.xml" value="0.19230769230769232" />
         <entry key="..\:/Users/Ivan/Documents/cropool/app/src/main/res/drawable-night/splash_screen_v1.xml" value="0.3104166666666667" />
         <entry key="..\:/Users/Ivan/Documents/cropool/app/src/main/res/drawable-night/unseen_message.xml" value="0.19273504273504274" />
@@ -43,6 +44,7 @@
         <entry key="..\:/Users/Ivan/Documents/cropool/app/src/main/res/drawable/ic_splash_grid_v1_2.xml" value="0.403125" />
         <entry key="..\:/Users/Ivan/Documents/cropool/app/src/main/res/drawable/my_account_card_round_background.xml" value="0.23547008547008547" />
         <entry key="..\:/Users/Ivan/Documents/cropool/app/src/main/res/drawable/my_account_screen_background.xml" value="0.1905982905982906" />
+        <entry key="..\:/Users/Ivan/Documents/cropool/app/src/main/res/drawable/one_line_title_screen_background.xml" value="0.30128205128205127" />
         <entry key="..\:/Users/Ivan/Documents/cropool/app/src/main/res/drawable/outlined_button_gray.xml" value="0.2677083333333333" />
         <entry key="..\:/Users/Ivan/Documents/cropool/app/src/main/res/drawable/personal_details_screen_background.xml" value="0.19230769230769232" />
         <entry key="..\:/Users/Ivan/Documents/cropool/app/src/main/res/drawable/round_background.xml" value="0.23205128205128206" />
@@ -64,7 +66,7 @@
         <entry key="..\:/Users/Ivan/Documents/cropool/app/src/main/res/layout/chat_adapter_layout.xml" value="0.21367521367521367" />
         <entry key="..\:/Users/Ivan/Documents/cropool/app/src/main/res/layout/chat_item_adapter_layout.xml" value="0.67" />
         <entry key="..\:/Users/Ivan/Documents/cropool/app/src/main/res/layout/conversation_item_adapter_layout.xml" value="0.2282051282051282" />
-        <entry key="..\:/Users/Ivan/Documents/cropool/app/src/main/res/layout/fragment_add_route.xml" value="0.276268115942029" />
+        <entry key="..\:/Users/Ivan/Documents/cropool/app/src/main/res/layout/fragment_add_route.xml" value="0.25" />
         <entry key="..\:/Users/Ivan/Documents/cropool/app/src/main/res/layout/fragment_change_password.xml" value="0.17905982905982906" />
         <entry key="..\:/Users/Ivan/Documents/cropool/app/src/main/res/layout/fragment_chat.xml" value="0.25" />
         <entry key="..\:/Users/Ivan/Documents/cropool/app/src/main/res/layout/fragment_conversation_list.xml" value="0.1547008547008547" />

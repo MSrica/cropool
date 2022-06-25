@@ -50,4 +50,12 @@
     <color name="cropool_route_card_background">#FFFFFFFF</color>
     <color name="route_delete">#D30E00</color>
     <color name="my_routes_title">#FFFFFFFF</color>
+
+    <color name="chipChecked">@color/cropool_main</color>
+    <color name="chipUnchecked">#29333333</color>
+    <color name="timePickerBackground">#FFEFEFEF</color>
+    <color name="addRouteMUI">@color/cropool_gray</color>
+    <color name="addRouteSliderThumb">@color/cropool_gray</color>
+    <color name="addRouteSliderTrack">@color/cropool_main</color>
+    <color name="addRouteButton">@color/cropool_main</color>
 </resources>

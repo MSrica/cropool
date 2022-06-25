@@ -1,18 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <style name="WelcomeFragment" parent="Theme.AppCompat.NoActionBar">
-        <item name="android:background">@drawable/welcome_screen_background</item>
-    </style>
-
     <style name="ChipCustomStyle" parent="Widget.MaterialComponents.Chip.Action">
         <item name="checkedIconEnabled">false</item>
         <item name="checkedIcon">@drawable/ic_check</item>
     </style>
 
     <style name="MuiTextInputLayoutCustomColor" parent="Widget.MaterialComponents.TextInputLayout.OutlinedBox.Dense">
-        <item name="boxStrokeColor">@color/cropool_purple</item>
-        <item name="hintTextColor">@color/cropool_purple</item>
-        <!-- <item name="startIconTint">@color/cropool_purple</item>-->
+        <item name="boxStrokeColor">@color/cropool_gray_blue</item>
+        <item name="hintTextColor">@color/cropool_gray_blue</item>
+        <!-- <item name="startIconTint">@color/cropool_gray_blue</item>-->
     </style>
 
     <style name="MuiSliderCustomColor" parent="Widget.Material3.Tooltip">

@@ -62,8 +62,6 @@ public class MyAccountFragment extends Fragment {
     private TextView name, routesQty, routesQtyLabel, membership, membershipLabel;
     private ActivityResultLauncher<Intent> chooseImageActivityResultLauncher;
 
-    private String waitingStopLock = "";
-
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);

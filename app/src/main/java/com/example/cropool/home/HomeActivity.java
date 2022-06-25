@@ -31,9 +31,15 @@ public class HomeActivity extends AppCompatActivity implements NavigationBarView
     private static FirebaseAuth mAuth;
     private static FirebaseUser currentUser;
     private final DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReferenceFromUrl(BuildConfig.FIREBASE_RTDB_URL);
+    private NavigationBarView navigationBarView;
 
     public static FirebaseUser getCurrentFBUser() {
         return currentUser;
+    }
+
+    public static void signOutCurrentFBUser() {
+        mAuth.signOut();
+        currentUser = null;
     }
 
     @Override
@@ -52,7 +58,7 @@ public class HomeActivity extends AppCompatActivity implements NavigationBarView
         }
 
         // Initialize bottom navigation view
-        NavigationBarView navigationBarView = findViewById(R.id.home_activity_bottom_navigation);
+        navigationBarView = findViewById(R.id.home_activity_bottom_navigation);
         navigationBarView.setOnItemSelectedListener(this);
         navigationBarView.setSelectedItemId(getIntent().getIntExtra(getResources().getString(R.string.HOME_ACTIVITY_NAVIGATION_EXTRA), R.id.find_route));
 
@@ -119,6 +125,10 @@ public class HomeActivity extends AppCompatActivity implements NavigationBarView
         });
     }
 
+    public void changeNavigationFragment(int rid) {
+        navigationBarView.setSelectedItemId(rid);
+    }
+
     @Override
     public boolean onNavigationItemSelected(@NonNull MenuItem item) {
         int itemId = item.getItemId();
@@ -145,11 +155,6 @@ public class HomeActivity extends AppCompatActivity implements NavigationBarView
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-    }
-
-    public static void signOutCurrentFBUser(){
-        mAuth.signOut();
-        currentUser = null;
     }
 
     @Override

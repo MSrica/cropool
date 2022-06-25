@@ -39,4 +39,7 @@ public interface CropoolAPI {
 
     @PATCH("logout")
     Call<Feedback> signOut(@Header("access_token") String accessToken);
+
+    @POST("addRoute")
+    Call<Feedback> addRoute(@Header("access_token") String accessToken, @Body AddRouteReq addRouteReq);
 }
