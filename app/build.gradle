@@ -18,7 +18,7 @@ android {
 
     buildTypes {
         debug {
-            buildConfigField("String", "BASE_URL", "\"http://192.168.0.136:3001/\"")
+            buildConfigField("String", "BASE_URL", "\"http://192.168.5.14:3001/\"")
             buildConfigField("String", "FIREBASE_DB_URL", "\"https://cropool-chat-default-rtdb.europe-west1.firebasedatabase.app/\"")
             buildConfigField("String", "FIREBASE_RTDB_URL", "\"https://cropool-chat-default-rtdb.europe-west1.firebasedatabase.app/\"")
             buildConfigField("String", "FIREBASE_STORAGE_URL", "\"gs://cropool-chat.appspot.com\"")

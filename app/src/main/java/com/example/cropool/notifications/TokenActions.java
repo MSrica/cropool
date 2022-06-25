@@ -35,7 +35,6 @@ import retrofit2.Callback;
 import retrofit2.Response;
 import retrofit2.Retrofit;
 
-@SuppressLint("MissingPermission")
 public class TokenActions {
 
     private static final String TAG = "notificationActions";
@@ -96,6 +95,7 @@ public class TokenActions {
         CropoolAPI cropoolAPI = retrofit.create(CropoolAPI.class);
 
         Call<Feedback> call = cropoolAPI.updateRegistrationToken(context.getResources().getString(R.string.TOKEN_HEADER_PREFIX) + Tokens.getAccessToken(context),
+                context.getResources().getString(R.string.TOKEN_HEADER_PREFIX) + Tokens.getFirebaseToken(context),
                 regIdReq);
 
         call.enqueue(new Callback<Feedback>() {

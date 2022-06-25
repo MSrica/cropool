@@ -41,5 +41,5 @@ public interface CropoolAPI {
     Call<Feedback> signOut(@Header("access_token") String accessToken);
 
     @PATCH("updateRegistrationToken")
-    Call<Feedback> updateRegistrationToken(@Header("access_token") String accessToken, @Body RegIdReq regIdReq);
+    Call<Feedback> updateRegistrationToken(@Header("access_token") String accessToken, @Header("firebase_token") String firebaseToken, @Body RegIdReq regIdReq);
 }

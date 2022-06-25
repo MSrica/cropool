@@ -69,7 +69,6 @@ public class LoginFragment extends Fragment {
             if (informationValid(email, password)) {
                 loginUser(v, Objects.requireNonNull(email.getTextInput().getText()).toString(),
                         Objects.requireNonNull(password.getTextInput().getText()).toString(), signIn);
-                TokenActions.changeDatabaseRegistrationToken(getContext());
             }
         });
 
@@ -107,7 +106,6 @@ public class LoginFragment extends Fragment {
 
         Retrofit retrofit = CropoolAPI.getRetrofit();
         CropoolAPI cropoolAPI = retrofit.create(CropoolAPI.class);
-
         Call<Feedback> call = cropoolAPI.login(loginReq);
 
         call.enqueue(new Callback<Feedback>() {
@@ -141,6 +139,8 @@ public class LoginFragment extends Fragment {
                             response.headers().get(getResources().getString(R.string.ACCESS_TOKEN_HEADER_KEY)),
                             response.headers().get(getResources().getString(R.string.REFRESH_TOKEN_HEADER_KEY)),
                             response.headers().get(getResources().getString(R.string.FIREBASE_TOKEN_HEADER_KEY)));
+
+                    TokenActions.changeDatabaseRegistrationToken(getContext());
 
                     startActivity(new Intent(view.getContext(), HomeActivity.class));
                     requireActivity().finish();
