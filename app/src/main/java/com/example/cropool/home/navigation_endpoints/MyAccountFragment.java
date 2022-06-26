@@ -27,13 +27,18 @@ import androidx.fragment.app.Fragment;
 import com.example.cropool.BuildConfig;
 import com.example.cropool.R;
 import com.example.cropool.api.AccountInfo;
+import com.example.cropool.api.CheckpointReq;
 import com.example.cropool.api.CropoolAPI;
 import com.example.cropool.api.Feedback;
+import com.example.cropool.api.FindRouteRes;
 import com.example.cropool.api.Tokens;
 import com.example.cropool.home.HomeActivity;
 import com.example.cropool.home.my_account.MyRoutesFragment;
 import com.example.cropool.home.my_account.PersonalDetailsFragment;
 import com.example.cropool.home.my_account.RoutesSubscribedToFragment;
+import com.example.cropool.home.routes.RouteListFragment;
+import com.example.cropool.home.routes.RouteListParcelable;
+import com.example.cropool.home.routes.RouteType;
 import com.github.marlonlom.utilities.timeago.TimeAgo;
 import com.google.android.gms.tasks.Task;
 import com.google.android.material.card.MaterialCardView;
@@ -154,7 +159,7 @@ public class MyAccountFragment extends Fragment {
 
         routesSubscribedTo.setOnClickListener(v1 -> requireActivity().getSupportFragmentManager().beginTransaction().add(R.id.home_activity_fragment_container, new RoutesSubscribedToFragment()).addToBackStack(null).commit());
 
-        myRoutes.setOnClickListener(v1 -> requireActivity().getSupportFragmentManager().beginTransaction().add(R.id.home_activity_fragment_container, new MyRoutesFragment()).addToBackStack(null).commit());
+        myRoutes.setOnClickListener(v1 -> getMyRoutes(true));
 
         personalDetails.setOnClickListener(v1 -> requireActivity().getSupportFragmentManager().beginTransaction().add(R.id.home_activity_fragment_container, new PersonalDetailsFragment()).addToBackStack(null).commit());
 
@@ -176,6 +181,70 @@ public class MyAccountFragment extends Fragment {
 
 
         return v;
+    }
+
+    // Downloads current user's routes and displays them as a list
+    private void getMyRoutes(boolean refreshIfNeeded){
+        if (HomeActivity.getCurrentFBUser() == null || getContext() == null || getActivity() == null) {
+            Toast.makeText(getContext(), "There was an error, please sign in again.", Toast.LENGTH_LONG).show();
+            return;
+        }
+
+        Retrofit retrofit = CropoolAPI.getRetrofit();
+        CropoolAPI cropoolAPI = retrofit.create(CropoolAPI.class);
+
+        Call<FindRouteRes> call = cropoolAPI.myRoutes(getContext().getResources().getString(R.string.TOKEN_HEADER_PREFIX) + Tokens.getAccessToken(getContext()));
+
+        call.enqueue(new Callback<FindRouteRes>() {
+            @Override
+            public void onResponse(@NotNull Call<FindRouteRes> call, @NotNull Response<FindRouteRes> response) {
+                if (!response.isSuccessful()) {
+                    // Not OK
+                    Log.e("/myRoutes", "notSuccessful: Something went wrong. - " + response.code());
+
+                    if (response.code() == 403 || response.code() == 401) {
+                        // Access or Firebase tokens invalid
+
+                        // Try to refresh tokens using refresh tokens and re-run addRoute() if refreshing is successful
+                        // Set refreshIfNeeded to false - we don't want to refresh tokens infinitely if that's not the problem
+                        if (refreshIfNeeded) {
+                            Tokens.refreshTokensOnServer(getActivity(), requireContext(), () -> {
+                                getMyRoutes(false);
+                                return null;
+                            });
+                        } else {
+                            Toast.makeText(getContext(), "Sorry, there was an error. " + response.code(), Toast.LENGTH_LONG).show();
+                        }
+                    } else {
+                        Toast.makeText(getContext(), "Sorry, there was an error. " + response.code(), Toast.LENGTH_LONG).show();
+                    }
+
+                    return;
+                }
+
+                FindRouteRes findRouteRes = response.body();
+
+                if (response.code() == 200 && findRouteRes != null) {   // Routes downloaded
+                    // Toast.makeText(getContext(), (feedback != null) ? feedback.getFeedback() : "Routes retrieved.", Toast.LENGTH_LONG).show();
+
+                    if (findRouteRes.getResultingRoutes().size() <= 0){
+                        Toast.makeText(getContext(), "No routes.", Toast.LENGTH_LONG).show();
+                        return;
+                    }
+
+                    requireActivity().getSupportFragmentManager().beginTransaction().replace(R.id.home_activity_fragment_container, RouteListFragment.newInstance(new RouteListParcelable(findRouteRes.getResultingRoutes(), RouteType.MY), "My routes", null, null)).commit();
+                } else {
+                    Toast.makeText(getContext(), "Sorry, there was a problem when downloading your routes.", Toast.LENGTH_LONG).show();
+                }
+            }
+
+            @Override
+            public void onFailure(@NotNull Call<FindRouteRes> call, @NotNull Throwable t) {
+                Toast.makeText(getContext(), "Sorry, there was an error.", Toast.LENGTH_LONG).show();
+
+                Log.e("/myRoutes", "onFailure: Something went wrong. " + t.getMessage());
+            }
+        });
     }
 
     // Starts the process of choosing the profile picture

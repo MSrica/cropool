@@ -99,12 +99,19 @@ public class RoutesAdapter extends RecyclerView.Adapter<RoutesAdapter.MyViewHold
 
         String priceText = route.getPricePerKm() + "€";
         holder.routePricePerKm.setText(priceText);
-        Toast.makeText(context, priceText, Toast.LENGTH_LONG).show();
 
         showRoutePassengers(holder, route.getPassengers());
 
         if (routesType.equals(RouteType.MY)) {
+            String action1Text = "See requests";
+            holder.routeAction1.setText(action1Text);
+            holder.routeAction1.setTextColor(context.getResources().getColor(R.color.USER_ONLINE_COLOR));
+            holder.routeAction1.setOnClickListener(v -> {
+                Toast.makeText(context, "Popup recycler view confirm/decline with passenger name, start, finish place", Toast.LENGTH_LONG).show();
+            });
 
+            // TODO: Maybe an option to delete the route?
+            holder.routeAction2.setVisibility(View.GONE);
         } else if (routesType.equals(RouteType.SUBSCRIBED_TO)) {
 
         } else {
@@ -119,7 +126,7 @@ public class RoutesAdapter extends RecyclerView.Adapter<RoutesAdapter.MyViewHold
 
     private void subscribeToRoute(Route route, boolean refreshIfNeeded) {
         if (HomeActivity.getCurrentFBUser() == null || startLatLng == null || finishLatLng == null) {
-            Toast.makeText(context, "There was an error, please sign in again." + HomeActivity.getCurrentFBUser() + startLatLng + finishLatLng, Toast.LENGTH_LONG).show();
+            Toast.makeText(context, "There was an error, please sign in again.", Toast.LENGTH_LONG).show();
             return;
         }
 
