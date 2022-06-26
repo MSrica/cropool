@@ -2,6 +2,7 @@ package com.example.cropool.home.routes;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -9,13 +10,16 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.AlertDialog;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.cropool.R;
+import com.example.cropool.api.CheckpointIDReq;
 import com.example.cropool.api.CheckpointReq;
 import com.example.cropool.api.CropoolAPI;
 import com.example.cropool.api.Feedback;
@@ -80,6 +84,20 @@ public class RoutesAdapter extends RecyclerView.Adapter<RoutesAdapter.MyViewHold
     public void onBindViewHolder(@NonNull RoutesAdapter.MyViewHolder holder, int position) {
         Route route = routes.get(position);
 
+        // Dialog for logout from all devices query
+        DialogInterface.OnClickListener unsubscribeDialogListener = (dialog, which) -> {
+            switch (which) {
+                case DialogInterface.BUTTON_POSITIVE:
+                    // Unsubscribe
+                    unsubscribeFromRoute(holder.rootLayout, route, true);
+                    break;
+
+                case DialogInterface.BUTTON_NEGATIVE:
+                    // Do nothing
+                    break;
+            }
+        };
+
         holder.routeName.setText(route.getName());
 
         String createdOnText = "Route created on " + DateFormat.getDateTimeInstance(DateFormat.SHORT, DateFormat.SHORT).format(route.getCreatedAt());
@@ -118,7 +136,12 @@ public class RoutesAdapter extends RecyclerView.Adapter<RoutesAdapter.MyViewHold
             String action2Text = "Unsubscribe";
             holder.routeAction2.setText(action2Text);
             holder.routeAction2.setOnClickListener(v -> {
-                Toast.makeText(context, "UNSUB FROM " + route.getSubscriptionCheckpointID(), Toast.LENGTH_LONG).show();
+                // Manage unsubscribing via AlertDialog
+                AlertDialog.Builder builder = new AlertDialog.Builder(context);
+                builder.setMessage(context.getResources().getString(R.string.UNSUBSCRIBE_CONFIRM))
+                        .setPositiveButton(context.getResources().getString(R.string.YES), unsubscribeDialogListener)
+                        .setNegativeButton(context.getResources().getString(R.string.NO), unsubscribeDialogListener)
+                        .show();
             });
         } else {
             // RouteType.FOUND
@@ -130,6 +153,68 @@ public class RoutesAdapter extends RecyclerView.Adapter<RoutesAdapter.MyViewHold
         }
     }
 
+    // Removes subscription to the route
+    private void unsubscribeFromRoute(View rootLayout, Route route, boolean refreshIfNeeded) {
+        if (HomeActivity.getCurrentFBUser() == null || startLatLng == null || finishLatLng == null) {
+            Toast.makeText(context, "There was an error, please sign in again.", Toast.LENGTH_LONG).show();
+            return;
+        }
+
+        CheckpointIDReq checkpointIDReq = new CheckpointIDReq(route.getSubscriptionCheckpointID());
+        Retrofit retrofit = CropoolAPI.getRetrofit();
+        CropoolAPI cropoolAPI = retrofit.create(CropoolAPI.class);
+
+        Call<Feedback> call = cropoolAPI.unsubscribeCheckpoint(context.getResources().getString(R.string.TOKEN_HEADER_PREFIX) + Tokens.getAccessToken(context), checkpointIDReq);
+
+        call.enqueue(new Callback<Feedback>() {
+            @Override
+            public void onResponse(@NotNull Call<Feedback> call, @NotNull Response<Feedback> response) {
+                if (!response.isSuccessful()) {
+                    // Not OK
+                    Log.e("/unsubscribeFromRoute", "notSuccessful: Something went wrong. - " + response.code() + response);
+
+                    if (response.code() == 403 || response.code() == 401) {
+                        // Access or Firebase tokens invalid
+
+                        // Try to refresh tokens using refresh tokens and re-run addRoute() if refreshing is successful
+                        // Set refreshIfNeeded to false - we don't want to refresh tokens infinitely if that's not the problem
+                        if (refreshIfNeeded) {
+                            Tokens.refreshTokensOnServer(activity, context, () -> {
+                                unsubscribeFromRoute(rootLayout, route, false);
+                                return null;
+                            });
+                        } else {
+                            Toast.makeText(context, "Sorry, there was an error. " + response.code(), Toast.LENGTH_LONG).show();
+                        }
+                    } else {
+                        Toast.makeText(context, "Sorry, there was an error. " + response.code(), Toast.LENGTH_LONG).show();
+                    }
+
+                    return;
+                }
+
+                Feedback feedback = response.body();
+
+                if (response.code() == 200) {   // Unsubscribed
+                    Toast.makeText(context, (feedback != null) ? feedback.getFeedback() : "Successfully unsubscribed.", Toast.LENGTH_LONG).show();
+
+                    // Hide the route we unsubscribed from
+                    rootLayout.setVisibility(View.GONE);
+                } else {
+                    Toast.makeText(context, "Sorry, couldn't unsubscribe.", Toast.LENGTH_LONG).show();
+                }
+            }
+
+            @Override
+            public void onFailure(@NotNull Call<Feedback> call, @NotNull Throwable t) {
+                Toast.makeText(context, "Sorry, there was an error.", Toast.LENGTH_LONG).show();
+
+                Log.e("/unsubscribeFromRoute", "onFailure: Something went wrong. " + t.getMessage());
+            }
+        });
+    }
+
+    // Sends request to subscribe to the route
     private void subscribeToRoute(Route route, boolean refreshIfNeeded) {
         if (HomeActivity.getCurrentFBUser() == null || startLatLng == null || finishLatLng == null) {
             Toast.makeText(context, "There was an error, please sign in again.", Toast.LENGTH_LONG).show();
@@ -291,10 +376,9 @@ public class RoutesAdapter extends RecyclerView.Adapter<RoutesAdapter.MyViewHold
             Picasso.get().load(passenger.getProfilePicture()).into(passengerView);
 
             // Create parameters and set them to passenger image
-            LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(35, 35);
-            params.setMarginStart(4);
-            passengerView.setMinimumHeight(35);
-            passengerView.setMinimumWidth(35);
+            float dpFactor = context.getResources().getDisplayMetrics().density;
+            LinearLayout.LayoutParams params = new LinearLayout.LayoutParams((int) (30 * dpFactor), (int) (30 * dpFactor));
+            params.setMarginStart((int) (8 * dpFactor));
             passengerView.setLayoutParams(params);
 
             passengerView.setOnClickListener(v -> {
@@ -302,7 +386,12 @@ public class RoutesAdapter extends RecyclerView.Adapter<RoutesAdapter.MyViewHold
             });
 
             passengerView.setOnLongClickListener(v -> {
-                Toast.makeText(context, passenger.getFirstName() + " " + passenger.getLastName() + "/REMOVE", Toast.LENGTH_SHORT).show();
+                if (routesType.equals(RouteType.SUBSCRIBED_TO) || routesType.equals(RouteType.FOUND)) {
+                    Toast.makeText(context, passenger.getFirstName() + " " + passenger.getLastName(), Toast.LENGTH_SHORT).show();
+                } else if (routesType.equals(RouteType.MY)) {
+                    Toast.makeText(context, "DIALOG REMOVE?", Toast.LENGTH_SHORT).show();
+                }
+
                 return false;
             });
 
@@ -321,6 +410,7 @@ public class RoutesAdapter extends RecyclerView.Adapter<RoutesAdapter.MyViewHold
         // TODO: change to MapView and show the map
         private final ImageView map;
 
+        private final RelativeLayout rootLayout;
         private final TextView routeName, routeCreatedOn, routeSchedule, routePricePerKm, routePassengersLabel;
         private final LinearLayout routePassengersLayout;
         private final MaterialButton routeAction1, routeAction2;
@@ -329,6 +419,7 @@ public class RoutesAdapter extends RecyclerView.Adapter<RoutesAdapter.MyViewHold
         public MyViewHolder(@NonNull View itemView) {
             super(itemView);
 
+            rootLayout = itemView.findViewById(R.id.route_card_root_layout);
             card = itemView.findViewById(R.id.card);
             map = itemView.findViewById(R.id.map);
             routeName = itemView.findViewById(R.id.route_name);

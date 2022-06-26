@@ -141,4 +141,5 @@
     <string name="starting_time_tolerance_minutes">Starting time tolerance (minutes)</string>
     <string name="routes">Routes</string>
     <string name="subscribe">Subscribe</string>
+    <string name="UNSUBSCRIBE_CONFIRM">Are you sure you want to unsubscribe?</string>
 </resources>

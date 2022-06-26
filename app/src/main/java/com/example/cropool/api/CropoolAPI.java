@@ -54,4 +54,7 @@ public interface CropoolAPI {
 
     @GET("subscribedToRoutes")
     Call<FindRouteRes> subscribedToRoutes(@Header("access_token") String accessToken);
+
+    @PATCH("unsubscribeCheckpoint")
+    Call<Feedback> unsubscribeCheckpoint(@Header("access_token") String accessToken, @Body CheckpointIDReq checkpointIDReq);
 }
