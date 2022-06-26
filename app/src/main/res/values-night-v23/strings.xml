@@ -100,9 +100,9 @@
     <string name="route_map">Route map.</string>
     <string name="route_created_on">Route created on 2/6/22 at 15:33.</string>
     <string name="route_schedule">Tuesdays at 2PM.</string>
-    <string name="route_passengers">Passengers: Sebastian Vettel, Fernando Alonso</string>
-    <string name="route_price_per_km">Price per kilometer: 0.15€</string>
-    <string name="route_driver">Driver: Michael Schumacher</string>
+    <string name="route_passengers">Passengers:</string>
+    <string name="route_price_per_km">Price per kilometer:</string>
+    <string name="route_driver">Driver:</string>
     <string name="route_edit">Edit</string>
     <string name="route_delete">Delete</string>
     <string name="PROFILE_PICTURE_RESOURCE">How do you want to update your profile picture?</string>
@@ -135,4 +135,8 @@
     <string name="price_per_kilometer">Price per kilometer (€)</string>
     <string name="monthly">Monthly</string>
     <string name="day_of_month">Start day of month</string>
+    <string name="find_a_route">Find a route</string>
+    <string name="starting_time_tolerance_minutes">Starting time tolerance (minutes)</string>
+    <string name="routes">Routes</string>
+    <string name="subscribe">Subscribe</string>
 </resources>

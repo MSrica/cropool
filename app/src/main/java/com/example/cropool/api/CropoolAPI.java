@@ -42,4 +42,10 @@ public interface CropoolAPI {
 
     @POST("addRoute")
     Call<Feedback> addRoute(@Header("access_token") String accessToken, @Body AddRouteReq addRouteReq);
+
+    @POST("findRoute")
+    Call<FindRouteRes> findRoute(@Header("access_token") String accessToken, @Body FindRouteReq findRouteReq);
+
+    @POST("requestCheckpoint")
+    Call<Feedback> requestCheckpoint(@Header("access_token") String accessToken, @Body CheckpointReq checkpointReq);
 }

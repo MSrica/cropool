@@ -22,7 +22,7 @@ public class AddRouteReq {
     private int repetitionMode;
 
     @SerializedName("price_per_km")
-    private int pricePerKm;
+    private Double pricePerKm;
 
     @SerializedName("custom_repetition")
     private boolean customRepetition;
@@ -45,7 +45,7 @@ public class AddRouteReq {
     @SerializedName("note")
     private String note;
 
-    public AddRouteReq(String routeOwnerID, String routeName, int maxNumberPassengers, String startLatLng, String finishLatLng, int repetitionMode, int pricePerKm, boolean customRepetition, Integer startMonth, Integer startDayOfMonth, Integer startDayOfWeek, Integer startHourOfDay, Integer startMinuteOfHour, String note) {
+    public AddRouteReq(String routeOwnerID, String routeName, int maxNumberPassengers, String startLatLng, String finishLatLng, int repetitionMode, Double pricePerKm, boolean customRepetition, Integer startMonth, Integer startDayOfMonth, Integer startDayOfWeek, Integer startHourOfDay, Integer startMinuteOfHour, String note) {
         this.routeOwnerID = routeOwnerID;
         this.routeName = routeName;
         this.maxNumberPassengers = maxNumberPassengers;
@@ -86,7 +86,7 @@ public class AddRouteReq {
         return repetitionMode;
     }
 
-    public int getPricePerKm() {
+    public Double getPricePerKm() {
         return pricePerKm;
     }
 

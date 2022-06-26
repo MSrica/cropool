@@ -224,7 +224,7 @@ public class AddRouteFragment extends Fragment {
             return;
         }
 
-        AddRouteReq addRouteReq = new AddRouteReq(HomeActivity.getCurrentFBUser().getUid(), Objects.requireNonNull(name.getTextInput().getText()).toString(), (int) passengerNum.getValue(), startLatLng.latitude + "," + startLatLng.longitude, finishLatLng.latitude + "," + finishLatLng.longitude, repetitionMode, (int) price.getValue(), customRepetition != null && customRepetition, null, (int) dayOfMonth.getValue(), null, startTime.getCurrentHour(), startTime.getCurrentMinute(), Objects.requireNonNull(note.getTextInput().getText()).toString());
+        AddRouteReq addRouteReq = new AddRouteReq(HomeActivity.getCurrentFBUser().getUid(), Objects.requireNonNull(name.getTextInput().getText()).toString(), (int) passengerNum.getValue(), startLatLng.latitude + "," + startLatLng.longitude, finishLatLng.latitude + "," + finishLatLng.longitude, repetitionMode, (double) price.getValue(), customRepetition != null && customRepetition, null, (int) dayOfMonth.getValue(), null, startTime.getCurrentHour(), startTime.getCurrentMinute(), Objects.requireNonNull(note.getTextInput().getText()).toString());
 
         Retrofit retrofit = CropoolAPI.getRetrofit();
         CropoolAPI cropoolAPI = retrofit.create(CropoolAPI.class);

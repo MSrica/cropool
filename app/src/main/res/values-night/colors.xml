@@ -58,4 +58,7 @@
     <color name="addRouteSliderThumb">@color/cropool_gray_blue</color>
     <color name="addRouteSliderTrack">@color/cropool_purple</color>
     <color name="addRouteButton">@color/cropool_purple</color>
+    <color name="findRouteSliderThumb">@color/cropool_gray_blue</color>
+    <color name="findRouteSliderTrack">@color/cropool_purple</color>
+    <color name="findRouteButton">@color/cropool_purple</color>
 </resources>

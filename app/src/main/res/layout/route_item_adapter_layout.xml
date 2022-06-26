@@ -1,113 +1,174 @@
 <?xml version="1.0" encoding="utf-8"?>
-<com.google.android.material.card.MaterialCardView xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:id="@+id/card"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:layout_margin="8dp"
-    app:strokeWidth="0dp">
+    android:layout_height="match_parent">
 
-    <LinearLayout
+    <com.google.android.material.card.MaterialCardView
+        android:id="@+id/card"
         android:layout_width="match_parent"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentBottom="true"
         android:layout_height="wrap_content"
-        android:orientation="vertical">
+        app:strokeWidth="0dp"
+        android:layout_marginBottom="20dp"
+        android:layout_marginHorizontal="20dp">
 
-        <!-- Route map placeholder -->
-        <ImageView
-            android:id="@+id/map"
+        <RelativeLayout
             android:layout_width="match_parent"
-            android:layout_height="194dp"
-            android:contentDescription="@string/route_map"
-            app:srcCompat="@drawable/ic_map" />
+            android:layout_height="match_parent"
+            android:orientation="vertical">
 
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:padding="16dp">
+            <!-- Route map placeholder -->
+            <ImageView
+                android:id="@+id/map"
+                android:layout_width="match_parent"
+                android:layout_alignParentTop="true"
+                android:layout_alignParentStart="true"
+                android:layout_alignParentEnd="true"
+                android:layout_height="194dp"
+                android:contentDescription="@string/route_map"
+                app:srcCompat="@drawable/ic_map" />
 
-            <!-- Title, secondary and supporting text -->
-            <TextView
-                android:id="@+id/route_name"
-                android:layout_width="wrap_content"
+            <LinearLayout
+                android:layout_alignParentStart="true"
+                android:layout_alignParentEnd="true"
+                android:layout_below="@id/map"
+                android:id="@+id/route_data_layout"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="@string/route_name"
-                android:textAppearance="?attr/textAppearanceHeadline6" />
+                android:orientation="vertical"
+                android:padding="16dp">
 
-            <TextView
-                android:id="@+id/route_created_on"
-                android:layout_width="wrap_content"
+                <!-- Title, secondary and supporting text -->
+                <TextView
+                    android:id="@+id/route_name"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/route_name"
+                    android:textAppearance="?attr/textAppearanceHeadline6" />
+
+                <TextView
+                    android:id="@+id/route_created_on"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    android:text="@string/route_created_on"
+                    android:textAppearance="?attr/textAppearanceBody2"
+                    android:textColor="?android:attr/textColorSecondary" />
+
+                <TextView
+                    android:id="@+id/route_schedule"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="16dp"
+                    android:text="@string/route_schedule"
+                    android:textAppearance="?attr/textAppearanceBody2"
+                    android:textColor="?android:attr/textColorSecondary" />
+
+                <LinearLayout
+                    android:id="@+id/route_driver_layout"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="4dp"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/route_driver"
+                        android:textAppearance="?attr/textAppearanceBody2"
+                        android:textColor="?android:attr/textColorSecondary" />
+
+                    <de.hdodenhof.circleimageview.CircleImageView
+                        android:id="@+id/driver_profile_picture"
+                        android:layout_width="35dp"
+                        android:layout_height="35dp"
+                        android:layout_marginStart="5dp"
+                        android:src="@drawable/ic_person" />
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:id="@+id/route_price_per_km_layout"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="4dp"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal">
+
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/route_price_per_km"
+                        android:textAppearance="?attr/textAppearanceBody2"
+                        android:textColor="?android:attr/textColorSecondary" />
+
+                    <TextView
+                        android:id="@+id/route_price_per_km"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="2dp"
+                        android:textAppearance="?attr/textAppearanceBody2"
+                        android:textColor="?android:attr/textColorSecondary" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:id="@+id/route_passengers_layout"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="4dp"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:id="@+id/route_passengers_label"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/route_passengers"
+                        android:textAppearance="?attr/textAppearanceBody2"
+                        android:textColor="?android:attr/textColorSecondary" />
+                </LinearLayout>
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/actions_layout"
+                android:layout_alignParentEnd="true"
+                android:layout_alignParentStart="true"
+                android:layout_below="@id/route_data_layout"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="8dp"
-                android:text="@string/route_created_on"
-                android:textAppearance="?attr/textAppearanceBody2"
-                android:textColor="?android:attr/textColorSecondary" />
+                android:layout_margin="8dp"
+                android:orientation="horizontal">
 
-            <TextView
-                android:id="@+id/route_schedule"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="16dp"
-                android:text="@string/route_schedule"
-                android:textAppearance="?attr/textAppearanceBody2"
-                android:textColor="?android:attr/textColorSecondary" />
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/route_action1"
+                    style="?attr/borderlessButtonStyle"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="8dp"
+                    android:text="@string/route_edit"
+                    android:textAllCaps="true"
+                    android:textColor="@color/cropool_text_default" />
 
-            <TextView
-                android:id="@+id/route_driver"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="4dp"
-                android:text="@string/route_driver"
-                android:textAppearance="?attr/textAppearanceBody2"
-                android:textColor="?android:attr/textColorSecondary" />
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/route_action2"
+                    style="?attr/borderlessButtonStyle"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/route_delete"
+                    android:textAllCaps="true"
+                    android:textColor="@color/route_delete" />
+            </LinearLayout>
 
-            <TextView
-                android:id="@+id/route_passengers"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="4dp"
-                android:text="@string/route_passengers"
-                android:textAppearance="?attr/textAppearanceBody2"
-                android:textColor="?android:attr/textColorSecondary" />
+        </RelativeLayout>
 
-            <TextView
-                android:id="@+id/route_price_per_km"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="4dp"
-                android:text="@string/route_price_per_km"
-                android:textAppearance="?attr/textAppearanceBody2"
-                android:textColor="?android:attr/textColorSecondary" />
-        </LinearLayout>
+    </com.google.android.material.card.MaterialCardView>
 
-        <LinearLayout
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_margin="8dp"
-            android:orientation="horizontal">
-
-            <com.google.android.material.button.MaterialButton
-                android:id="@+id/route_action1"
-                style="?attr/borderlessButtonStyle"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginEnd="8dp"
-                android:text="@string/route_edit"
-                android:textAllCaps="true"
-                android:textColor="@color/cropool_text_default" />
-
-            <com.google.android.material.button.MaterialButton
-                android:id="@+id/route_action2"
-                style="?attr/borderlessButtonStyle"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/route_delete"
-                android:textAllCaps="true"
-                android:textColor="@color/route_delete" />
-        </LinearLayout>
-
-    </LinearLayout>
-
-</com.google.android.material.card.MaterialCardView>
+</RelativeLayout>
 
     <!--Layout adapted from https://material.io/components/cards/android#card-->
