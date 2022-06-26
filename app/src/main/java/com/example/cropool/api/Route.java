@@ -68,7 +68,10 @@ public class Route {
     @SerializedName("directions")
     private String directions;
 
-    public Route(String id, String ownerID, String ownerFirstName, String ownerLastName, String ownerProfilePicture, String startLatLng, String finishLatLng, String name, Long createdAt, Boolean customRepetition, Integer repetitionMode, Integer startMonth, Integer startDayOfMonth, Integer startDayOfWeek, Integer startHourOfDay, Integer startMinuteOfHour, String note, Double pricePerKm, ArrayList<Passenger> passengers, Double devPercentage, String directions) {
+    @SerializedName("idcheckpoint")
+    private String subscriptionCheckpointID;
+
+    public Route(String id, String ownerID, String ownerFirstName, String ownerLastName, String ownerProfilePicture, String startLatLng, String finishLatLng, String name, Long createdAt, Boolean customRepetition, Integer repetitionMode, Integer startMonth, Integer startDayOfMonth, Integer startDayOfWeek, Integer startHourOfDay, Integer startMinuteOfHour, String note, Double pricePerKm, ArrayList<Passenger> passengers, Double devPercentage, String directions, String subscriptionCheckpointID) {
         this.id = id;
         this.ownerID = ownerID;
         this.ownerFirstName = ownerFirstName;
@@ -90,6 +93,7 @@ public class Route {
         this.passengers = passengers;
         this.devPercentage = devPercentage;
         this.directions = directions;
+        this.subscriptionCheckpointID = subscriptionCheckpointID;
     }
 
     public String getId() {
@@ -176,6 +180,10 @@ public class Route {
         return directions;
     }
 
+    public String getSubscriptionCheckpointID() {
+        return subscriptionCheckpointID;
+    }
+
     @Override
     public String toString() {
         return "Route{" +
@@ -200,6 +208,7 @@ public class Route {
                 ", passengers=" + passengers +
                 ", devPercentage=" + devPercentage +
                 ", directions='" + directions + '\'' +
+                ", subscriptionCheckpointID='" + subscriptionCheckpointID + '\'' +
                 '}';
     }
 }

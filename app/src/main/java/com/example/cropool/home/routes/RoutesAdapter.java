@@ -113,7 +113,13 @@ public class RoutesAdapter extends RecyclerView.Adapter<RoutesAdapter.MyViewHold
             // TODO: Maybe an option to delete the route?
             holder.routeAction2.setVisibility(View.GONE);
         } else if (routesType.equals(RouteType.SUBSCRIBED_TO)) {
+            holder.routeAction1.setVisibility(View.GONE);
 
+            String action2Text = "Unsubscribe";
+            holder.routeAction2.setText(action2Text);
+            holder.routeAction2.setOnClickListener(v -> {
+                Toast.makeText(context, "UNSUB FROM " + route.getSubscriptionCheckpointID(), Toast.LENGTH_LONG).show();
+            });
         } else {
             // RouteType.FOUND
             holder.routeAction2.setVisibility(View.GONE);
@@ -287,6 +293,8 @@ public class RoutesAdapter extends RecyclerView.Adapter<RoutesAdapter.MyViewHold
             // Create parameters and set them to passenger image
             LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(35, 35);
             params.setMarginStart(4);
+            passengerView.setMinimumHeight(35);
+            passengerView.setMinimumWidth(35);
             passengerView.setLayoutParams(params);
 
             passengerView.setOnClickListener(v -> {

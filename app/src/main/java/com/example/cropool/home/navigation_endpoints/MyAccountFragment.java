@@ -157,7 +157,7 @@ public class MyAccountFragment extends Fragment {
                     .show();
         });
 
-        routesSubscribedTo.setOnClickListener(v1 -> requireActivity().getSupportFragmentManager().beginTransaction().add(R.id.home_activity_fragment_container, new RoutesSubscribedToFragment()).addToBackStack(null).commit());
+        routesSubscribedTo.setOnClickListener(v1 -> getSubscribedToRoutes(true));
 
         myRoutes.setOnClickListener(v1 -> getMyRoutes(true));
 
@@ -181,6 +181,70 @@ public class MyAccountFragment extends Fragment {
 
 
         return v;
+    }
+
+    // Downloads routes current user is subscribed to and displays them as a list
+    private void getSubscribedToRoutes(boolean refreshIfNeeded){
+        if (HomeActivity.getCurrentFBUser() == null || getContext() == null || getActivity() == null) {
+            Toast.makeText(getContext(), "There was an error, please sign in again.", Toast.LENGTH_LONG).show();
+            return;
+        }
+
+        Retrofit retrofit = CropoolAPI.getRetrofit();
+        CropoolAPI cropoolAPI = retrofit.create(CropoolAPI.class);
+
+        Call<FindRouteRes> call = cropoolAPI.subscribedToRoutes(getContext().getResources().getString(R.string.TOKEN_HEADER_PREFIX) + Tokens.getAccessToken(getContext()));
+
+        call.enqueue(new Callback<FindRouteRes>() {
+            @Override
+            public void onResponse(@NotNull Call<FindRouteRes> call, @NotNull Response<FindRouteRes> response) {
+                if (!response.isSuccessful()) {
+                    // Not OK
+                    Log.e("/subscribedToRoutes", "notSuccessful: Something went wrong. - " + response.code());
+
+                    if (response.code() == 403 || response.code() == 401) {
+                        // Access or Firebase tokens invalid
+
+                        // Try to refresh tokens using refresh tokens and re-run addRoute() if refreshing is successful
+                        // Set refreshIfNeeded to false - we don't want to refresh tokens infinitely if that's not the problem
+                        if (refreshIfNeeded) {
+                            Tokens.refreshTokensOnServer(getActivity(), requireContext(), () -> {
+                                getSubscribedToRoutes(false);
+                                return null;
+                            });
+                        } else {
+                            Toast.makeText(getContext(), "Sorry, there was an error. " + response.code(), Toast.LENGTH_LONG).show();
+                        }
+                    } else {
+                        Toast.makeText(getContext(), "Sorry, there was an error. " + response.code(), Toast.LENGTH_LONG).show();
+                    }
+
+                    return;
+                }
+
+                FindRouteRes findRouteRes = response.body();
+
+                if (response.code() == 200 && findRouteRes != null) {   // Routes downloaded
+                    // Toast.makeText(getContext(), (feedback != null) ? feedback.getFeedback() : "Routes retrieved.", Toast.LENGTH_LONG).show();
+
+                    if (findRouteRes.getResultingRoutes().size() <= 0){
+                        Toast.makeText(getContext(), "No routes.", Toast.LENGTH_LONG).show();
+                        return;
+                    }
+
+                    requireActivity().getSupportFragmentManager().beginTransaction().replace(R.id.home_activity_fragment_container, RouteListFragment.newInstance(new RouteListParcelable(findRouteRes.getResultingRoutes(), RouteType.SUBSCRIBED_TO), "Routes subscribed to", null, null)).commit();
+                } else {
+                    Toast.makeText(getContext(), "Sorry, there was a problem when downloading your routes.", Toast.LENGTH_LONG).show();
+                }
+            }
+
+            @Override
+            public void onFailure(@NotNull Call<FindRouteRes> call, @NotNull Throwable t) {
+                Toast.makeText(getContext(), "Sorry, there was an error.", Toast.LENGTH_LONG).show();
+
+                Log.e("/subscribedToRoutes", "onFailure: Something went wrong. " + t.getMessage());
+            }
+        });
     }
 
     // Downloads current user's routes and displays them as a list

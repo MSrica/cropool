@@ -51,4 +51,7 @@ public interface CropoolAPI {
 
     @GET("myRoutes")
     Call<FindRouteRes> myRoutes(@Header("access_token") String accessToken);
+
+    @GET("subscribedToRoutes")
+    Call<FindRouteRes> subscribedToRoutes(@Header("access_token") String accessToken);
 }
