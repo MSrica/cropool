@@ -77,10 +77,10 @@ public class RouteListFragment extends Fragment {
         routeListRecyclerView.setHasFixedSize(false);
         routeListRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
         if(routeListParcelable.getRoutesType().equals(RouteType.FOUND)) {
-            routeListRecyclerView.setAdapter(new RoutesAdapter(routeListParcelable.getRoutes(), requireContext(), getActivity(), routeListParcelable.getRoutesType(), startLatLng, finishLatLng));
+            routeListRecyclerView.setAdapter(new RoutesAdapter(routeListParcelable.getRoutes(), requireContext(), requireActivity(), routeListParcelable.getRoutesType(), startLatLng, finishLatLng));
         }
         else {
-            routeListRecyclerView.setAdapter(new RoutesAdapter(routeListParcelable.getRoutes(), requireContext(), getActivity(), routeListParcelable.getRoutesType()));
+            routeListRecyclerView.setAdapter(new RoutesAdapter(routeListParcelable.getRoutes(), requireContext(), requireActivity(), routeListParcelable.getRoutesType()));
         }
 
         return view;

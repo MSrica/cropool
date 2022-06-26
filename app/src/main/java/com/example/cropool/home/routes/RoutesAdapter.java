@@ -1,6 +1,5 @@
 package com.example.cropool.home.routes;
 
-import android.app.Activity;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -16,6 +15,7 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
+import androidx.fragment.app.FragmentActivity;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.cropool.R;
@@ -24,9 +24,13 @@ import com.example.cropool.api.CheckpointReq;
 import com.example.cropool.api.CropoolAPI;
 import com.example.cropool.api.Feedback;
 import com.example.cropool.api.Passenger;
+import com.example.cropool.api.RequestedCheckpointsRes;
 import com.example.cropool.api.Route;
+import com.example.cropool.api.RouteIDReq;
 import com.example.cropool.api.Tokens;
 import com.example.cropool.home.HomeActivity;
+import com.example.cropool.home.subscription_requests.SubscriptionRequestListDialogFragment;
+import com.example.cropool.home.subscription_requests.SubscriptionRequestListParcelable;
 import com.google.android.material.button.MaterialButton;
 import com.google.android.material.card.MaterialCardView;
 import com.squareup.picasso.Picasso;
@@ -50,19 +54,39 @@ public class RoutesAdapter extends RecyclerView.Adapter<RoutesAdapter.MyViewHold
 
     private final List<Route> routes;
     private final Context context;
-    private final Activity activity;
+    private final FragmentActivity activity;
     private final RouteType routesType;
     private String startLatLng = "";
     private String finishLatLng = "";
 
-    public RoutesAdapter(List<Route> routes, Context context, Activity activity, RouteType routesType) {
+    private String subscriptionIDToRemove = null;
+    private View subscriptionViewToRemove = null;
+    // Dialog for deleting/declining a user's request to subscribe to current user's route
+    private final DialogInterface.OnClickListener removeExistingRequestedSubscriptionListener = (dialog, which) -> {
+        switch (which) {
+            case DialogInterface.BUTTON_POSITIVE:
+                // Unsubscribe
+                removeSubscription(subscriptionIDToRemove, subscriptionViewToRemove, true);
+                subscriptionIDToRemove = null;
+                subscriptionViewToRemove = null;
+                break;
+
+            case DialogInterface.BUTTON_NEGATIVE:
+                // Reset subscriptionIDToRemove and subscriptionViewToRemove
+                subscriptionIDToRemove = null;
+                subscriptionViewToRemove = null;
+                break;
+        }
+    };
+
+    public RoutesAdapter(List<Route> routes, Context context, FragmentActivity activity, RouteType routesType) {
         this.routes = routes;
         this.context = context;
         this.activity = activity;
         this.routesType = routesType;
     }
 
-    public RoutesAdapter(List<Route> routes, Context context, Activity activity, RouteType routesType, String startLatLng, String finishLatLng) {
+    public RoutesAdapter(List<Route> routes, Context context, FragmentActivity activity, RouteType routesType, String startLatLng, String finishLatLng) {
         this.routes = routes;
         this.context = context;
         this.activity = activity;
@@ -70,7 +94,6 @@ public class RoutesAdapter extends RecyclerView.Adapter<RoutesAdapter.MyViewHold
         this.startLatLng = startLatLng;
         this.finishLatLng = finishLatLng;
     }
-
 
     @NonNull
     @Override
@@ -84,7 +107,7 @@ public class RoutesAdapter extends RecyclerView.Adapter<RoutesAdapter.MyViewHold
     public void onBindViewHolder(@NonNull RoutesAdapter.MyViewHolder holder, int position) {
         Route route = routes.get(position);
 
-        // Dialog for logout from all devices query
+        // Dialog for unsubscribing from a route
         DialogInterface.OnClickListener unsubscribeDialogListener = (dialog, which) -> {
             switch (which) {
                 case DialogInterface.BUTTON_POSITIVE:
@@ -125,7 +148,7 @@ public class RoutesAdapter extends RecyclerView.Adapter<RoutesAdapter.MyViewHold
             holder.routeAction1.setText(action1Text);
             holder.routeAction1.setTextColor(context.getResources().getColor(R.color.USER_ONLINE_COLOR));
             holder.routeAction1.setOnClickListener(v -> {
-                Toast.makeText(context, "Popup recycler view confirm/decline with passenger name, start, finish place", Toast.LENGTH_LONG).show();
+                requestedCheckpoints(route.getId(), true);
             });
 
             // TODO: Maybe an option to delete the route?
@@ -153,13 +176,126 @@ public class RoutesAdapter extends RecyclerView.Adapter<RoutesAdapter.MyViewHold
         }
     }
 
-    // Removes subscription to the route
-    private void unsubscribeFromRoute(View rootLayout, Route route, boolean refreshIfNeeded) {
-        if (HomeActivity.getCurrentFBUser() == null || startLatLng == null || finishLatLng == null) {
-            Toast.makeText(context, "There was an error, please sign in again.", Toast.LENGTH_LONG).show();
-            return;
+    // Retrieves requested checkpoints for a route
+    private void requestedCheckpoints(String routeID, boolean refreshIfNeeded) {
+        if (routeID == null) {
+            Toast.makeText(context, "Sorry, there was an error. Try again.", Toast.LENGTH_LONG).show();
         }
 
+        RouteIDReq routeIDReq = new RouteIDReq(routeID);
+        Retrofit retrofit = CropoolAPI.getRetrofit();
+        CropoolAPI cropoolAPI = retrofit.create(CropoolAPI.class);
+
+        Call<RequestedCheckpointsRes> call = cropoolAPI.requestedCheckpoints(context.getResources().getString(R.string.TOKEN_HEADER_PREFIX) + Tokens.getAccessToken(context), routeIDReq);
+
+        call.enqueue(new Callback<RequestedCheckpointsRes>() {
+            @Override
+            public void onResponse(@NotNull Call<RequestedCheckpointsRes> call, @NotNull Response<RequestedCheckpointsRes> response) {
+                if (!response.isSuccessful()) {
+                    // Not OK
+                    Log.e("/requestedCheckpoints", "notSuccessful: Something went wrong. - " + response.code() + response);
+
+                    if (response.code() == 403 || response.code() == 401) {
+                        // Access or Firebase tokens invalid
+
+                        // Try to refresh tokens using refresh tokens and re-run addRoute() if refreshing is successful
+                        // Set refreshIfNeeded to false - we don't want to refresh tokens infinitely if that's not the problem
+                        if (refreshIfNeeded) {
+                            Tokens.refreshTokensOnServer(activity, context, () -> {
+                                requestedCheckpoints(routeID, false);
+                                return null;
+                            });
+                        } else {
+                            Toast.makeText(context, "Sorry, there was an error. " + response.code(), Toast.LENGTH_LONG).show();
+                        }
+                    } else {
+                        Toast.makeText(context, "Sorry, there was an error. " + response.code(), Toast.LENGTH_LONG).show();
+                    }
+
+                    return;
+                }
+
+                RequestedCheckpointsRes requestedCheckpointsRes = response.body();
+
+                if (response.code() == 200 && requestedCheckpointsRes != null && requestedCheckpointsRes.getRequestedCheckpoints().size() > 0) {   // Retreived the list
+                    activity.getSupportFragmentManager().beginTransaction().add(R.id.home_activity_fragment_container, SubscriptionRequestListDialogFragment.newInstance(new SubscriptionRequestListParcelable(requestedCheckpointsRes.getRequestedCheckpoints()))).addToBackStack(null).commit();
+                } else {
+                    Toast.makeText(context, "No requests found.", Toast.LENGTH_LONG).show();
+                }
+            }
+
+            @Override
+            public void onFailure(@NotNull Call<RequestedCheckpointsRes> call, @NotNull Throwable t) {
+                Toast.makeText(context, "Sorry, there was an error.", Toast.LENGTH_LONG).show();
+
+                Log.e("/requestedCheckpoints", "onFailure: Something went wrong. " + t.getMessage());
+            }
+        });
+    }
+
+    // Removes an existing/requested subscription (checkpoint with checkpointID subscriptionIDToRemove)
+    private void removeSubscription(String subscriptionIDToRemove, View viewToRemove, boolean refreshIfNeeded) {
+        if (subscriptionIDToRemove == null) {
+            Toast.makeText(context, "Sorry, there was an error. Try again.", Toast.LENGTH_LONG).show();
+        }
+
+        CheckpointIDReq checkpointIDReq = new CheckpointIDReq(subscriptionIDToRemove);
+        Retrofit retrofit = CropoolAPI.getRetrofit();
+        CropoolAPI cropoolAPI = retrofit.create(CropoolAPI.class);
+
+        Call<Feedback> call = cropoolAPI.removeCheckpoint(context.getResources().getString(R.string.TOKEN_HEADER_PREFIX) + Tokens.getAccessToken(context), checkpointIDReq);
+
+        call.enqueue(new Callback<Feedback>() {
+            @Override
+            public void onResponse(@NotNull Call<Feedback> call, @NotNull Response<Feedback> response) {
+                if (!response.isSuccessful()) {
+                    // Not OK
+                    Log.e("/removeSubscription", "notSuccessful: Something went wrong. - " + response.code() + response);
+
+                    if (response.code() == 403 || response.code() == 401) {
+                        // Access or Firebase tokens invalid
+
+                        // Try to refresh tokens using refresh tokens and re-run addRoute() if refreshing is successful
+                        // Set refreshIfNeeded to false - we don't want to refresh tokens infinitely if that's not the problem
+                        if (refreshIfNeeded) {
+                            Tokens.refreshTokensOnServer(activity, context, () -> {
+                                removeSubscription(subscriptionIDToRemove, subscriptionViewToRemove, false);
+                                return null;
+                            });
+                        } else {
+                            Toast.makeText(context, "Sorry, there was an error. " + response.code(), Toast.LENGTH_LONG).show();
+                        }
+                    } else {
+                        Toast.makeText(context, "Sorry, there was an error. " + response.code(), Toast.LENGTH_LONG).show();
+                    }
+
+                    return;
+                }
+
+                Feedback feedback = response.body();
+
+                if (response.code() == 200) {   // Unsubscribed
+                    Toast.makeText(context, (feedback != null) ? feedback.getFeedback() : "Successfully removed.", Toast.LENGTH_LONG).show();
+
+                    // Hide the route we unsubscribed from
+                    if (viewToRemove != null)
+                        viewToRemove.setVisibility(View.GONE);
+                } else {
+                    Toast.makeText(context, "Sorry, couldn't remove.", Toast.LENGTH_LONG).show();
+                }
+            }
+
+            @Override
+            public void onFailure(@NotNull Call<Feedback> call, @NotNull Throwable t) {
+                Toast.makeText(context, "Sorry, there was an error.", Toast.LENGTH_LONG).show();
+
+                Log.e("/removeSubscription", "onFailure: Something went wrong. " + t.getMessage());
+            }
+        });
+    }
+
+    // Removes subscription to the route
+    private void unsubscribeFromRoute(View rootLayout, Route route, boolean refreshIfNeeded) {
         CheckpointIDReq checkpointIDReq = new CheckpointIDReq(route.getSubscriptionCheckpointID());
         Retrofit retrofit = CropoolAPI.getRetrofit();
         CropoolAPI cropoolAPI = retrofit.create(CropoolAPI.class);
@@ -216,7 +352,7 @@ public class RoutesAdapter extends RecyclerView.Adapter<RoutesAdapter.MyViewHold
 
     // Sends request to subscribe to the route
     private void subscribeToRoute(Route route, boolean refreshIfNeeded) {
-        if (HomeActivity.getCurrentFBUser() == null || startLatLng == null || finishLatLng == null) {
+        if (startLatLng == null || finishLatLng == null) {
             Toast.makeText(context, "There was an error, please sign in again.", Toast.LENGTH_LONG).show();
             return;
         }
@@ -373,10 +509,13 @@ public class RoutesAdapter extends RecyclerView.Adapter<RoutesAdapter.MyViewHold
             CircleImageView passengerView = new CircleImageView(context);
 
             // Set the picture
-            Picasso.get().load(passenger.getProfilePicture()).into(passengerView);
+            if (passenger.getProfilePicture() != null && !passenger.getProfilePicture().equals(context.getResources().getString(R.string.FB_RTDB_DEFAULT_PICTURE_VALUE)))
+                Picasso.get().load(passenger.getProfilePicture()).into(passengerView);
 
             // Create parameters and set them to passenger image
             float dpFactor = context.getResources().getDisplayMetrics().density;
+
+
             LinearLayout.LayoutParams params = new LinearLayout.LayoutParams((int) (30 * dpFactor), (int) (30 * dpFactor));
             params.setMarginStart((int) (8 * dpFactor));
             passengerView.setLayoutParams(params);
@@ -389,7 +528,15 @@ public class RoutesAdapter extends RecyclerView.Adapter<RoutesAdapter.MyViewHold
                 if (routesType.equals(RouteType.SUBSCRIBED_TO) || routesType.equals(RouteType.FOUND)) {
                     Toast.makeText(context, passenger.getFirstName() + " " + passenger.getLastName(), Toast.LENGTH_SHORT).show();
                 } else if (routesType.equals(RouteType.MY)) {
-                    Toast.makeText(context, "DIALOG REMOVE?", Toast.LENGTH_SHORT).show();
+                    subscriptionIDToRemove = passenger.getCheckpointID();
+                    subscriptionViewToRemove = passengerView;
+
+                    // Manage unsubscribing via AlertDialog
+                    AlertDialog.Builder builder = new AlertDialog.Builder(context);
+                    builder.setMessage(context.getResources().getString(R.string.REMOVE_SUBSCRIPTION))
+                            .setPositiveButton(context.getResources().getString(R.string.YES), removeExistingRequestedSubscriptionListener)
+                            .setNegativeButton(context.getResources().getString(R.string.NO), removeExistingRequestedSubscriptionListener)
+                            .show();
                 }
 
                 return false;

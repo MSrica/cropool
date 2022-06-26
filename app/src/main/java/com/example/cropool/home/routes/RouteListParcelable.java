@@ -19,6 +19,7 @@ public class RouteListParcelable implements Parcelable {
             return new RouteListParcelable[size];
         }
     };
+
     private ArrayList<Route> routes;
     private RouteType routesType;
 

@@ -232,7 +232,7 @@ public class MyAccountFragment extends Fragment {
                         return;
                     }
 
-                    requireActivity().getSupportFragmentManager().beginTransaction().replace(R.id.home_activity_fragment_container, RouteListFragment.newInstance(new RouteListParcelable(findRouteRes.getResultingRoutes(), RouteType.SUBSCRIBED_TO), "Routes subscribed to", null, null)).commit();
+                    requireActivity().getSupportFragmentManager().beginTransaction().add(R.id.home_activity_fragment_container, RouteListFragment.newInstance(new RouteListParcelable(findRouteRes.getResultingRoutes(), RouteType.SUBSCRIBED_TO), "Routes subscribed to", null, null)).addToBackStack(null).commit();
                 } else {
                     Toast.makeText(getContext(), "Sorry, there was a problem when downloading your routes.", Toast.LENGTH_LONG).show();
                 }
@@ -296,7 +296,7 @@ public class MyAccountFragment extends Fragment {
                         return;
                     }
 
-                    requireActivity().getSupportFragmentManager().beginTransaction().replace(R.id.home_activity_fragment_container, RouteListFragment.newInstance(new RouteListParcelable(findRouteRes.getResultingRoutes(), RouteType.MY), "My routes", null, null)).commit();
+                    requireActivity().getSupportFragmentManager().beginTransaction().add(R.id.home_activity_fragment_container, RouteListFragment.newInstance(new RouteListParcelable(findRouteRes.getResultingRoutes(), RouteType.MY), "My routes", null, null)).addToBackStack(null).commit();
                 } else {
                     Toast.makeText(getContext(), "Sorry, there was a problem when downloading your routes.", Toast.LENGTH_LONG).show();
                 }

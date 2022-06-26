@@ -2,6 +2,8 @@ package com.example.cropool.api;
 
 import com.example.cropool.BuildConfig;
 
+import java.util.List;
+
 import retrofit2.Call;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
@@ -57,4 +59,13 @@ public interface CropoolAPI {
 
     @PATCH("unsubscribeCheckpoint")
     Call<Feedback> unsubscribeCheckpoint(@Header("access_token") String accessToken, @Body CheckpointIDReq checkpointIDReq);
+
+    @PATCH("removeCheckpoint")
+    Call<Feedback> removeCheckpoint(@Header("access_token") String accessToken, @Body CheckpointIDReq checkpointIDReq);
+
+    @PATCH("acceptCheckpoint")
+    Call<Feedback> acceptCheckpoint(@Header("access_token") String accessToken, @Body CheckpointIDReq checkpointIDReq);
+
+    @POST("requestedCheckpoints")
+    Call<RequestedCheckpointsRes> requestedCheckpoints(@Header("access_token") String accessToken, @Body RouteIDReq routeIDReq);
 }
