@@ -27,15 +27,12 @@ import androidx.fragment.app.Fragment;
 import com.example.cropool.BuildConfig;
 import com.example.cropool.R;
 import com.example.cropool.api.AccountInfo;
-import com.example.cropool.api.CheckpointReq;
 import com.example.cropool.api.CropoolAPI;
 import com.example.cropool.api.Feedback;
 import com.example.cropool.api.FindRouteRes;
 import com.example.cropool.api.Tokens;
 import com.example.cropool.home.HomeActivity;
-import com.example.cropool.home.my_account.MyRoutesFragment;
 import com.example.cropool.home.my_account.PersonalDetailsFragment;
-import com.example.cropool.home.my_account.RoutesSubscribedToFragment;
 import com.example.cropool.home.routes.RouteListFragment;
 import com.example.cropool.home.routes.RouteListParcelable;
 import com.example.cropool.home.routes.RouteType;
@@ -184,7 +181,7 @@ public class MyAccountFragment extends Fragment {
     }
 
     // Downloads routes current user is subscribed to and displays them as a list
-    private void getSubscribedToRoutes(boolean refreshIfNeeded){
+    private void getSubscribedToRoutes(boolean refreshIfNeeded) {
         if (HomeActivity.getCurrentFBUser() == null || getContext() == null || getActivity() == null) {
             Toast.makeText(getContext(), "There was an error, please sign in again.", Toast.LENGTH_LONG).show();
             return;
@@ -227,7 +224,7 @@ public class MyAccountFragment extends Fragment {
                 if (response.code() == 200 && findRouteRes != null) {   // Routes downloaded
                     // Toast.makeText(getContext(), (feedback != null) ? feedback.getFeedback() : "Routes retrieved.", Toast.LENGTH_LONG).show();
 
-                    if (findRouteRes.getResultingRoutes().size() <= 0){
+                    if (findRouteRes.getResultingRoutes().size() <= 0) {
                         Toast.makeText(getContext(), "No routes.", Toast.LENGTH_LONG).show();
                         return;
                     }
@@ -248,7 +245,7 @@ public class MyAccountFragment extends Fragment {
     }
 
     // Downloads current user's routes and displays them as a list
-    private void getMyRoutes(boolean refreshIfNeeded){
+    private void getMyRoutes(boolean refreshIfNeeded) {
         if (HomeActivity.getCurrentFBUser() == null || getContext() == null || getActivity() == null) {
             Toast.makeText(getContext(), "There was an error, please sign in again.", Toast.LENGTH_LONG).show();
             return;
@@ -291,7 +288,7 @@ public class MyAccountFragment extends Fragment {
                 if (response.code() == 200 && findRouteRes != null) {   // Routes downloaded
                     // Toast.makeText(getContext(), (feedback != null) ? feedback.getFeedback() : "Routes retrieved.", Toast.LENGTH_LONG).show();
 
-                    if (findRouteRes.getResultingRoutes().size() <= 0){
+                    if (findRouteRes.getResultingRoutes().size() <= 0) {
                         Toast.makeText(getContext(), "No routes.", Toast.LENGTH_LONG).show();
                         return;
                     }
@@ -523,7 +520,7 @@ public class MyAccountFragment extends Fragment {
                     String displayName = accountInfo.getFirstName() + " " + accountInfo.getLastName() + "!";
                     name.setText(displayName);
 
-                    if (!accountInfo.getProfilePicture().equals(requireContext().getResources().getString(R.string.FB_RTDB_DEFAULT_PICTURE_VALUE)))
+                    if (getContext() != null && !accountInfo.getProfilePicture().equals(requireContext().getResources().getString(R.string.FB_RTDB_DEFAULT_PICTURE_VALUE)))
                         Picasso.get().load(accountInfo.getProfilePicture()).into(profilePicture);
 
                     String routesQtyText = "" + accountInfo.getNumberOfRoutes();

@@ -1,8 +1,11 @@
 package com.example.cropool.home.routes;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.graphics.Color;
+import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -34,8 +37,11 @@ import com.example.cropool.home.messages.ChatActivity;
 import com.example.cropool.home.messages.Conversation;
 import com.example.cropool.home.subscription_requests.SubscriptionRequestListDialogFragment;
 import com.example.cropool.home.subscription_requests.SubscriptionRequestListParcelable;
+import com.google.android.gms.maps.CameraUpdateFactory;
+import com.google.android.gms.maps.MapView;
+import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.PolylineOptions;
 import com.google.android.material.button.MaterialButton;
-import com.google.android.material.card.MaterialCardView;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -111,6 +117,7 @@ public class RoutesAdapter extends RecyclerView.Adapter<RoutesAdapter.MyViewHold
         return new MyViewHolder(LayoutInflater.from(parent.getContext()).inflate(R.layout.route_item_adapter_layout, null));
     }
 
+    @SuppressLint("ClickableViewAccessibility")
     @Override
     public void onBindViewHolder(@NonNull RoutesAdapter.MyViewHolder holder, int position) {
         Route route = routes.get(position);
@@ -165,9 +172,7 @@ public class RoutesAdapter extends RecyclerView.Adapter<RoutesAdapter.MyViewHold
             String action1Text = "See requests";
             holder.routeAction1.setText(action1Text);
             holder.routeAction1.setTextColor(context.getResources().getColor(R.color.USER_ONLINE_COLOR));
-            holder.routeAction1.setOnClickListener(v -> {
-                requestedCheckpoints(route.getId(), true);
-            });
+            holder.routeAction1.setOnClickListener(v -> requestedCheckpoints(route.getId(), true));
 
             // TODO: Maybe an option to delete the route?
             holder.routeAction2.setVisibility(View.GONE);
@@ -192,11 +197,41 @@ public class RoutesAdapter extends RecyclerView.Adapter<RoutesAdapter.MyViewHold
             holder.routeAction1.setText(context.getResources().getString(R.string.subscribe));
             holder.routeAction1.setOnClickListener(v -> subscribeToRoute(route, true));
         }
+
+        holder.map.setOnTouchListener((v, event) -> {
+            holder.map.getParent().requestDisallowInterceptTouchEvent(true);
+            return false;
+        });
+
+        Bundle bundle = new Bundle();
+        holder.map.onCreate(bundle);
+        holder.map.getMapAsync(googleMap -> {
+            if (route.getDirections() != null) {
+                List<LatLng> points = decodePoly(route.getDirections());
+                if (points.size() <= 0) {
+                    return;
+                }
+
+                holder.mapPlaceholder.setVisibility(View.GONE);
+                holder.map.setVisibility(View.VISIBLE);
+
+                PolylineOptions polylineOptions = new PolylineOptions();
+                polylineOptions.addAll(points);
+                polylineOptions.width(12);
+                polylineOptions.color((context != null) ? context.getResources().getColor(R.color.cropool_main) : Color.CYAN);
+
+                googleMap.addPolyline(polylineOptions);
+                googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(points.get(0), 9f));
+            }
+
+
+            holder.map.onResume();
+        });
     }
 
     // Checking whether the chat between currentUserUID and otherUserUID exists and acting accordingly
     private void startChat(String name, String profilePicture, String currentUserUID, String otherUserUID) {
-        if (currentUserUID == null || otherUserUID == null || currentUserUID.equals(otherUserUID)){
+        if (currentUserUID == null || otherUserUID == null || currentUserUID.equals(otherUserUID)) {
             return;
         }
 
@@ -467,9 +502,11 @@ public class RoutesAdapter extends RecyclerView.Adapter<RoutesAdapter.MyViewHold
 
     // Generates route schedule text information relative to repetition mode etc.
     private String getScheduleText(Route route) {
-        String timeText = String.format("%02d", route.getStartHourOfDay()) + ":" + String.format("%02d", route.getStartMinuteOfHour());
+        @SuppressLint("DefaultLocale") String timeText = String.format("%02d", route.getStartHourOfDay()) + ":" + String.format("%02d", route.getStartMinuteOfHour());
 
-        if (route.getRepetitionMode() == REPETITION_DAILY) {
+        if (route.getRepetitionMode() == null || route.getCustomRepetition()) {
+            return "Custom repetition: " + route.getNote();
+        } else if (route.getRepetitionMode() == REPETITION_DAILY) {
             return "Daily at " + timeText + ".";
         } else if (route.getRepetitionMode() == REPETITION_MONTHLY) {
             String suffix = "th";
@@ -487,8 +524,6 @@ public class RoutesAdapter extends RecyclerView.Adapter<RoutesAdapter.MyViewHold
             }
 
             return "Monthly on " + route.getStartDayOfMonth() + suffix + " at " + timeText + ".";
-        } else if (route.getCustomRepetition()) {
-            return "Custom repetition: " + route.getNote();
         } else {
             return getDaysFromCode(route.getRepetitionMode()) + " at " + timeText + ".";
         }
@@ -530,7 +565,6 @@ public class RoutesAdapter extends RecyclerView.Adapter<RoutesAdapter.MyViewHold
 
         if (code >= 60) {
             days.add("Sunday");
-            code -= 60;
         }
 
         StringBuilder sb = new StringBuilder();
@@ -604,17 +638,50 @@ public class RoutesAdapter extends RecyclerView.Adapter<RoutesAdapter.MyViewHold
         }
     }
 
+    // http://jeffreysambells.com/2010/05/27/decoding-polylines-from-google-maps-direction-api-with-java
+    private List<LatLng> decodePoly(String encoded) {
+
+        List<LatLng> poly = new ArrayList<>();
+        int index = 0, len = encoded.length();
+        int lat = 0, lng = 0;
+
+        while (index < len) {
+            int b, shift = 0, result = 0;
+            do {
+                b = encoded.charAt(index++) - 63;
+                result |= (b & 0x1f) << shift;
+                shift += 5;
+            } while (b >= 0x20);
+            int dlat = ((result & 1) != 0 ? ~(result >> 1) : (result >> 1));
+            lat += dlat;
+
+            shift = 0;
+            result = 0;
+            do {
+                b = encoded.charAt(index++) - 63;
+                result |= (b & 0x1f) << shift;
+                shift += 5;
+            } while (b >= 0x20);
+            int dlng = ((result & 1) != 0 ? ~(result >> 1) : (result >> 1));
+            lng += dlng;
+
+            LatLng p = new LatLng((((double) lat / 1E5)),
+                    (((double) lng / 1E5)));
+            poly.add(p);
+        }
+
+        return poly;
+    }
+
     @Override
     public int getItemCount() {
         return routes.size();
     }
 
     static class MyViewHolder extends RecyclerView.ViewHolder {
-        private final MaterialCardView card;
 
-        // TODO: change to MapView and show the map
-        private final ImageView map;
-
+        private final ImageView mapPlaceholder;
+        private final MapView map;
         private final RelativeLayout rootLayout;
         private final TextView routeName, routeCreatedOn, routeSchedule, routePricePerKm, routePassengersLabel;
         private final LinearLayout routePassengersLayout;
@@ -625,7 +692,7 @@ public class RoutesAdapter extends RecyclerView.Adapter<RoutesAdapter.MyViewHold
             super(itemView);
 
             rootLayout = itemView.findViewById(R.id.route_card_root_layout);
-            card = itemView.findViewById(R.id.card);
+            mapPlaceholder = itemView.findViewById(R.id.map_placeholder);
             map = itemView.findViewById(R.id.map);
             routeName = itemView.findViewById(R.id.route_name);
             routeCreatedOn = itemView.findViewById(R.id.route_created_on);

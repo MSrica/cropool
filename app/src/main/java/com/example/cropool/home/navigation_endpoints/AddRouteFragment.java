@@ -54,11 +54,10 @@ public class AddRouteFragment extends Fragment {
     private LatLng startLatLng = null, finishLatLng = null;
     private InputElement startLocation, finishLocation, name, note;
     private Slider passengerNum, price, dayOfMonth;
-    private ChipGroup repetitionModeChipGroup, startDayChipGroup;
+    private ChipGroup startDayChipGroup;
     private TextView startDayLabel, noteLabel, startTimeLabel, dayOfMonthLabel;
     private TimePicker startTime;
     private ActivityResultLauncher<Intent> placesAutocomplete;
-    private Button addRouteButton;
 
     // Repetition mode that'll be sent to API
     private Integer repetitionMode = null;
@@ -81,7 +80,7 @@ public class AddRouteFragment extends Fragment {
         name = new InputElement(view.findViewById(R.id.add_route_name_layout), view.findViewById(R.id.add_route_name));
         passengerNum = view.findViewById(R.id.add_route_max_passenger_number);
         price = view.findViewById(R.id.add_route_price_per_km);
-        repetitionModeChipGroup = view.findViewById(R.id.repetition_mode_chip_group);
+        ChipGroup repetitionModeChipGroup = view.findViewById(R.id.repetition_mode_chip_group);
         startDayLabel = view.findViewById(R.id.add_route_start_day_label);
         startDayChipGroup = view.findViewById(R.id.start_day_chip_group);
         dayOfMonthLabel = view.findViewById(R.id.add_route_start_day_of_month_label);
@@ -90,7 +89,7 @@ public class AddRouteFragment extends Fragment {
         note = new InputElement(view.findViewById(R.id.add_route_note_layout), view.findViewById(R.id.add_route_note));
         startTimeLabel = view.findViewById(R.id.start_time_label);
         startTime = view.findViewById(R.id.start_time_picker);
-        addRouteButton = view.findViewById(R.id.add_route_button);
+        Button addRouteButton = view.findViewById(R.id.add_route_button);
 
         startTime.setIs24HourView(true);
 
@@ -194,7 +193,7 @@ public class AddRouteFragment extends Fragment {
 
         // Updating startDayOfWeek/someDaysCode when something changes
         startDayChipGroup.setOnCheckedStateChangeListener(((group, checkedIds) -> {
-            if (checkedIds.isEmpty()){
+            if (checkedIds.isEmpty()) {
                 repetitionMode = null;
                 return;
             }
@@ -224,7 +223,7 @@ public class AddRouteFragment extends Fragment {
             return;
         }
 
-        AddRouteReq addRouteReq = new AddRouteReq(HomeActivity.getCurrentFBUser().getUid(), Objects.requireNonNull(name.getTextInput().getText()).toString(), (int) passengerNum.getValue(), startLatLng.latitude + "," + startLatLng.longitude, finishLatLng.latitude + "," + finishLatLng.longitude, repetitionMode, (double) price.getValue(), customRepetition != null && customRepetition, null, (int) dayOfMonth.getValue(), null, startTime.getCurrentHour(), startTime.getCurrentMinute(), Objects.requireNonNull(note.getTextInput().getText()).toString());
+        AddRouteReq addRouteReq = new AddRouteReq(HomeActivity.getCurrentFBUser().getUid(), Objects.requireNonNull(name.getTextInput().getText()).toString(), (int) passengerNum.getValue(), startLatLng.latitude + "," + startLatLng.longitude, finishLatLng.latitude + "," + finishLatLng.longitude, repetitionMode, (double) price.getValue(), customRepetition != null && customRepetition, null, (int) dayOfMonth.getValue(), null, (startTime != null) ? startTime.getCurrentHour() : null, (startTime != null) ? startTime.getCurrentMinute() : null, Objects.requireNonNull(note.getTextInput().getText()).toString());
 
         Retrofit retrofit = CropoolAPI.getRetrofit();
         CropoolAPI cropoolAPI = retrofit.create(CropoolAPI.class);
@@ -244,7 +243,7 @@ public class AddRouteFragment extends Fragment {
 
                         // Try to refresh tokens using refresh tokens and re-run addRoute() if refreshing is successful
                         // Set refreshIfNeeded to false - we don't want to refresh tokens infinitely if that's not the problem
-                        if(refreshIfNeeded) {
+                        if (refreshIfNeeded) {
                             Tokens.refreshTokensOnServer(requireActivity(), requireContext(), () -> {
                                 addRoute(false);
                                 return null;
@@ -326,7 +325,7 @@ public class AddRouteFragment extends Fragment {
         if (customRepetition != null && customRepetition) {
             // Repetition is custom therefore only note has to be set
 
-            if (note == null || note.getTextInput() == null || note.getTextInput().getText() == null) {
+            if (note == null || note.getTextInput() == null || note.getTextInput().getText() == null || note.getTextInput().getText().toString().isEmpty()) {
                 // Note is not set
                 isValid = false;
                 if (note != null && note.getInputLayout() != null)

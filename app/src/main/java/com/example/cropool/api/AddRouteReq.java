@@ -10,7 +10,7 @@ public class AddRouteReq {
     private String routeName;
 
     @SerializedName("max_num_passengers")
-    private int maxNumberPassengers;
+    private Integer maxNumberPassengers;
 
     @SerializedName("start_latlng")
     private String startLatLng;
@@ -19,13 +19,13 @@ public class AddRouteReq {
     private String finishLatLng;
 
     @SerializedName("repetition_mode")
-    private int repetitionMode;
+    private Integer repetitionMode;
 
     @SerializedName("price_per_km")
     private Double pricePerKm;
 
     @SerializedName("custom_repetition")
-    private boolean customRepetition;
+    private Boolean customRepetition;
 
     @SerializedName("start_month")
     private Integer startMonth;
@@ -45,7 +45,7 @@ public class AddRouteReq {
     @SerializedName("note")
     private String note;
 
-    public AddRouteReq(String routeOwnerID, String routeName, int maxNumberPassengers, String startLatLng, String finishLatLng, int repetitionMode, Double pricePerKm, boolean customRepetition, Integer startMonth, Integer startDayOfMonth, Integer startDayOfWeek, Integer startHourOfDay, Integer startMinuteOfHour, String note) {
+    public AddRouteReq(String routeOwnerID, String routeName, Integer maxNumberPassengers, String startLatLng, String finishLatLng, Integer repetitionMode, Double pricePerKm, Boolean customRepetition, Integer startMonth, Integer startDayOfMonth, Integer startDayOfWeek, Integer startHourOfDay, Integer startMinuteOfHour, String note) {
         this.routeOwnerID = routeOwnerID;
         this.routeName = routeName;
         this.maxNumberPassengers = maxNumberPassengers;
@@ -70,7 +70,7 @@ public class AddRouteReq {
         return routeName;
     }
 
-    public int getMaxNumberPassengers() {
+    public Integer getMaxNumberPassengers() {
         return maxNumberPassengers;
     }
 
@@ -82,7 +82,7 @@ public class AddRouteReq {
         return finishLatLng;
     }
 
-    public int getRepetitionMode() {
+    public Integer getRepetitionMode() {
         return repetitionMode;
     }
 
@@ -90,7 +90,7 @@ public class AddRouteReq {
         return pricePerKm;
     }
 
-    public boolean getCustomRepetition() {
+    public Boolean getCustomRepetition() {
         return customRepetition;
     }
 

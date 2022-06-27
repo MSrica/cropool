@@ -16,8 +16,8 @@ android {
         targetSdk 31
         versionCode 1
         versionName "1.0"
-
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+        manifestPlaceholders = [MAPS_API_KEY: apikeyProperties['MAPS_API_KEY']]
     }
 
     buildTypes {
@@ -37,6 +37,7 @@ android {
             buildConfigField("String", "FIREBASE_RTDB_URL", "\"https://cropool-chat-default-rtdb.europe-west1.firebasedatabase.app/\"")
             buildConfigField("String", "HELP_AND_SUPPORT_URL", "\"https://github.com/MSrica/cropool\"")
             buildConfigField("String", "PLACES_API_KEY", apikeyProperties['PLACES_API_KEY'])
+
         }
     }
     compileOptions {
