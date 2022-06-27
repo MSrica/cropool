@@ -15,10 +15,14 @@ public class AccountInfo {
     @SerializedName("created_at")
     private Long createdAt;
 
-    public AccountInfo(String firstName, String lastName, String profilePicture) {
+    @SerializedName("number_of_routes")
+    private Integer numberOfRoutes;
+
+    public AccountInfo(String firstName, String lastName, String profilePicture, Integer numberOfRoutes) {
         this.firstName = firstName;
         this.lastName = lastName;
         this.profilePicture = profilePicture;
+        this.numberOfRoutes = numberOfRoutes;
     }
 
     public String getFirstName() {
@@ -37,6 +41,10 @@ public class AccountInfo {
         return createdAt;
     }
 
+    public Integer getNumberOfRoutes() {
+        return numberOfRoutes;
+    }
+
     @Override
     public String toString() {
         return "AccountInfo{" +
@@ -44,6 +52,7 @@ public class AccountInfo {
                 ", lastName='" + lastName + '\'' +
                 ", profilePicture='" + profilePicture + '\'' +
                 ", createdAt=" + createdAt +
+                ", numberOfRoutes=" + numberOfRoutes +
                 '}';
     }
 }

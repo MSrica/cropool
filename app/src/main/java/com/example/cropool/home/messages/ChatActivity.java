@@ -14,6 +14,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.cropool.BuildConfig;
 import com.example.cropool.R;
+import com.example.cropool.home.HomeActivity;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -49,6 +50,10 @@ public class ChatActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_chat);
+
+        if (HomeActivity.getCurrentFBUser() != null) {
+            currentUserUID = HomeActivity.getCurrentFBUser().getUid();
+        }
 
         // Fetch conversation in question from intent extras
         conversation = getIntent().hasExtra(getResources().getString(R.string.CHAT_ACTIVITY_INTENT_CONVERSATION_NAME))
@@ -89,6 +94,22 @@ public class ChatActivity extends AppCompatActivity {
                     // Default createdConversationID is 0 (if no chats are created yet in the RTDB)
                     long createdConversationID = (snapshot.hasChild(getResources().getString(R.string.FB_RTDB_CHAT_TABLE_NAME))) ? snapshot.child(getResources().getString(R.string.FB_RTDB_CHAT_TABLE_NAME)).getChildrenCount() : 0L;
                     conversation.setConversationID(Long.toString(createdConversationID));
+
+                    // Insert conversationID to both user's conversations table
+                    databaseReference.child(getResources().getString(R.string.FB_RTDB_USER_TABLE_NAME)).child(conversation.getCurrentUserUID()).child(getResources().getString(R.string.FB_RTDB_CONVERSATIONS_KEY)).child(String.valueOf(createdConversationID)).setValue(getResources().getString(R.string.FB_RTDB_ACTIVE_CHAT_LABEL));
+                    databaseReference.child(getResources().getString(R.string.FB_RTDB_USER_TABLE_NAME)).child(conversation.getOtherUserUID()).child(getResources().getString(R.string.FB_RTDB_CONVERSATIONS_KEY)).child(String.valueOf(createdConversationID)).setValue(getResources().getString(R.string.FB_RTDB_ACTIVE_CHAT_LABEL));
+
+                    // Create chat record in chat table
+                    try {
+                        databaseReference.child(getResources().getString(R.string.FB_RTDB_CHAT_TABLE_NAME)).child(String.valueOf(createdConversationID)).child(getResources().getString(R.string.FB_RTDB_CHAT_USER_1_KEY)).setValue(Long.parseLong(conversation.getCurrentUserUID()));
+                        databaseReference.child(getResources().getString(R.string.FB_RTDB_CHAT_TABLE_NAME)).child(String.valueOf(createdConversationID)).child(getResources().getString(R.string.FB_RTDB_CHAT_USER_1_SEEN_AT_KEY)).setValue(System.currentTimeMillis());
+                        databaseReference.child(getResources().getString(R.string.FB_RTDB_CHAT_TABLE_NAME)).child(String.valueOf(createdConversationID)).child(getResources().getString(R.string.FB_RTDB_CHAT_USER_2_KEY)).setValue(Long.parseLong(conversation.getOtherUserUID()));
+                        databaseReference.child(getResources().getString(R.string.FB_RTDB_CHAT_TABLE_NAME)).child(String.valueOf(createdConversationID)).child(getResources().getString(R.string.FB_RTDB_CHAT_USER_1_SEEN_AT_KEY)).setValue(0L);
+                    } catch (Exception ex) {
+                        Log.e("initializingConvID", ex.getMessage());
+                        return;
+                    }
+
 
                     // conversationID is created and we can start the listener
                     startTextsListener();
@@ -175,11 +196,20 @@ public class ChatActivity extends AppCompatActivity {
 
                 // Initialization process (if needed)
                 if (!snapshot.hasChild(getResources().getString(R.string.FB_RTDB_CHAT_USER_1_KEY)) || !snapshot.hasChild(getResources().getString(R.string.FB_RTDB_CHAT_USER_2_KEY))) {
-                    // Conversation record in RTDB has none or one users - we initialize them (order is not important)
-                    databaseReference.child(getResources().getString(R.string.FB_RTDB_CHAT_TABLE_NAME)).child(conversation.getConversationID()).child(getResources().getString(R.string.FB_RTDB_CHAT_USER_1_KEY)).setValue(conversation.getCurrentUserUID());
-                    databaseReference.child(getResources().getString(R.string.FB_RTDB_CHAT_TABLE_NAME)).child(conversation.getConversationID()).child(getResources().getString(R.string.FB_RTDB_CHAT_USER_1_SEEN_AT_KEY)).setValue(currentTS);
-                    databaseReference.child(getResources().getString(R.string.FB_RTDB_CHAT_TABLE_NAME)).child(conversation.getConversationID()).child(getResources().getString(R.string.FB_RTDB_CHAT_USER_2_KEY)).setValue(conversation.getOtherUserUID());
-                    databaseReference.child(getResources().getString(R.string.FB_RTDB_CHAT_TABLE_NAME)).child(conversation.getConversationID()).child(getResources().getString(R.string.FB_RTDB_CHAT_USER_2_SEEN_AT_KEY)).setValue(0L);
+                    try {
+                        Long currentUserUID = Long.parseLong(conversation.getCurrentUserUID());
+                        Long otherUserUID = Long.parseLong(conversation.getOtherUserUID());
+
+                        // Conversation record in RTDB has none or one users - we initialize them (order is not important)
+                        databaseReference.child(getResources().getString(R.string.FB_RTDB_CHAT_TABLE_NAME)).child(conversation.getConversationID()).child(getResources().getString(R.string.FB_RTDB_CHAT_USER_1_KEY)).setValue(currentUserUID);
+                        databaseReference.child(getResources().getString(R.string.FB_RTDB_CHAT_TABLE_NAME)).child(conversation.getConversationID()).child(getResources().getString(R.string.FB_RTDB_CHAT_USER_1_SEEN_AT_KEY)).setValue(currentTS);
+                        databaseReference.child(getResources().getString(R.string.FB_RTDB_CHAT_TABLE_NAME)).child(conversation.getConversationID()).child(getResources().getString(R.string.FB_RTDB_CHAT_USER_2_KEY)).setValue(otherUserUID);
+                        databaseReference.child(getResources().getString(R.string.FB_RTDB_CHAT_TABLE_NAME)).child(conversation.getConversationID()).child(getResources().getString(R.string.FB_RTDB_CHAT_USER_2_SEEN_AT_KEY)).setValue(0L);
+                    } catch (Exception ex) {
+                        Log.e("sendText", ex.getMessage());
+                        return;
+                    }
+
                 }
 
 
@@ -292,7 +322,7 @@ public class ChatActivity extends AppCompatActivity {
         // In case there is already an updater running
         cancelRecurrentUpdateLastSeen();
 
-        if (interval < 0 || userID.isEmpty())
+        if (interval < 0 || userID == null || userID.isEmpty())
             return;
 
         // Update last_seen_at field in user table at some interval

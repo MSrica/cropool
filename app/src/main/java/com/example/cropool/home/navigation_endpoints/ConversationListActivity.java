@@ -240,8 +240,8 @@ public class ConversationListActivity extends AppCompatActivity implements Navig
                             lastTextSentByUID = dataSnapshot.child(getResources().getString(R.string.FB_RTDB_CHAT_SENT_BY_KEY)).getValue(Long.class);
                         }
 
-                        boolean someTextsUnseen = (lastTextSentByUID == null) || (!lastTextSentByUID.toString().equals(currentUser.getUid()) && currentUserSeenAt < lastTextTS);
-                        boolean sentByOtherUser = (lastTextSentByUID == null) || (!currentUser.getUid().equals(lastTextSentByUID.toString()));
+                        boolean someTextsUnseen = (lastTextSentByUID == null || currentUser == null || currentUserSeenAt == null) || !lastTextSentByUID.toString().equals(currentUser.getUid()) && currentUserSeenAt < lastTextTS;
+                        boolean sentByOtherUser = (lastTextSentByUID == null || currentUser == null) || (!currentUser.getUid().equals(lastTextSentByUID.toString()));
 
                         Conversation conversation = new Conversation(otherUserName, lastMessage, otherUserProfilePicture, sentByOtherUser, someTextsUnseen, lastTextTS, conversationID, currentUser.getUid(), otherUserUID);
                         conversationMap.put(conversationID, conversation);

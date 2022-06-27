@@ -59,7 +59,7 @@ public class PersonalDetailsFragment extends Fragment {
         if (!validateData(firstName, lastName))
             return;
 
-        AccountInfo updateInfo = new AccountInfo(Objects.requireNonNull(firstName.getTextInput().getText()).toString(), Objects.requireNonNull(lastName.getTextInput().getText()).toString(), null);
+        AccountInfo updateInfo = new AccountInfo(Objects.requireNonNull(firstName.getTextInput().getText()).toString(), Objects.requireNonNull(lastName.getTextInput().getText()).toString(), null, null);
 
         Retrofit retrofit = CropoolAPI.getRetrofit();
         CropoolAPI cropoolAPI = retrofit.create(CropoolAPI.class);

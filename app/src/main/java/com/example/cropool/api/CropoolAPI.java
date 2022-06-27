@@ -2,6 +2,8 @@ package com.example.cropool.api;
 
 import com.example.cropool.BuildConfig;
 
+import java.util.List;
+
 import retrofit2.Call;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
@@ -39,4 +41,31 @@ public interface CropoolAPI {
 
     @PATCH("logout")
     Call<Feedback> signOut(@Header("access_token") String accessToken);
+
+    @POST("addRoute")
+    Call<Feedback> addRoute(@Header("access_token") String accessToken, @Body AddRouteReq addRouteReq);
+
+    @POST("findRoute")
+    Call<FindRouteRes> findRoute(@Header("access_token") String accessToken, @Body FindRouteReq findRouteReq);
+
+    @POST("requestCheckpoint")
+    Call<Feedback> requestCheckpoint(@Header("access_token") String accessToken, @Body CheckpointReq checkpointReq);
+
+    @GET("myRoutes")
+    Call<FindRouteRes> myRoutes(@Header("access_token") String accessToken);
+
+    @GET("subscribedToRoutes")
+    Call<FindRouteRes> subscribedToRoutes(@Header("access_token") String accessToken);
+
+    @PATCH("unsubscribeCheckpoint")
+    Call<Feedback> unsubscribeCheckpoint(@Header("access_token") String accessToken, @Body CheckpointIDReq checkpointIDReq);
+
+    @PATCH("removeCheckpoint")
+    Call<Feedback> removeCheckpoint(@Header("access_token") String accessToken, @Body CheckpointIDReq checkpointIDReq);
+
+    @PATCH("acceptCheckpoint")
+    Call<Feedback> acceptCheckpoint(@Header("access_token") String accessToken, @Body CheckpointIDReq checkpointIDReq);
+
+    @POST("requestedCheckpoints")
+    Call<RequestedCheckpointsRes> requestedCheckpoints(@Header("access_token") String accessToken, @Body RouteIDReq routeIDReq);
 }

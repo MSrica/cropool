@@ -88,3 +88,5 @@ lint/tmp/
 .env
 
 /app/google-services.json
+
+apikeys.properties

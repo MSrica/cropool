@@ -3,6 +3,10 @@ plugins {
     id 'com.google.gms.google-services'
 }
 
+def apikeyPropertiesFile = rootProject.file("apikeys.properties")
+def apikeyProperties = new Properties()
+apikeyProperties.load(new FileInputStream(apikeyPropertiesFile))
+
 android {
     compileSdk 31
 
@@ -12,17 +16,18 @@ android {
         targetSdk 31
         versionCode 1
         versionName "1.0"
-
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+        manifestPlaceholders = [MAPS_API_KEY: apikeyProperties['MAPS_API_KEY']]
     }
 
     buildTypes {
         debug {
-            buildConfigField("String", "BASE_URL", "\"http://192.168.5.14:3001/\"")
+            buildConfigField("String", "BASE_URL", "\"http://192.168.5.15:3001/\"")
             buildConfigField("String", "FIREBASE_DB_URL", "\"https://cropool-chat-default-rtdb.europe-west1.firebasedatabase.app/\"")
             buildConfigField("String", "FIREBASE_RTDB_URL", "\"https://cropool-chat-default-rtdb.europe-west1.firebasedatabase.app/\"")
             buildConfigField("String", "FIREBASE_STORAGE_URL", "\"gs://cropool-chat.appspot.com\"")
             buildConfigField("String", "HELP_AND_SUPPORT_URL", "\"https://github.com/MSrica/cropool\"")
+            buildConfigField("String", "PLACES_API_KEY", apikeyProperties['PLACES_API_KEY'])
         }
         release {
             minifyEnabled false
@@ -31,6 +36,8 @@ android {
             buildConfigField("String", "FIREBASE_DB_URL", "\"https://cropool-chat-default-rtdb.europe-west1.firebasedatabase.app/\"")
             buildConfigField("String", "FIREBASE_RTDB_URL", "\"https://cropool-chat-default-rtdb.europe-west1.firebasedatabase.app/\"")
             buildConfigField("String", "HELP_AND_SUPPORT_URL", "\"https://github.com/MSrica/cropool\"")
+            buildConfigField("String", "PLACES_API_KEY", apikeyProperties['PLACES_API_KEY'])
+
         }
     }
     compileOptions {
@@ -40,6 +47,8 @@ android {
 }
 
 dependencies {
+
+    implementation 'com.google.android.gms:play-services-maps:18.0.2'
     implementation 'com.github.marlonlom:timeago:4.0.3'
     implementation 'com.google.firebase:firebase-storage:20.0.1'
     implementation platform('com.google.firebase:firebase-bom:30.1.0')
@@ -56,6 +65,7 @@ dependencies {
     implementation 'androidx.legacy:legacy-support-v4:1.0.0'
     implementation group: 'at.favre.lib', name: 'bcrypt', version: '0.9.0'
     implementation 'androidx.emoji2:emoji2-views:1.1.0'
+    implementation 'com.google.android.libraries.places:places:2.6.0'
     testImplementation 'junit:junit:4.13.2'
     androidTestImplementation 'androidx.test.ext:junit:1.1.3'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.4.0'

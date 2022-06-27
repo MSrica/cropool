@@ -1,6 +1,7 @@
 <resources xmlns:tools="http://schemas.android.com/tools">
     <!-- Base application theme. -->
     <style name="Theme.Cropool" parent="Theme.Material3.DayNight.NoActionBar">
+        <item name="textInputStyle">@style/MuiTextInputLayoutCustomColor</item>
         <!-- Primary brand color. -->
         <item name="colorPrimary">@color/cropool_blue</item>
         <item name="colorPrimaryVariant">@color/cropool_dark_blue</item>
