@@ -410,7 +410,7 @@ public class MyAccountFragment extends Fragment {
 
     // Updates uploads the uploaded profile picture
     private void updateProfilePicture(String pictureURL, boolean refreshIfNeeded) {
-        AccountInfo updateInfo = new AccountInfo(null, null, pictureURL);
+        AccountInfo updateInfo = new AccountInfo(null, null, pictureURL, null);
 
         Retrofit retrofit = CropoolAPI.getRetrofit();
         CropoolAPI cropoolAPI = retrofit.create(CropoolAPI.class);
@@ -519,15 +519,19 @@ public class MyAccountFragment extends Fragment {
                     return;
                 }
 
-                if (response.code() == 201) {   // User info downloaded
+                if (response.code() == 200) {   // User info downloaded
                     String displayName = accountInfo.getFirstName() + " " + accountInfo.getLastName() + "!";
                     name.setText(displayName);
 
                     if (!accountInfo.getProfilePicture().equals(requireContext().getResources().getString(R.string.FB_RTDB_DEFAULT_PICTURE_VALUE)))
                         Picasso.get().load(accountInfo.getProfilePicture()).into(profilePicture);
 
+                    String routesQtyText = "" + accountInfo.getNumberOfRoutes();
+                    routesQty.setText(routesQtyText);
+
                     // We don't want it to say '1 year ago' but '1 year'
                     String membershipTime = TimeAgo.using(accountInfo.getCreatedAt() * 1000L).replace(" ago", "");
+                    membershipTime = membershipTime.substring(0, 1).toUpperCase() + membershipTime.substring(1);
                     membership.setText(membershipTime);
                 } else {
                     Toast.makeText(getContext(), "Sorry, there was an error.", Toast.LENGTH_LONG).show();

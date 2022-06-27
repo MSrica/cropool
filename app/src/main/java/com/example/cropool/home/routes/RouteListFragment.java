@@ -73,6 +73,10 @@ public class RouteListFragment extends Fragment {
         TextView title = view.findViewById(R.id.route_list_title);
         title.setText(fragmentTitle);
 
+        if (routeListParcelable == null){
+            return view;
+        }
+
         routeListRecyclerView = view.findViewById(R.id.route_list_recycler_view);
         routeListRecyclerView.setHasFixedSize(false);
         routeListRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));

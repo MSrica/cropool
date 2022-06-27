@@ -18,6 +18,7 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.FragmentActivity;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.example.cropool.BuildConfig;
 import com.example.cropool.R;
 import com.example.cropool.api.CheckpointIDReq;
 import com.example.cropool.api.CheckpointReq;
@@ -29,10 +30,17 @@ import com.example.cropool.api.Route;
 import com.example.cropool.api.RouteIDReq;
 import com.example.cropool.api.Tokens;
 import com.example.cropool.home.HomeActivity;
+import com.example.cropool.home.messages.ChatActivity;
+import com.example.cropool.home.messages.Conversation;
 import com.example.cropool.home.subscription_requests.SubscriptionRequestListDialogFragment;
 import com.example.cropool.home.subscription_requests.SubscriptionRequestListParcelable;
 import com.google.android.material.button.MaterialButton;
 import com.google.android.material.card.MaterialCardView;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 import com.squareup.picasso.Picasso;
 
 import org.jetbrains.annotations.NotNull;
@@ -51,7 +59,7 @@ public class RoutesAdapter extends RecyclerView.Adapter<RoutesAdapter.MyViewHold
 
     private static final int REPETITION_DAILY = 1;
     private static final int REPETITION_MONTHLY = 2;
-
+    private final DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReferenceFromUrl(BuildConfig.FIREBASE_RTDB_URL);
     private final List<Route> routes;
     private final Context context;
     private final FragmentActivity activity;
@@ -131,7 +139,17 @@ public class RoutesAdapter extends RecyclerView.Adapter<RoutesAdapter.MyViewHold
         // Set driver picture, onclick (chat) and onlongclick (show name)
         Picasso.get().load(route.getOwnerProfilePicture()).into(holder.routeDriver);
         holder.routeDriver.setOnClickListener(v -> {
-            Toast.makeText(context, "Start chat to " + route.getOwnerID(), Toast.LENGTH_LONG).show();
+            if (routesType.equals(RouteType.MY)) {
+                // Current user is the driver - he shouldn't talk to himself (I guess...)
+                return;
+            }
+
+            if (HomeActivity.getCurrentFBUser() == null) {
+                Toast.makeText(context, "Please sign in again.", Toast.LENGTH_SHORT).show();
+                return;
+            }
+
+            startChat(route.getOwnerFirstName() + " " + route.getOwnerLastName(), route.getOwnerProfilePicture(), HomeActivity.getCurrentFBUser().getUid(), route.getOwnerID());
         });
         holder.routeDriver.setOnLongClickListener(v -> {
             Toast.makeText(context, route.getOwnerFirstName() + " " + route.getOwnerLastName(), Toast.LENGTH_LONG).show();
@@ -174,6 +192,41 @@ public class RoutesAdapter extends RecyclerView.Adapter<RoutesAdapter.MyViewHold
             holder.routeAction1.setText(context.getResources().getString(R.string.subscribe));
             holder.routeAction1.setOnClickListener(v -> subscribeToRoute(route, true));
         }
+    }
+
+    // Checking whether the chat between currentUserUID and otherUserUID exists and acting accordingly
+    private void startChat(String name, String profilePicture, String currentUserUID, String otherUserUID) {
+        if (currentUserUID == null || otherUserUID == null || currentUserUID.equals(otherUserUID)){
+            return;
+        }
+
+        databaseReference.child(context.getResources().getString(R.string.FB_RTDB_CHAT_TABLE_NAME)).addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                String conversationID = "";
+                for (DataSnapshot dataSnapshot : snapshot.getChildren()) {
+                    Long user1UID = dataSnapshot.hasChild(context.getResources().getString(R.string.FB_RTDB_CHAT_USER_1_KEY)) ? dataSnapshot.child(context.getResources().getString(R.string.FB_RTDB_CHAT_USER_1_KEY)).getValue(Long.class) : null;
+                    Long user2UID = dataSnapshot.hasChild(context.getResources().getString(R.string.FB_RTDB_CHAT_USER_2_KEY)) ? dataSnapshot.child(context.getResources().getString(R.string.FB_RTDB_CHAT_USER_2_KEY)).getValue(Long.class) : null;
+
+                    if (user1UID != null && user2UID != null && ((user1UID.toString().equals(currentUserUID) && user2UID.toString().equals(otherUserUID)) || (user1UID.toString().equals(otherUserUID) && user2UID.toString().equals(currentUserUID)))) {
+                        // conversationID for selected user combination already exists
+                        conversationID = dataSnapshot.getKey();
+                        break;
+                    }
+                }
+
+                Conversation conversation = new Conversation(name, null, profilePicture, false, false, null, conversationID, currentUserUID, otherUserUID);
+
+                Intent goToChat = new Intent(context, ChatActivity.class);
+                goToChat.putExtra(context.getResources().getString(R.string.CHAT_ACTIVITY_INTENT_CONVERSATION_NAME), conversation);
+                activity.startActivity(goToChat);
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+
+            }
+        });
     }
 
     // Retrieves requested checkpoints for a route
@@ -521,7 +574,12 @@ public class RoutesAdapter extends RecyclerView.Adapter<RoutesAdapter.MyViewHold
             passengerView.setLayoutParams(params);
 
             passengerView.setOnClickListener(v -> {
-                Toast.makeText(context, "Start chat to " + passenger.getId(), Toast.LENGTH_SHORT).show();
+                if (HomeActivity.getCurrentFBUser() == null) {
+                    Toast.makeText(context, "Please sign in again.", Toast.LENGTH_SHORT).show();
+                    return;
+                }
+
+                startChat(passenger.getFirstName() + " " + passenger.getLastName(), passenger.getProfilePicture(), HomeActivity.getCurrentFBUser().getUid(), passenger.getId());
             });
 
             passengerView.setOnLongClickListener(v -> {
