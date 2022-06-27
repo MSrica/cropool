@@ -59,7 +59,7 @@ public class ChatActivity extends AppCompatActivity {
         conversation = getIntent().hasExtra(getResources().getString(R.string.CHAT_ACTIVITY_INTENT_CONVERSATION_NAME))
                 ? getIntent().getParcelableExtra(getResources().getString(R.string.CHAT_ACTIVITY_INTENT_CONVERSATION_NAME))
                 : new Conversation(getResources().getString(R.string.name_surname), getResources().getString(R.string.message_content), getResources().getString(R.string.FB_RTDB_DEFAULT_PICTURE_VALUE), false, false, 0L, "-1", "-1", "-1");
-        Toast.makeText(getApplicationContext(), conversation.getCurrentUserUID() + ", " + conversation.getOtherUserUID(), Toast.LENGTH_LONG).show();
+
         ImageView backButton = findViewById(R.id.back);
         ImageView sendButton = findViewById(R.id.send);
         TextView name = findViewById(R.id.chat_name);

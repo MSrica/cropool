@@ -3,6 +3,8 @@ package com.example.cropool.home.subscription_requests;
 import android.app.Activity;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.location.Address;
+import android.location.Geocoder;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -26,7 +28,9 @@ import com.squareup.picasso.Picasso;
 
 import org.jetbrains.annotations.NotNull;
 
+import java.io.IOException;
 import java.util.List;
+import java.util.Locale;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 import retrofit2.Call;
@@ -75,13 +79,29 @@ public class SubscriptionRequestsAdapter extends RecyclerView.Adapter<Subscripti
     public void onBindViewHolder(@NonNull SubscriptionRequestsAdapter.MyViewHolder holder, int position) {
         SubscriptionRequest subscriptionRequest = subscriptionRequests.get(position);
 
-        if(subscriptionRequest.getProfilePicture() != null && !subscriptionRequest.getProfilePicture().equals(context.getResources().getString(R.string.FB_RTDB_DEFAULT_PICTURE_VALUE)))
+        if(context != null && subscriptionRequest.getProfilePicture() != null && !subscriptionRequest.getProfilePicture().equals(context.getResources().getString(R.string.FB_RTDB_DEFAULT_PICTURE_VALUE)))
             Picasso.get().load(subscriptionRequest.getProfilePicture()).into(holder.profilePicture);
 
         String nameText = subscriptionRequest.getFirstName() + " " + subscriptionRequest.getLastName();
         holder.name.setText(nameText);
 
-        String fromTo = subscriptionRequest.getStartLatLng() + " " + subscriptionRequest.getFinishLatLng();
+        String fromTo = "From: " + subscriptionRequest.getStartLatLng() + "\nTo: " + subscriptionRequest.getFinishLatLng();
+        if(context != null && subscriptionRequest.getStartLatLng() != null && subscriptionRequest.getFinishLatLng() != null){
+            Geocoder geocoder = new Geocoder(context, Locale.getDefault());
+
+            String[] pos1 = subscriptionRequest.getStartLatLng().split(",");
+            String[] pos2 = subscriptionRequest.getFinishLatLng().split(",");
+
+            if(pos1.length == 2 || pos2.length == 2) {
+                try {
+                    List<Address> addresses1 = geocoder.getFromLocation(Double.parseDouble(pos1[0]), Double.parseDouble(pos1[1]), 1);
+                    List<Address> addresses2 = geocoder.getFromLocation(Double.parseDouble(pos2[0]), Double.parseDouble(pos2[1]), 1);
+                    fromTo = "From: " + addresses1.get(0).getAddressLine(0) + "\nTo: " + addresses2.get(0).getAddressLine(0);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+        }
         holder.description.setText(fromTo);
 
         holder.accept.setOnClickListener(v -> {
@@ -94,7 +114,7 @@ public class SubscriptionRequestsAdapter extends RecyclerView.Adapter<Subscripti
 
             // Manage unsubscribing via AlertDialog
             AlertDialog.Builder builder = new AlertDialog.Builder(context);
-            builder.setMessage(context.getResources().getString(R.string.REMOVE_SUBSCRIPTION))
+            builder.setMessage(context.getResources().getString(R.string.DECLINE_SUBSCRIPTION))
                     .setPositiveButton(context.getResources().getString(R.string.YES), removeExistingRequestedSubscriptionListener)
                     .setNegativeButton(context.getResources().getString(R.string.NO), removeExistingRequestedSubscriptionListener)
                     .show();
@@ -143,13 +163,13 @@ public class SubscriptionRequestsAdapter extends RecyclerView.Adapter<Subscripti
                 Feedback feedback = response.body();
 
                 if (response.code() == 200) {   // Unsubscribed
-                    Toast.makeText(context, (feedback != null) ? feedback.getFeedback() : "Successfully removed.", Toast.LENGTH_LONG).show();
+                    Toast.makeText(context, (feedback != null) ? feedback.getFeedback() : "Successfully declined.", Toast.LENGTH_LONG).show();
 
                     // Hide the route we unsubscribed from
                     if (viewToRemove != null)
                         viewToRemove.setVisibility(View.GONE);
                 } else {
-                    Toast.makeText(context, "Sorry, couldn't remove.", Toast.LENGTH_LONG).show();
+                    Toast.makeText(context, "Sorry, couldn't decline.", Toast.LENGTH_LONG).show();
                 }
             }
 

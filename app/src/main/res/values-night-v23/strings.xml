@@ -142,4 +142,5 @@
     <string name="UNSUBSCRIBE_CONFIRM">Are you sure you want to unsubscribe?</string>
     <string name="REMOVE_SUBSCRIPTION">Are you sure you want to remove this passenger\'s subscription?</string>
     <string name="from_rijeka_to_zagreb">From Rijeka to Zagreb</string>
+    <string name="DECLINE_SUBSCRIPTION">Are you sure you want to decline this request?</string>
 </resources>
