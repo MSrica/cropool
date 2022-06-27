@@ -57,11 +57,10 @@ public class FindRouteFragment extends Fragment {
     private LatLng startLatLng = null, finishLatLng = null;
     private InputElement startLocation, finishLocation;
     private Slider price, dayOfMonth, tolerance;
-    private ChipGroup repetitionModeChipGroup, startDayChipGroup;
+    private ChipGroup startDayChipGroup;
     private TextView startDayLabel, startTimeLabel, dayOfMonthLabel, toleranceLabel;
     private TimePicker startTime;
     private ActivityResultLauncher<Intent> placesAutocomplete;
-    private Button findRouteButton;
 
     // Repetition mode that'll be sent to API
     private Integer repetitionMode = null;
@@ -82,7 +81,7 @@ public class FindRouteFragment extends Fragment {
         startLocation = new InputElement(view.findViewById(R.id.find_a_route_start_location_layout), view.findViewById(R.id.find_a_route_start_location));
         finishLocation = new InputElement(view.findViewById(R.id.find_a_route_finish_location_layout), view.findViewById(R.id.find_a_route_finish_location));
         price = view.findViewById(R.id.find_a_route_max_price_per_km);
-        repetitionModeChipGroup = view.findViewById(R.id.find_a_route_repetition_mode_chip_group);
+        ChipGroup repetitionModeChipGroup = view.findViewById(R.id.find_a_route_repetition_mode_chip_group);
         startDayLabel = view.findViewById(R.id.find_a_route_start_day_label);
         startDayChipGroup = view.findViewById(R.id.find_a_route_start_day_chip_group);
         dayOfMonthLabel = view.findViewById(R.id.find_a_route_start_day_of_month_label);
@@ -91,7 +90,7 @@ public class FindRouteFragment extends Fragment {
         startTime = view.findViewById(R.id.find_a_route_start_time_picker);
         toleranceLabel = view.findViewById(R.id.find_a_route_time_tolerance_label);
         tolerance = view.findViewById(R.id.find_a_route_time_tolerance);
-        findRouteButton = view.findViewById(R.id.find_a_route_button);
+        Button findRouteButton = view.findViewById(R.id.find_a_route_button);
 
         startTime.setIs24HourView(true);
 
@@ -115,7 +114,8 @@ public class FindRouteFragment extends Fragment {
                             finishLocation.getInputLayout().setEnabled(true);
                         }
                     } else if (result.getResultCode() != Activity.RESULT_CANCELED) {
-                        Toast.makeText(getContext(), "Place decoding error.", Toast.LENGTH_LONG).show();
+                        if (getContext() != null)
+                            Toast.makeText(getContext(), "Place decoding error.", Toast.LENGTH_LONG).show();
                     }
 
                     // Re-enable location inputs
@@ -225,7 +225,8 @@ public class FindRouteFragment extends Fragment {
         }
 
         if (HomeActivity.getCurrentFBUser() == null) {
-            Toast.makeText(getContext(), "There was an error, please sign in again.", Toast.LENGTH_LONG).show();
+            if (getContext() != null)
+                Toast.makeText(getContext(), "There was an error, please sign in again.", Toast.LENGTH_LONG).show();
             return;
         }
 
@@ -255,10 +256,12 @@ public class FindRouteFragment extends Fragment {
                                 return null;
                             });
                         } else {
-                            Toast.makeText(getContext(), "Sorry, there was an error. " + response.code(), Toast.LENGTH_LONG).show();
+                            if (getContext() != null)
+                                Toast.makeText(getContext(), "Sorry, there was an error. " + response.code(), Toast.LENGTH_LONG).show();
                         }
                     } else {
-                        Toast.makeText(getContext(), "Sorry, there was an error. " + response.code(), Toast.LENGTH_LONG).show();
+                        if (getContext() != null)
+                            Toast.makeText(getContext(), "Sorry, there was an error. " + response.code(), Toast.LENGTH_LONG).show();
                     }
 
                     return;
@@ -266,17 +269,19 @@ public class FindRouteFragment extends Fragment {
 
                 FindRouteRes findRouteRes = response.body();
 
-                if (response.code() == 200 && findRouteRes != null && findRouteRes.getResultingRoutes().size() > 0) {   // Filtered routeItems received
+                if (response.code() == 200 && findRouteRes != null && findRouteRes.getResultingRoutes().size() > 0) {   // Filtered routes received
                     RouteListParcelable routeListParcelable = new RouteListParcelable(findRouteRes.getResultingRoutes(), RouteType.FOUND);
                     requireActivity().getSupportFragmentManager().beginTransaction().replace(R.id.home_activity_fragment_container, RouteListFragment.newInstance(routeListParcelable, "Found routes", startLatLng.latitude + "," + startLatLng.longitude, finishLatLng.latitude + "," + finishLatLng.longitude)).commit();
                 } else {
-                    Toast.makeText(getContext(), "Sorry, no appropriate routeItems were found.", Toast.LENGTH_LONG).show();
+                    if (getContext() != null)
+                        Toast.makeText(getContext(), "Sorry, no appropriate routes were found.", Toast.LENGTH_LONG).show();
                 }
             }
 
             @Override
             public void onFailure(@NotNull Call<FindRouteRes> call, @NotNull Throwable t) {
-                Toast.makeText(getContext(), "Sorry, there was an error.", Toast.LENGTH_LONG).show();
+                if (getContext() != null)
+                    Toast.makeText(getContext(), "Sorry, there was an error.", Toast.LENGTH_LONG).show();
 
                 Log.e("/findRoute", "onFailure: Something went wrong. " + t.getMessage());
             }
@@ -309,7 +314,8 @@ public class FindRouteFragment extends Fragment {
         if (price == null || price.getValue() < 0) {
             // Price is not set
             isValid = false;
-            Toast.makeText(getContext(), "Please set a valid maximum price.", Toast.LENGTH_LONG).show();
+            if (getContext() != null)
+                Toast.makeText(getContext(), "Please set a valid maximum price.", Toast.LENGTH_LONG).show();
         }
 
         if (customRepetition != null && customRepetition) {
@@ -321,14 +327,16 @@ public class FindRouteFragment extends Fragment {
         if (repetitionMode == null || repetitionMode <= 0) {
             // Repetition mode is not set
             isValid = false;
-            Toast.makeText(getContext(), "Please choose a valid repetition mode.", Toast.LENGTH_LONG).show();
+            if (getContext() != null)
+                Toast.makeText(getContext(), "Please choose a valid repetition mode.", Toast.LENGTH_LONG).show();
         } else if (repetitionMode == REPETITION_MONTHLY) {
             // Day of month has to be set
 
             if (dayOfMonth == null || dayOfMonth.getValue() <= 0 || dayOfMonth.getValue() >= 32) {
                 // Day of month is not set or not correctly set
                 isValid = false;
-                Toast.makeText(getContext(), "Please set a valid starting day of month.", Toast.LENGTH_LONG).show();
+                if (getContext() != null)
+                    Toast.makeText(getContext(), "Please set a valid starting day of month.", Toast.LENGTH_LONG).show();
             }
         }
 
@@ -338,13 +346,15 @@ public class FindRouteFragment extends Fragment {
         if (startTime == null) {
             // Starting time is not set
             isValid = false;
-            Toast.makeText(getContext(), "Please set a valid starting time.", Toast.LENGTH_LONG).show();
+            if (getContext() != null)
+                Toast.makeText(getContext(), "Please set a valid starting time.", Toast.LENGTH_LONG).show();
         }
 
         if (tolerance == null) {
             // Tolerance time is not set
             isValid = false;
-            Toast.makeText(getContext(), "Please set a valid starting time tolerance.", Toast.LENGTH_LONG).show();
+            if (getContext() != null)
+                Toast.makeText(getContext(), "Please set a valid starting time tolerance.", Toast.LENGTH_LONG).show();
         }
 
         return isValid;

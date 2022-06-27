@@ -6,10 +6,10 @@ import java.util.ArrayList;
 
 public class FindRouteRes {
     @SerializedName("result")
-    private ArrayList<Route> resultingRoutes;
+    private final ArrayList<Route> resultingRoutes;
 
     @SerializedName("feedback")
-    private String feedback;
+    private final String feedback;
 
     public FindRouteRes(ArrayList<Route> resultingRoutes, String feedback) {
         this.resultingRoutes = resultingRoutes;

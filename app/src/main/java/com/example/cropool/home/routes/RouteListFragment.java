@@ -5,7 +5,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -26,20 +25,18 @@ public class RouteListFragment extends Fragment {
     private static final String ARG_START_LATLNG = "STARTLATLNG";
     private static final String ARG_FINISH_LATLNG = "FINISHLATLNG";
 
-    // Parameters - routeItems being visualized and fragment title
+    // Parameters - routes being visualized and fragment title
     private RouteListParcelable routeListParcelable;
     private String fragmentTitle, startLatLng, finishLatLng;
-
-    private RecyclerView routeListRecyclerView;
 
     /**
      * Use this factory method to create a new instance of
      * this fragment using the provided parameters.
      *
      * @param downloadedRouteList Routes list wrapped to RouteListParcelable object.
-     * @param title Fragment title.
-     * @param startLatLng Start location for FINDROUTE, null otherwise.
-     * @param finishLatLng Finish location for FINDROUTE, null otherwise.
+     * @param title               Fragment title.
+     * @param startLatLng         Start location for FINDROUTE, null otherwise.
+     * @param finishLatLng        Finish location for FINDROUTE, null otherwise.
      * @return A new instance of fragment RouteListFragment.
      */
     public static RouteListFragment newInstance(RouteListParcelable downloadedRouteList, String title, String startLatLng, String finishLatLng) {
@@ -73,17 +70,16 @@ public class RouteListFragment extends Fragment {
         TextView title = view.findViewById(R.id.route_list_title);
         title.setText(fragmentTitle);
 
-        if (routeListParcelable == null){
+        if (routeListParcelable == null) {
             return view;
         }
 
-        routeListRecyclerView = view.findViewById(R.id.route_list_recycler_view);
+        RecyclerView routeListRecyclerView = view.findViewById(R.id.route_list_recycler_view);
         routeListRecyclerView.setHasFixedSize(false);
         routeListRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
-        if(routeListParcelable.getRoutesType().equals(RouteType.FOUND)) {
+        if (routeListParcelable.getRoutesType().equals(RouteType.FOUND)) {
             routeListRecyclerView.setAdapter(new RoutesAdapter(routeListParcelable.getRoutes(), requireContext(), requireActivity(), routeListParcelable.getRoutesType(), startLatLng, finishLatLng));
-        }
-        else {
+        } else {
             routeListRecyclerView.setAdapter(new RoutesAdapter(routeListParcelable.getRoutes(), requireContext(), requireActivity(), routeListParcelable.getRoutesType()));
         }
 

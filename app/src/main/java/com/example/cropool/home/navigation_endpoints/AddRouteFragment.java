@@ -113,7 +113,8 @@ public class AddRouteFragment extends Fragment {
                             finishLocation.getInputLayout().setEnabled(true);
                         }
                     } else if (result.getResultCode() != Activity.RESULT_CANCELED) {
-                        Toast.makeText(getContext(), "Place decoding error.", Toast.LENGTH_LONG).show();
+                        if (getContext() != null)
+                            Toast.makeText(getContext(), "Place decoding error.", Toast.LENGTH_LONG).show();
                     }
 
                     // Re-enable location inputs
@@ -219,7 +220,8 @@ public class AddRouteFragment extends Fragment {
 
     private void addRoute(boolean refreshIfNeeded) {
         if (!validateData() || HomeActivity.getCurrentFBUser() == null) {
-            Toast.makeText(getContext(), "Route couldn't be added. Please check your input.", Toast.LENGTH_LONG).show();
+            if (getContext() != null)
+                Toast.makeText(getContext(), "Route couldn't be added. Please check your input.", Toast.LENGTH_LONG).show();
             return;
         }
 
@@ -249,10 +251,12 @@ public class AddRouteFragment extends Fragment {
                                 return null;
                             });
                         } else {
-                            Toast.makeText(getContext(), "Sorry, there was an error. " + response.code(), Toast.LENGTH_LONG).show();
+                            if (getContext() != null)
+                                Toast.makeText(getContext(), "Sorry, there was an error. " + response.code(), Toast.LENGTH_LONG).show();
                         }
                     } else {
-                        Toast.makeText(getContext(), "Sorry, there was an error. " + response.code(), Toast.LENGTH_LONG).show();
+                        if (getContext() != null)
+                            Toast.makeText(getContext(), "Sorry, there was an error. " + response.code(), Toast.LENGTH_LONG).show();
                     }
 
                     return;
@@ -261,19 +265,22 @@ public class AddRouteFragment extends Fragment {
                 Feedback feedback = response.body();
 
                 if (response.code() == 201) {   // Route inserted
-                    Toast.makeText(getContext(), (feedback != null) ? feedback.getFeedback() : "Route created.", Toast.LENGTH_LONG).show();
+                    if (getContext() != null)
+                        Toast.makeText(getContext(), (feedback != null) ? feedback.getFeedback() : "Route created.", Toast.LENGTH_LONG).show();
 
                     // Go back to find route fragment (can't replace fragment because of navigation bar)
                     requireActivity().startActivity(new Intent(getContext(), HomeActivity.class));
                     requireActivity().finish();
                 } else {
-                    Toast.makeText(getContext(), "Sorry, there was an error.", Toast.LENGTH_LONG).show();
+                    if (getContext() != null)
+                        Toast.makeText(getContext(), "Sorry, there was an error.", Toast.LENGTH_LONG).show();
                 }
             }
 
             @Override
             public void onFailure(@NotNull Call<Feedback> call, @NotNull Throwable t) {
-                Toast.makeText(getContext(), "Sorry, there was an error.", Toast.LENGTH_LONG).show();
+                if (getContext() != null)
+                    Toast.makeText(getContext(), "Sorry, there was an error.", Toast.LENGTH_LONG).show();
 
                 Log.e("/addRoute", "onFailure: Something went wrong. " + t.getMessage());
             }
@@ -313,13 +320,15 @@ public class AddRouteFragment extends Fragment {
         if (passengerNum == null || passengerNum.getValue() <= 0) {
             // Number of passengers is not set
             isValid = false;
-            Toast.makeText(getContext(), "Please set a valid number of passengers.", Toast.LENGTH_LONG).show();
+            if (getContext() != null)
+                Toast.makeText(getContext(), "Please set a valid number of passengers.", Toast.LENGTH_LONG).show();
         }
 
         if (price == null || price.getValue() < 0) {
             // Price is not set
             isValid = false;
-            Toast.makeText(getContext(), "Please set a valid price.", Toast.LENGTH_LONG).show();
+            if (getContext() != null)
+                Toast.makeText(getContext(), "Please set a valid price.", Toast.LENGTH_LONG).show();
         }
 
         if (customRepetition != null && customRepetition) {
@@ -339,14 +348,16 @@ public class AddRouteFragment extends Fragment {
         if (repetitionMode == null || repetitionMode <= 0) {
             // Repetition mode is not set
             isValid = false;
-            Toast.makeText(getContext(), "Please choose a valid repetition mode.", Toast.LENGTH_LONG).show();
+            if (getContext() != null)
+                Toast.makeText(getContext(), "Please choose a valid repetition mode.", Toast.LENGTH_LONG).show();
         } else if (repetitionMode == REPETITION_MONTHLY) {
             // Day of month has to be set
 
             if (dayOfMonth == null || dayOfMonth.getValue() <= 0 || dayOfMonth.getValue() >= 32) {
                 // Day of month is not set or not correctly set
                 isValid = false;
-                Toast.makeText(getContext(), "Please set a valid starting day of month.", Toast.LENGTH_LONG).show();
+                if (getContext() != null)
+                    Toast.makeText(getContext(), "Please set a valid starting day of month.", Toast.LENGTH_LONG).show();
             }
         }
 
@@ -356,7 +367,8 @@ public class AddRouteFragment extends Fragment {
         if (startTime == null) {
             // Starting time is not set
             isValid = false;
-            Toast.makeText(getContext(), "Please set a valid starting time.", Toast.LENGTH_LONG).show();
+            if (getContext() != null)
+                Toast.makeText(getContext(), "Please set a valid starting time.", Toast.LENGTH_LONG).show();
         }
 
         return isValid;

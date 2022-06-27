@@ -4,22 +4,22 @@ import com.google.gson.annotations.SerializedName;
 
 public class SubscriptionRequest {
     @SerializedName("idcheckpoint")
-    private String checkpointID;
+    private final String checkpointID;
 
     @SerializedName("first_name")
-    private String  firstName;
+    private final String firstName;
 
     @SerializedName("last_name")
-    private String  lastName;
+    private final String lastName;
 
     @SerializedName("profile_picture")
-    private String  profilePicture;
+    private final String profilePicture;
 
     @SerializedName("pickup_latlng")
-    private String  startLatLng;
+    private final String startLatLng;
 
     @SerializedName("dropoff_latlng")
-    private String  finishLatLng;
+    private final String finishLatLng;
 
     public SubscriptionRequest(String checkpointID, String firstName, String lastName, String profilePicture, String startLatLng, String finishLatLng) {
         this.checkpointID = checkpointID;

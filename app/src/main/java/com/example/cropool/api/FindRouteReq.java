@@ -4,37 +4,37 @@ import com.google.gson.annotations.SerializedName;
 
 public class FindRouteReq {
     @SerializedName("pickup_latlng")
-    private String pickupLatLng;
+    private final String pickupLatLng;
 
     @SerializedName("dropoff_latlng")
-    private String dropoffLatLng;
+    private final String dropoffLatLng;
 
     @SerializedName("max_price_per_km")
-    private Double maxPricePerKm;
+    private final Double maxPricePerKm;
 
     @SerializedName("custom_repetition")
-    private Boolean customRepetition;
+    private final Boolean customRepetition;
 
     @SerializedName("repetition_mode")
-    private Integer repetitionMode;
+    private final Integer repetitionMode;
 
     @SerializedName("start_month")
-    private Integer startMonth;
+    private final Integer startMonth;
 
     @SerializedName("start_day_of_month")
-    private Integer startDayOfMonth;
+    private final Integer startDayOfMonth;
 
     @SerializedName("start_day_of_week")
-    private Integer startDayOfWeek;
+    private final Integer startDayOfWeek;
 
     @SerializedName("start_hour_of_day")
-    private Integer startHourOfDay;
+    private final Integer startHourOfDay;
 
     @SerializedName("start_minute_of_hour")
-    private Integer startMinuteOfHour;
+    private final Integer startMinuteOfHour;
 
     @SerializedName("pickup_timestamp_tolerance")
-    private Integer pickupSecondsTolerance;
+    private final Integer pickupSecondsTolerance;
 
     public FindRouteReq(String pickupLatLng, String dropoffLatLng, Double maxPricePerKm, Boolean customRepetition, Integer repetitionMode, Integer startMonth, Integer startDayOfMonth, Integer startDayOfWeek, Integer startHourOfDay, Integer startMinuteOfHour, Integer pickupSecondsTolerance) {
         this.pickupLatLng = pickupLatLng;

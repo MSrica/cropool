@@ -80,16 +80,18 @@ public class PersonalDetailsFragment extends Fragment {
 
                         // Try to refresh tokens using refresh tokens and re-run updateUserData() if refreshing is successful
                         // Set refreshIfNeeded to false - we don't want to refresh tokens infinitely if that's not the problem
-                        if(refreshIfNeeded) {
+                        if (refreshIfNeeded) {
                             Tokens.refreshTokensOnServer(requireActivity(), requireContext(), () -> {
                                 updateName(firstName, lastName, false);
                                 return null;
                             });
                         } else {
-                            Toast.makeText(getContext(), "Sorry, there was an error. " + response.code(), Toast.LENGTH_LONG).show();
+                            if (getContext() != null)
+                                Toast.makeText(getContext(), "Sorry, there was an error. " + response.code(), Toast.LENGTH_LONG).show();
                         }
                     } else {
-                        Toast.makeText(getContext(), "Sorry, there was an error. " + response.code(), Toast.LENGTH_LONG).show();
+                        if (getContext() != null)
+                            Toast.makeText(getContext(), "Sorry, there was an error. " + response.code(), Toast.LENGTH_LONG).show();
                     }
 
                     return;
@@ -98,16 +100,19 @@ public class PersonalDetailsFragment extends Fragment {
                 Feedback feedback = response.body();
 
                 if (response.code() == 201) {   // User info updated
-                    Toast.makeText(getContext(), (feedback != null) ? feedback.getFeedback() : "User info updated.", Toast.LENGTH_LONG).show();
+                    if (getContext() != null)
+                        Toast.makeText(getContext(), (feedback != null) ? feedback.getFeedback() : "User info updated.", Toast.LENGTH_LONG).show();
                     requireActivity().getSupportFragmentManager().beginTransaction().add(R.id.home_activity_fragment_container, new MyAccountFragment()).addToBackStack(null).commit();
                 } else {
-                    Toast.makeText(getContext(), "Sorry, there was an error.", Toast.LENGTH_LONG).show();
+                    if (getContext() != null)
+                        Toast.makeText(getContext(), "Sorry, there was an error.", Toast.LENGTH_LONG).show();
                 }
             }
 
             @Override
             public void onFailure(@NotNull Call<Feedback> call, @NotNull Throwable t) {
-                Toast.makeText(getContext(), "Sorry, there was an error.", Toast.LENGTH_LONG).show();
+                if (getContext() != null)
+                    Toast.makeText(getContext(), "Sorry, there was an error.", Toast.LENGTH_LONG).show();
 
                 Log.e("/updateInfo", "onFailure: Something went wrong. " + t.getMessage());
             }

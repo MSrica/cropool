@@ -116,11 +116,13 @@ public class ChangePasswordFragment extends Fragment {
                             });
                         } else {
                             // We already refreshed the tokens so the credentials are invalid
-                            Toast.makeText(getContext(), getResources().getString(R.string.FEEDBACK_CREDS_INVALID), Toast.LENGTH_SHORT).show();
+                            if (getContext() != null)
+                                Toast.makeText(getContext(), getResources().getString(R.string.FEEDBACK_CREDS_INVALID), Toast.LENGTH_SHORT).show();
                             return;
                         }
                     } else {
-                        Toast.makeText(getContext(), "Sorry, there was an error. " + response.code(), Toast.LENGTH_LONG).show();
+                        if (getContext() != null)
+                            Toast.makeText(getContext(), "Sorry, there was an error. " + response.code(), Toast.LENGTH_LONG).show();
                     }
 
                     return;
@@ -129,7 +131,8 @@ public class ChangePasswordFragment extends Fragment {
                 Feedback feedback = response.body();
 
                 if (response.code() == 201) {   // User password updated
-                    Toast.makeText(getContext(), (feedback != null) ? feedback.getFeedback() : "User password updated.", Toast.LENGTH_LONG).show();
+                    if (getContext() != null)
+                        Toast.makeText(getContext(), (feedback != null) ? feedback.getFeedback() : "User password updated.", Toast.LENGTH_LONG).show();
 
                     if (logoutRequired) {
                         // Logout was required
@@ -139,13 +142,15 @@ public class ChangePasswordFragment extends Fragment {
                         requireActivity().getSupportFragmentManager().beginTransaction().add(R.id.home_activity_fragment_container, new MyAccountFragment()).addToBackStack(null).commit();
                     }
                 } else {
-                    Toast.makeText(getContext(), "Sorry, there was an error.", Toast.LENGTH_LONG).show();
+                    if (getContext() != null)
+                        Toast.makeText(getContext(), "Sorry, there was an error.", Toast.LENGTH_LONG).show();
                 }
             }
 
             @Override
             public void onFailure(@NotNull Call<Feedback> call, @NotNull Throwable t) {
-                Toast.makeText(getContext(), "Sorry, there was an error.", Toast.LENGTH_LONG).show();
+                if (getContext() != null)
+                    Toast.makeText(getContext(), "Sorry, there was an error.", Toast.LENGTH_LONG).show();
 
                 Log.e("/changePassword", "onFailure: Something went wrong. " + t.getMessage());
             }

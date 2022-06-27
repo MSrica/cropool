@@ -21,6 +21,7 @@ import com.example.cropool.api.LoginReq;
 import com.example.cropool.api.Tokens;
 import com.example.cropool.custom.InputElement;
 import com.example.cropool.home.HomeActivity;
+import com.example.cropool.notifications.TokenActions;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -64,9 +65,10 @@ public class LoginFragment extends Fragment {
         signIn.setOnClickListener(v -> {
             signIn.setEnabled(false);
 
-            if (informationValid(email, password))
+            if (informationValid(email, password)) {
                 loginUser(v, Objects.requireNonNull(email.getTextInput().getText()).toString(),
                         Objects.requireNonNull(password.getTextInput().getText()).toString(), signIn);
+            }
         });
 
         return view;
@@ -103,7 +105,6 @@ public class LoginFragment extends Fragment {
 
         Retrofit retrofit = CropoolAPI.getRetrofit();
         CropoolAPI cropoolAPI = retrofit.create(CropoolAPI.class);
-
         Call<Feedback> call = cropoolAPI.login(loginReq);
 
         call.enqueue(new Callback<Feedback>() {
@@ -114,11 +115,14 @@ public class LoginFragment extends Fragment {
                     Log.e("/login", "notSuccessful: Something went wrong. - " + response.code());
 
                     if (response.body() != null) {
-                        Toast.makeText(view.getContext(), "Sorry, there was an error. " + response.body().getFeedback(), Toast.LENGTH_LONG).show();
+                        if (view.getContext() != null)
+                            Toast.makeText(view.getContext(), "Sorry, there was an error. " + response.body().getFeedback(), Toast.LENGTH_LONG).show();
                     } else if (response.code() == 403) {
-                        Toast.makeText(view.getContext(), "Sorry, there was an error. " + getResources().getString(R.string.FEEDBACK_CREDS_INVALID), Toast.LENGTH_LONG).show();
+                        if (view.getContext() != null)
+                            Toast.makeText(view.getContext(), "Sorry, there was an error. " + getResources().getString(R.string.FEEDBACK_CREDS_INVALID), Toast.LENGTH_LONG).show();
                     } else {
-                        Toast.makeText(view.getContext(), "Sorry, there was an error. " + response.code(), Toast.LENGTH_LONG).show();
+                        if (view.getContext() != null)
+                            Toast.makeText(view.getContext(), "Sorry, there was an error. " + response.code(), Toast.LENGTH_LONG).show();
                     }
 
                     signIn.setEnabled(true);
@@ -138,10 +142,13 @@ public class LoginFragment extends Fragment {
                             response.headers().get(getResources().getString(R.string.REFRESH_TOKEN_HEADER_KEY)),
                             response.headers().get(getResources().getString(R.string.FIREBASE_TOKEN_HEADER_KEY)));
 
+                    TokenActions.changeDatabaseRegistrationToken(getContext());
+
                     startActivity(new Intent(view.getContext(), HomeActivity.class));
                     requireActivity().finish();
                 } else {
-                    Toast.makeText(view.getContext(), "Sorry, there was an error. " + feedback.getFeedback(), Toast.LENGTH_LONG).show();
+                    if (view.getContext() != null)
+                        Toast.makeText(view.getContext(), "Sorry, there was an error. " + feedback.getFeedback(), Toast.LENGTH_LONG).show();
                 }
 
                 signIn.setEnabled(true);
@@ -149,7 +156,8 @@ public class LoginFragment extends Fragment {
 
             @Override
             public void onFailure(@NotNull Call<Feedback> call, @NotNull Throwable t) {
-                Toast.makeText(view.getContext(), "Sorry, there was an error.", Toast.LENGTH_LONG).show();
+                if (view.getContext() != null)
+                    Toast.makeText(view.getContext(), "Sorry, there was an error.", Toast.LENGTH_LONG).show();
 
                 Log.e("/login", "onFailure: Something went wrong. " + t.getMessage());
 

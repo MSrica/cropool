@@ -4,7 +4,7 @@ import com.google.gson.annotations.SerializedName;
 
 public class RouteIDReq {
     @SerializedName("route_id")
-    private String routeID;
+    private final String routeID;
 
     public RouteIDReq(String routeID) {
         this.routeID = routeID;

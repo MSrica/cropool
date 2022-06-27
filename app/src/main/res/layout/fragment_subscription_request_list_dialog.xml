@@ -16,6 +16,7 @@
         android:layout_marginHorizontal="40dp"
         android:layout_height="wrap_content"
         android:background="@drawable/edit_profile_picture_round_background">
+
         <androidx.recyclerview.widget.RecyclerView
             android:layout_margin="10dp"
             android:id="@+id/subscription_request_recycler_view"

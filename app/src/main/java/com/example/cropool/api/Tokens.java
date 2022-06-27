@@ -109,6 +109,7 @@ public abstract class Tokens {
         }
     }
 
+    // TODO new version isSet (not -> setTokens -> isSet)
     public static boolean isAccessTokenSet(@NonNull Context context) {
         SharedPreferences sharedPreferences = context.getSharedPreferences(context.getResources().getString(R.string.SHARED_PREFERENCES_NAME), Context.MODE_PRIVATE);
 
