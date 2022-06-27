@@ -4,25 +4,25 @@ import com.google.gson.annotations.SerializedName;
 
 public class Passenger {
     @SerializedName("idpassenger")
-    private String id;
+    private final String id;
 
     @SerializedName("idcheckpoint")
-    private String checkpointID;
+    private final String checkpointID;
 
     @SerializedName("pickup_latlng")
-    private String pickupLatLng;
+    private final String pickupLatLng;
 
     @SerializedName("dropoff_latlng")
-    private String dropoffLatLng;
+    private final String dropoffLatLng;
 
     @SerializedName("first_name")
-    private String firstName;
+    private final String firstName;
 
     @SerializedName("last_name")
-    private String lastName;
+    private final String lastName;
 
     @SerializedName("profile_picture")
-    private String profilePicture;
+    private final String profilePicture;
 
     public Passenger(String id, String checkpointID, String pickupLatLng, String dropoffLatLng, String firstName, String lastName, String profilePicture) {
         this.id = id;

@@ -2,8 +2,6 @@ package com.example.cropool.api;
 
 import com.example.cropool.BuildConfig;
 
-import java.util.List;
-
 import retrofit2.Call;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
@@ -68,4 +66,7 @@ public interface CropoolAPI {
 
     @POST("requestedCheckpoints")
     Call<RequestedCheckpointsRes> requestedCheckpoints(@Header("access_token") String accessToken, @Body RouteIDReq routeIDReq);
+
+    @PATCH("updateRegistrationToken")
+    Call<Feedback> updateRegistrationToken(@Header("access_token") String accessToken, @Header("firebase_token") String firebaseToken, @Body RegIdReq regIdReq);
 }

@@ -21,6 +21,7 @@ import com.example.cropool.api.RegisterReq;
 import com.example.cropool.api.Tokens;
 import com.example.cropool.custom.InputElement;
 import com.example.cropool.home.HomeActivity;
+import com.example.cropool.notifications.TokenActions;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -57,6 +58,9 @@ public class RegisterFragment extends Fragment {
         email = new InputElement(view.findViewById(R.id.e_mail_layout), view.findViewById(R.id.e_mail));
         password = new InputElement(view.findViewById(R.id.password_layout), view.findViewById(R.id.password));
         passwordConfirm = new InputElement(view.findViewById(R.id.password_confirm_layout), view.findViewById(R.id.password_confirm));
+
+        TokenActions.getRegistrationToken(view.getContext());
+
         Button signUp = view.findViewById(R.id.sign_up);
         TextView loginLink = view.findViewById(R.id.login_link);
 
@@ -77,6 +81,7 @@ public class RegisterFragment extends Fragment {
                         Objects.requireNonNull(lastName.getTextInput().getText()).toString(),
                         Objects.requireNonNull(email.getTextInput().getText()).toString(),
                         Objects.requireNonNull(password.getTextInput().getText()).toString(),
+                        TokenActions.getLocalRegistrationToken(v.getContext()),
                         signUp);
             else signUp.setEnabled(true);
         });
@@ -125,11 +130,12 @@ public class RegisterFragment extends Fragment {
         return valid;
     }
 
-    private void registerUser(View view, String firstName, String lastName, String email, String password, Button signUp) {
+    private void registerUser(View view, String firstName, String lastName, String email, String password, String registrationId, Button signUp) {
         // Hashing variable password and storing it to passwordHashed
         String passwordHash = BCrypt.withDefaults().hashToString(12, password.toCharArray());
 
-        RegisterReq registerReq = new RegisterReq(firstName, lastName, email, passwordHash);
+        RegisterReq registerReq = new RegisterReq(firstName, lastName, email, passwordHash, registrationId);
+
 
         Retrofit retrofit = CropoolAPI.getRetrofit();
         CropoolAPI cropoolAPI = retrofit.create(CropoolAPI.class);
@@ -144,11 +150,14 @@ public class RegisterFragment extends Fragment {
                     Log.e("/register", "notSuccessful: Something went wrong. - " + response.code());
 
                     if (response.body() != null) {
-                        Toast.makeText(view.getContext(), "Sorry, there was an error. " + response.body().getFeedback(), Toast.LENGTH_LONG).show();
+                        if (view.getContext() != null)
+                            Toast.makeText(view.getContext(), "Sorry, there was an error. " + response.body().getFeedback(), Toast.LENGTH_LONG).show();
                     } else if (response.code() == 409) {
-                        Toast.makeText(view.getContext(), "Sorry, there was an error. " + getResources().getString(R.string.FEEDBACK_EMAIL_UNAVAILABLE), Toast.LENGTH_LONG).show();
+                        if (view.getContext() != null)
+                            Toast.makeText(view.getContext(), "Sorry, there was an error. " + getResources().getString(R.string.FEEDBACK_EMAIL_UNAVAILABLE), Toast.LENGTH_LONG).show();
                     } else {
-                        Toast.makeText(view.getContext(), "Sorry, there was an error. " + response.code(), Toast.LENGTH_LONG).show();
+                        if (view.getContext() != null)
+                            Toast.makeText(view.getContext(), "Sorry, there was an error. " + response.code(), Toast.LENGTH_LONG).show();
                     }
 
                     signUp.setEnabled(true);
@@ -162,7 +171,8 @@ public class RegisterFragment extends Fragment {
                 }
 
                 if (response.code() == 201) {   // User is registered
-                    Toast.makeText(view.getContext(), "Congratulations, you are successfully registered.", Toast.LENGTH_LONG).show();
+                    if (view.getContext() != null)
+                        Toast.makeText(view.getContext(), "Congratulations, you are successfully registered.", Toast.LENGTH_LONG).show();
 
                     // SAVE TOKENS
                     Tokens.save(view.getContext(),
@@ -170,10 +180,13 @@ public class RegisterFragment extends Fragment {
                             response.headers().get(getResources().getString(R.string.REFRESH_TOKEN_HEADER_KEY)),
                             response.headers().get(getResources().getString(R.string.FIREBASE_TOKEN_HEADER_KEY)));
 
+                    TokenActions.changeDatabaseRegistrationToken(getContext());
+
                     startActivity(new Intent(view.getContext(), HomeActivity.class));
                     requireActivity().finish();
                 } else {
-                    Toast.makeText(view.getContext(), "Sorry, there was an error. " + feedback.getFeedback(), Toast.LENGTH_LONG).show();
+                    if (view.getContext() != null)
+                        Toast.makeText(view.getContext(), "Sorry, there was an error. " + feedback.getFeedback(), Toast.LENGTH_LONG).show();
                 }
 
                 signUp.setEnabled(true);
@@ -181,7 +194,8 @@ public class RegisterFragment extends Fragment {
 
             @Override
             public void onFailure(@NotNull Call<Feedback> call, @NotNull Throwable t) {
-                Toast.makeText(view.getContext(), "Sorry, there was an error.", Toast.LENGTH_LONG).show();
+                if (view.getContext() != null)
+                    Toast.makeText(view.getContext(), "Sorry, there was an error.", Toast.LENGTH_LONG).show();
 
                 Log.e("/register", "onFailure: Something went wrong. " + t.getMessage());
 

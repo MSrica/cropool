@@ -109,7 +109,8 @@ public class MyAccountFragment extends Fragment {
                             uploadProfilePicture(bitmap, null, true);
                         }
                     } else {
-                        Toast.makeText(getContext(), "Profile picture not updated.", Toast.LENGTH_LONG).show();
+                        if (getContext() != null)
+                            Toast.makeText(getContext(), "Profile picture not updated.", Toast.LENGTH_LONG).show();
                     }
                 });
 
@@ -210,10 +211,12 @@ public class MyAccountFragment extends Fragment {
                                 return null;
                             });
                         } else {
-                            Toast.makeText(getContext(), "Sorry, there was an error. " + response.code(), Toast.LENGTH_LONG).show();
+                            if (getContext() != null)
+                                Toast.makeText(getContext(), "Sorry, there was an error. " + response.code(), Toast.LENGTH_LONG).show();
                         }
                     } else {
-                        Toast.makeText(getContext(), "Sorry, there was an error. " + response.code(), Toast.LENGTH_LONG).show();
+                        if (getContext() != null)
+                            Toast.makeText(getContext(), "Sorry, there was an error. " + response.code(), Toast.LENGTH_LONG).show();
                     }
 
                     return;
@@ -225,19 +228,22 @@ public class MyAccountFragment extends Fragment {
                     // Toast.makeText(getContext(), (feedback != null) ? feedback.getFeedback() : "Routes retrieved.", Toast.LENGTH_LONG).show();
 
                     if (findRouteRes.getResultingRoutes().size() <= 0) {
-                        Toast.makeText(getContext(), "No routes.", Toast.LENGTH_LONG).show();
+                        if (getContext() != null)
+                            Toast.makeText(getContext(), "No routes.", Toast.LENGTH_LONG).show();
                         return;
                     }
 
                     requireActivity().getSupportFragmentManager().beginTransaction().add(R.id.home_activity_fragment_container, RouteListFragment.newInstance(new RouteListParcelable(findRouteRes.getResultingRoutes(), RouteType.SUBSCRIBED_TO), "Routes subscribed to", null, null)).addToBackStack(null).commit();
                 } else {
-                    Toast.makeText(getContext(), "Sorry, there was a problem when downloading your routes.", Toast.LENGTH_LONG).show();
+                    if (getContext() != null)
+                        Toast.makeText(getContext(), "Sorry, there was a problem when downloading your routes.", Toast.LENGTH_LONG).show();
                 }
             }
 
             @Override
             public void onFailure(@NotNull Call<FindRouteRes> call, @NotNull Throwable t) {
-                Toast.makeText(getContext(), "Sorry, there was an error.", Toast.LENGTH_LONG).show();
+                if (getContext() != null)
+                    Toast.makeText(getContext(), "Sorry, there was an error.", Toast.LENGTH_LONG).show();
 
                 Log.e("/subscribedToRoutes", "onFailure: Something went wrong. " + t.getMessage());
             }
@@ -274,10 +280,12 @@ public class MyAccountFragment extends Fragment {
                                 return null;
                             });
                         } else {
-                            Toast.makeText(getContext(), "Sorry, there was an error. " + response.code(), Toast.LENGTH_LONG).show();
+                            if (getContext() != null)
+                                Toast.makeText(getContext(), "Sorry, there was an error. " + response.code(), Toast.LENGTH_LONG).show();
                         }
                     } else {
-                        Toast.makeText(getContext(), "Sorry, there was an error. " + response.code(), Toast.LENGTH_LONG).show();
+                        if (getContext() != null)
+                            Toast.makeText(getContext(), "Sorry, there was an error. " + response.code(), Toast.LENGTH_LONG).show();
                     }
 
                     return;
@@ -289,19 +297,22 @@ public class MyAccountFragment extends Fragment {
                     // Toast.makeText(getContext(), (feedback != null) ? feedback.getFeedback() : "Routes retrieved.", Toast.LENGTH_LONG).show();
 
                     if (findRouteRes.getResultingRoutes().size() <= 0) {
-                        Toast.makeText(getContext(), "No routes.", Toast.LENGTH_LONG).show();
+                        if (getContext() != null)
+                            Toast.makeText(getContext(), "No routes.", Toast.LENGTH_LONG).show();
                         return;
                     }
 
                     requireActivity().getSupportFragmentManager().beginTransaction().add(R.id.home_activity_fragment_container, RouteListFragment.newInstance(new RouteListParcelable(findRouteRes.getResultingRoutes(), RouteType.MY), "My routes", null, null)).addToBackStack(null).commit();
                 } else {
-                    Toast.makeText(getContext(), "Sorry, there was a problem when downloading your routes.", Toast.LENGTH_LONG).show();
+                    if (getContext() != null)
+                        Toast.makeText(getContext(), "Sorry, there was a problem when downloading your routes.", Toast.LENGTH_LONG).show();
                 }
             }
 
             @Override
             public void onFailure(@NotNull Call<FindRouteRes> call, @NotNull Throwable t) {
-                Toast.makeText(getContext(), "Sorry, there was an error.", Toast.LENGTH_LONG).show();
+                if (getContext() != null)
+                    Toast.makeText(getContext(), "Sorry, there was an error.", Toast.LENGTH_LONG).show();
 
                 Log.e("/myRoutes", "onFailure: Something went wrong. " + t.getMessage());
             }
@@ -348,7 +359,8 @@ public class MyAccountFragment extends Fragment {
             // Trying to upload a bitmap picture
 
             if (bitmap == null) {
-                Toast.makeText(getContext(), "Image loading error. Profile picture not updated.", Toast.LENGTH_LONG).show();
+                if (getContext() != null)
+                    Toast.makeText(getContext(), "Image loading error. Profile picture not updated.", Toast.LENGTH_LONG).show();
                 stopWaitingUI();
                 return;
             }
@@ -364,7 +376,8 @@ public class MyAccountFragment extends Fragment {
             // Trying to upload a picture in URI form (somewhere on the device)
 
             if (imageURI == null) {
-                Toast.makeText(getContext(), "Image loading error. Profile picture not updated.", Toast.LENGTH_LONG).show();
+                if (getContext() != null)
+                    Toast.makeText(getContext(), "Image loading error. Profile picture not updated.", Toast.LENGTH_LONG).show();
                 stopWaitingUI();
                 return;
             }
@@ -372,7 +385,8 @@ public class MyAccountFragment extends Fragment {
             // Create an upload task
 
             if (ContextCompat.checkSelfPermission(requireContext(), Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
-                Toast.makeText(getContext(), "Permissions error. Profile picture not updated.", Toast.LENGTH_LONG).show();
+                if (getContext() != null)
+                    Toast.makeText(getContext(), "Permissions error. Profile picture not updated.", Toast.LENGTH_LONG).show();
                 ActivityCompat.requestPermissions(requireActivity(), new String[]{Manifest.permission.READ_EXTERNAL_STORAGE}, 1);
                 stopWaitingUI();
                 return;
@@ -384,7 +398,8 @@ public class MyAccountFragment extends Fragment {
         // Create an URL task to get the URL of the uploaded photo
         Task<Uri> urlTask = uploadTask.continueWithTask(task -> {
             if (!task.isSuccessful()) {
-                Toast.makeText(getContext(), "Upload error. Profile picture not updated.", Toast.LENGTH_LONG).show();
+                if (getContext() != null)
+                    Toast.makeText(getContext(), "Upload error. Profile picture not updated.", Toast.LENGTH_LONG).show();
                 stopWaitingUI();
             }
 
@@ -399,7 +414,8 @@ public class MyAccountFragment extends Fragment {
                 // (which will automatically upload the FB RTDB profile picture URL)
                 updateProfilePicture(task.getResult().toString(), true);
             } else {
-                Toast.makeText(getContext(), "Upload error. Profile picture not updated.", Toast.LENGTH_LONG).show();
+                if (getContext() != null)
+                    Toast.makeText(getContext(), "Upload error. Profile picture not updated.", Toast.LENGTH_LONG).show();
                 stopWaitingUI();
             }
         });
@@ -434,10 +450,12 @@ public class MyAccountFragment extends Fragment {
                                 return null;
                             });
                         } else {
-                            Toast.makeText(getContext(), "Sorry, there was an error. " + response.code(), Toast.LENGTH_LONG).show();
+                            if (getContext() != null)
+                                Toast.makeText(getContext(), "Sorry, there was an error. " + response.code(), Toast.LENGTH_LONG).show();
                         }
                     } else {
-                        Toast.makeText(getContext(), "Sorry, there was an error. " + response.code(), Toast.LENGTH_LONG).show();
+                        if (getContext() != null)
+                            Toast.makeText(getContext(), "Sorry, there was an error. " + response.code(), Toast.LENGTH_LONG).show();
                     }
 
                     stopWaitingUI();
@@ -447,10 +465,12 @@ public class MyAccountFragment extends Fragment {
                 Feedback feedback = response.body();
 
                 if (response.code() == 201) {   // Profile picture URL updated
-                    Toast.makeText(getContext(), (feedback != null) ? feedback.getFeedback() : "Profile picture updated.", Toast.LENGTH_LONG).show();
+                    if (getContext() != null)
+                        Toast.makeText(getContext(), (feedback != null) ? feedback.getFeedback() : "Profile picture updated.", Toast.LENGTH_LONG).show();
                     updateUserData(true, true);
                 } else {
-                    Toast.makeText(getContext(), "Sorry, there was an error.", Toast.LENGTH_LONG).show();
+                    if (getContext() != null)
+                        Toast.makeText(getContext(), "Sorry, there was an error.", Toast.LENGTH_LONG).show();
                 }
 
                 stopWaitingUI();
@@ -458,7 +478,8 @@ public class MyAccountFragment extends Fragment {
 
             @Override
             public void onFailure(@NotNull Call<Feedback> call, @NotNull Throwable t) {
-                Toast.makeText(getContext(), "Sorry, there was an error.", Toast.LENGTH_LONG).show();
+                if (getContext() != null)
+                    Toast.makeText(getContext(), "Sorry, there was an error.", Toast.LENGTH_LONG).show();
                 stopWaitingUI();
 
                 Log.e("/updateProfilePicture", "onFailure: Something went wrong. " + t.getMessage());
@@ -497,7 +518,8 @@ public class MyAccountFragment extends Fragment {
                             });
                         }
                     } else {
-                        Toast.makeText(getContext(), "Sorry, there was an error. " + response.code(), Toast.LENGTH_LONG).show();
+                        if (getContext() != null)
+                            Toast.makeText(getContext(), "Sorry, there was an error. " + response.code(), Toast.LENGTH_LONG).show();
                     }
 
                     if (useWaitingUI)
@@ -508,7 +530,8 @@ public class MyAccountFragment extends Fragment {
                 AccountInfo accountInfo = response.body();
 
                 if (accountInfo == null) {
-                    Toast.makeText(getContext(), "Sorry, there was an error.", Toast.LENGTH_LONG).show();
+                    if (getContext() != null)
+                        Toast.makeText(getContext(), "Sorry, there was an error.", Toast.LENGTH_LONG).show();
 
                     if (useWaitingUI)
                         stopWaitingUI();
@@ -531,7 +554,8 @@ public class MyAccountFragment extends Fragment {
                     membershipTime = membershipTime.substring(0, 1).toUpperCase() + membershipTime.substring(1);
                     membership.setText(membershipTime);
                 } else {
-                    Toast.makeText(getContext(), "Sorry, there was an error.", Toast.LENGTH_LONG).show();
+                    if (getContext() != null)
+                        Toast.makeText(getContext(), "Sorry, there was an error.", Toast.LENGTH_LONG).show();
                 }
 
                 if (useWaitingUI)
@@ -540,7 +564,8 @@ public class MyAccountFragment extends Fragment {
 
             @Override
             public void onFailure(@NotNull Call<AccountInfo> call, @NotNull Throwable t) {
-                Toast.makeText(getContext(), "Sorry, there was an error.", Toast.LENGTH_LONG).show();
+                if (getContext() != null)
+                    Toast.makeText(getContext(), "Sorry, there was an error.", Toast.LENGTH_LONG).show();
 
                 if (useWaitingUI)
                     stopWaitingUI();
@@ -569,7 +594,8 @@ public class MyAccountFragment extends Fragment {
 
                         // First we'll refresh the tokens (if refreshIfNeeded is true)
                         if (refreshIfNeeded) {
-                            Toast.makeText(getContext(), "Refreshing tokens...", Toast.LENGTH_SHORT).show();
+                            if (getContext() != null)
+                                Toast.makeText(getContext(), "Refreshing tokens...", Toast.LENGTH_SHORT).show();
 
                             // Try to refresh tokens using refresh tokens and re-run updateUserData() if refreshing is successful
                             Tokens.refreshTokensOnServer(requireActivity(), requireContext(), () -> {
@@ -579,11 +605,13 @@ public class MyAccountFragment extends Fragment {
                             });
                         } else {
                             // We already refreshed the tokens so something else failed.
-                            Toast.makeText(getContext(), "Sorry, can't sign out.", Toast.LENGTH_SHORT).show();
+                            if (getContext() != null)
+                                Toast.makeText(getContext(), "Sorry, can't sign out.", Toast.LENGTH_SHORT).show();
                             return;
                         }
                     } else {
-                        Toast.makeText(getContext(), "Sorry, there was an error. " + response.code(), Toast.LENGTH_LONG).show();
+                        if (getContext() != null)
+                            Toast.makeText(getContext(), "Sorry, there was an error. " + response.code(), Toast.LENGTH_LONG).show();
                     }
 
                     return;
@@ -592,18 +620,21 @@ public class MyAccountFragment extends Fragment {
                 Feedback feedback = response.body();
 
                 if (response.code() == 201) {   // User signed out
-                    Toast.makeText(getContext(), (feedback != null) ? feedback.getFeedback() : "User signed out from all devices.", Toast.LENGTH_LONG).show();
+                    if (getContext() != null)
+                        Toast.makeText(getContext(), (feedback != null) ? feedback.getFeedback() : "User signed out from all devices.", Toast.LENGTH_LONG).show();
 
                     // Logout procedure
                     Tokens.logoutProcedure(requireContext(), requireActivity());
                 } else {
-                    Toast.makeText(getContext(), "Sorry, there was an error.", Toast.LENGTH_LONG).show();
+                    if (getContext() != null)
+                        Toast.makeText(getContext(), "Sorry, there was an error.", Toast.LENGTH_LONG).show();
                 }
             }
 
             @Override
             public void onFailure(@NotNull Call<Feedback> call, @NotNull Throwable t) {
-                Toast.makeText(getContext(), "Sorry, there was an error.", Toast.LENGTH_LONG).show();
+                if (getContext() != null)
+                    Toast.makeText(getContext(), "Sorry, there was an error.", Toast.LENGTH_LONG).show();
 
                 Log.e("/signOut", "onFailure: Something went wrong. " + t.getMessage());
             }

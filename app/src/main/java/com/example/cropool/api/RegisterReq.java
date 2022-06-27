@@ -15,11 +15,15 @@ public class RegisterReq {
     @SerializedName("password")
     private final String password;
 
-    public RegisterReq(String firstName, String lastName, String email, String password) {
+    @SerializedName("registration_id")
+    private final String registrationId;
+
+    public RegisterReq(String firstName, String lastName, String email, String password, String registrationId) {
         this.firstName = firstName;
         this.lastName = lastName;
         this.email = email;
         this.password = password;
+        this.registrationId = registrationId;
     }
 
     public String getFirstName() {
@@ -38,6 +42,11 @@ public class RegisterReq {
         return password;
     }
 
+    public String getRegistrationId() {
+        return registrationId;
+    }
+
+
     @Override
     public String toString() {
         return "RegisterReq{" +
@@ -45,6 +54,7 @@ public class RegisterReq {
                 ", lastName='" + lastName + '\'' +
                 ", email='" + email + '\'' +
                 ", password='" + password + '\'' +
+                ", registrationId='" + registrationId + '\'' +
                 '}';
     }
 }

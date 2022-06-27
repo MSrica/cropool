@@ -152,14 +152,16 @@ public class RoutesAdapter extends RecyclerView.Adapter<RoutesAdapter.MyViewHold
             }
 
             if (HomeActivity.getCurrentFBUser() == null) {
-                Toast.makeText(context, "Please sign in again.", Toast.LENGTH_SHORT).show();
+                if (context != null)
+                    Toast.makeText(context, "Please sign in again.", Toast.LENGTH_SHORT).show();
                 return;
             }
 
             startChat(route.getOwnerFirstName() + " " + route.getOwnerLastName(), route.getOwnerProfilePicture(), HomeActivity.getCurrentFBUser().getUid(), route.getOwnerID());
         });
         holder.routeDriver.setOnLongClickListener(v -> {
-            Toast.makeText(context, route.getOwnerFirstName() + " " + route.getOwnerLastName(), Toast.LENGTH_LONG).show();
+            if (context != null)
+                Toast.makeText(context, route.getOwnerFirstName() + " " + route.getOwnerLastName(), Toast.LENGTH_LONG).show();
             return false;
         });
 
@@ -267,7 +269,8 @@ public class RoutesAdapter extends RecyclerView.Adapter<RoutesAdapter.MyViewHold
     // Retrieves requested checkpoints for a route
     private void requestedCheckpoints(String routeID, boolean refreshIfNeeded) {
         if (routeID == null) {
-            Toast.makeText(context, "Sorry, there was an error. Try again.", Toast.LENGTH_LONG).show();
+            if (context != null)
+                Toast.makeText(context, "Sorry, there was an error. Try again.", Toast.LENGTH_LONG).show();
         }
 
         RouteIDReq routeIDReq = new RouteIDReq(routeID);
@@ -324,7 +327,8 @@ public class RoutesAdapter extends RecyclerView.Adapter<RoutesAdapter.MyViewHold
     // Removes an existing/requested subscription (checkpoint with checkpointID subscriptionIDToRemove)
     private void removeSubscription(String subscriptionIDToRemove, View viewToRemove, boolean refreshIfNeeded) {
         if (subscriptionIDToRemove == null) {
-            Toast.makeText(context, "Sorry, there was an error. Try again.", Toast.LENGTH_LONG).show();
+            if (context != null)
+                Toast.makeText(context, "Sorry, there was an error. Try again.", Toast.LENGTH_LONG).show();
         }
 
         CheckpointIDReq checkpointIDReq = new CheckpointIDReq(subscriptionIDToRemove);
@@ -441,7 +445,8 @@ public class RoutesAdapter extends RecyclerView.Adapter<RoutesAdapter.MyViewHold
     // Sends request to subscribe to the route
     private void subscribeToRoute(Route route, boolean refreshIfNeeded) {
         if (startLatLng == null || finishLatLng == null) {
-            Toast.makeText(context, "There was an error, please sign in again.", Toast.LENGTH_LONG).show();
+            if (context != null)
+                Toast.makeText(context, "There was an error, please sign in again.", Toast.LENGTH_LONG).show();
             return;
         }
 

@@ -130,7 +130,7 @@ public class ConversationListActivity extends AppCompatActivity implements Navig
         setConversationIDListener();
 
         // Set recurrent updates for last_seen_at field in user table
-        if(currentUser != null)
+        if (currentUser != null)
             setRecurrentUpdateLastSeen(LAST_SEEN_AT_UPDATE_INTERVAL, currentUser.getUid());
     }
 

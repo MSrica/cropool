@@ -6,70 +6,70 @@ import java.util.ArrayList;
 
 public class Route {
     @SerializedName("idroute")
-    private String id;
+    private final String id;
 
     @SerializedName("idowner")
-    private String ownerID;
+    private final String ownerID;
 
     @SerializedName("owner_first_name")
-    private String ownerFirstName;
+    private final String ownerFirstName;
 
     @SerializedName("owner_last_name")
-    private String ownerLastName;
+    private final String ownerLastName;
 
     @SerializedName("owner_profile_picture")
-    private String ownerProfilePicture;
+    private final String ownerProfilePicture;
 
     @SerializedName("start_latlng")
-    private String startLatLng;
+    private final String startLatLng;
 
     @SerializedName("finish_latlng")
-    private String finishLatLng;
+    private final String finishLatLng;
 
     @SerializedName("name")
-    private String name;
+    private final String name;
 
     @SerializedName("created_at")
-    private Long createdAt;
+    private final Long createdAt;
 
     @SerializedName("custom_repetition")
-    private Boolean customRepetition;
+    private final Boolean customRepetition;
 
     @SerializedName("repetition_mode")
-    private Integer repetitionMode;
+    private final Integer repetitionMode;
 
     @SerializedName("start_month")
-    private Integer startMonth;
+    private final Integer startMonth;
 
     @SerializedName("start_day_of_month")
-    private Integer startDayOfMonth;
+    private final Integer startDayOfMonth;
 
     @SerializedName("start_day_of_week")
-    private Integer startDayOfWeek;
+    private final Integer startDayOfWeek;
 
     @SerializedName("start_hour_of_day")
-    private Integer startHourOfDay;
+    private final Integer startHourOfDay;
 
     @SerializedName("start_minute_of_hour")
-    private Integer startMinuteOfHour;
+    private final Integer startMinuteOfHour;
 
     @SerializedName("note")
-    private String note;
+    private final String note;
 
     @SerializedName("price_per_km")
-    private Double pricePerKm;
+    private final Double pricePerKm;
 
     @SerializedName("passengers")
-    private ArrayList<Passenger> passengers;
+    private final ArrayList<Passenger> passengers;
 
     @SerializedName("devPercentage")
-    private Double devPercentage;
+    private final Double devPercentage;
 
     @SerializedName("directions")
-    private String directions;
+    private final String directions;
 
     @SerializedName("idcheckpoint")
-    private String subscriptionCheckpointID;
+    private final String subscriptionCheckpointID;
 
     public Route(String id, String ownerID, String ownerFirstName, String ownerLastName, String ownerProfilePicture, String startLatLng, String finishLatLng, String name, Long createdAt, Boolean customRepetition, Integer repetitionMode, Integer startMonth, Integer startDayOfMonth, Integer startDayOfWeek, Integer startHourOfDay, Integer startMinuteOfHour, String note, Double pricePerKm, ArrayList<Passenger> passengers, Double devPercentage, String directions, String subscriptionCheckpointID) {
         this.id = id;

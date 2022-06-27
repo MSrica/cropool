@@ -9,8 +9,6 @@ import android.widget.Button;
 import androidx.fragment.app.Fragment;
 
 import com.example.cropool.R;
-import com.example.cropool.start.LoginFragment;
-import com.example.cropool.start.RegisterFragment;
 
 public class WelcomeFragment extends Fragment {
     public WelcomeFragment() {

@@ -65,7 +65,6 @@
         android:layout_height="75dp"
         app:flow_horizontalBias="0.5"
         app:menu="@menu/home_activity_bottom_navigation"
-        android:layout_alignParentBottom="true"
-        />
+        android:layout_alignParentBottom="true" />
 
 </RelativeLayout>
