@@ -47,7 +47,7 @@ public class ConversationsAdapter extends RecyclerView.Adapter<ConversationsAdap
 
         holder.time.setText(DateFormat.getTimeInstance(DateFormat.SHORT).format(conversation.getTime()));
 
-        if (!conversation.getProfilePicture().equals(context.getResources().getString(R.string.FB_RTDB_DEFAULT_PICTURE_VALUE))) {
+        if (conversation.getProfilePicture() != null && !conversation.getProfilePicture().equals(context.getResources().getString(R.string.FB_RTDB_DEFAULT_PICTURE_VALUE))) {
             // Conversation has a custom profile picture
             Picasso.get().load(conversation.getProfilePicture()).into(holder.profilePicture);
         }
