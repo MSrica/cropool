@@ -71,7 +71,7 @@ public class ChatActivity extends AppCompatActivity {
         name.setText(conversation.getName());
 
         // Loading profile picture, default person icon if set to DEF_PIC_VAL
-        if (!conversation.getProfilePicture().equals(getResources().getString(R.string.FB_RTDB_DEFAULT_PICTURE_VALUE))) {
+        if (conversation.getProfilePicture() != null && !conversation.getProfilePicture().equals(getResources().getString(R.string.FB_RTDB_DEFAULT_PICTURE_VALUE))) {
             Picasso.get().load(conversation.getProfilePicture()).into(profilePicture);
         }
 

@@ -10,7 +10,6 @@
     android:orientation="vertical"
     tools:context=".home.subscription_requests.SubscriptionRequestListDialogFragment">
 
-
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_marginHorizontal="40dp"

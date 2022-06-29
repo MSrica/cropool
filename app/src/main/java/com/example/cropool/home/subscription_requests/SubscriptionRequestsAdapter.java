@@ -112,11 +112,13 @@ public class SubscriptionRequestsAdapter extends RecyclerView.Adapter<Subscripti
             subscriptionViewToRemove = holder.rootLayout;
 
             // Manage unsubscribing via AlertDialog
-            AlertDialog.Builder builder = new AlertDialog.Builder(context);
-            builder.setMessage(context.getResources().getString(R.string.DECLINE_SUBSCRIPTION))
-                    .setPositiveButton(context.getResources().getString(R.string.YES), removeExistingRequestedSubscriptionListener)
-                    .setNegativeButton(context.getResources().getString(R.string.NO), removeExistingRequestedSubscriptionListener)
-                    .show();
+            if(context != null) {
+                AlertDialog.Builder builder = new AlertDialog.Builder(context);
+                builder.setMessage(context.getResources().getString(R.string.DECLINE_SUBSCRIPTION))
+                        .setPositiveButton(context.getResources().getString(R.string.YES), removeExistingRequestedSubscriptionListener)
+                        .setNegativeButton(context.getResources().getString(R.string.NO), removeExistingRequestedSubscriptionListener)
+                        .show();
+            }
         });
     }
 

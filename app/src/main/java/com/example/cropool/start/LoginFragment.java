@@ -67,13 +67,10 @@ public class LoginFragment extends Fragment {
         signIn.setOnClickListener(v -> {
             signIn.setEnabled(false);
 
-            if (informationValid(email, password)) {
-                if (email == null || password == null || email.getTextInput() == null || password.getTextInput() == null || email.getTextInput().getText() == null || password.getTextInput().getText() == null) {
-                    if (getContext() != null)
-                        Toast.makeText(getContext(), "Check input.", Toast.LENGTH_LONG).show();
-                } else {
-                    loginUser(v, email.getTextInput().getText().toString(), password.getTextInput().getText().toString(), signIn);
-                }
+            if(informationValid(email, password) && email != null && email.getTextInput() != null && email.getTextInput().getText() != null && password != null && password.getTextInput() != null && password.getTextInput().getText() != null)
+                loginUser(v, email.getTextInput().getText().toString(), password.getTextInput().getText().toString(), signIn);
+            else{
+                signIn.setEnabled(true);
             }
         });
 
@@ -87,16 +84,18 @@ public class LoginFragment extends Fragment {
 
         boolean valid = true;
 
-        if (email.getTextInput() == null || !Patterns.EMAIL_ADDRESS.matcher(Objects.requireNonNull(email.getTextInput().getText()).toString()).matches()) {
+        if (email == null || email.getTextInput() == null || email.getTextInput().getText() == null || !Patterns.EMAIL_ADDRESS.matcher(email.getTextInput().getText().toString()).matches()) {
             valid = false;
-            assert email.getInputLayout() != null;
-            email.getInputLayout().setError(getResources().getString(R.string.INPUT_ERROR_EMAIL));
+
+            if (email != null && email.getTextInput() != null)
+                email.getInputLayout().setError(getResources().getString(R.string.INPUT_ERROR_EMAIL));
         }
 
-        if (password.getTextInput() == null || password.getTextInput().toString().isEmpty()) {
+        if (password == null || password.getTextInput() == null || password.getTextInput().getText() == null || password.getTextInput().getText().toString().isEmpty()) {
             valid = false;
-            assert password.getInputLayout() != null;
-            password.getInputLayout().setError(getResources().getString(R.string.INPUT_ERROR_PASSWORD_MISSING));
+
+            if (password != null && password.getTextInput() != null)
+                password.getInputLayout().setError(getResources().getString(R.string.INPUT_ERROR_PASSWORD_MISSING));
         }
 
         return valid;

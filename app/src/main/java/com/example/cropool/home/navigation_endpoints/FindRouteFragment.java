@@ -98,13 +98,13 @@ public class FindRouteFragment extends Fragment {
         placesAutocomplete = registerForActivityResult(
                 new ActivityResultContracts.StartActivityForResult(),
                 result -> {
-                    if (result.getResultCode() == Activity.RESULT_OK && result.getData() != null) {
+                    if (result != null && result.getResultCode() == Activity.RESULT_OK && result.getData() != null) {
                         // Success, initialize place
                         Place place = Autocomplete.getPlaceFromIntent(result.getData());
 
                         String placeAddress = place.getAddress();
 
-                        if (TARGET.equals(START_LOCATION_VALUE)) {
+                        if (TARGET != null && TARGET.equals(START_LOCATION_VALUE)) {
                             startLocation.getTextInput().setText(placeAddress);
                             startLatLng = place.getLatLng();
                             startLocation.getInputLayout().setEnabled(true);
@@ -113,7 +113,7 @@ public class FindRouteFragment extends Fragment {
                             finishLatLng = place.getLatLng();
                             finishLocation.getInputLayout().setEnabled(true);
                         }
-                    } else if (result.getResultCode() != Activity.RESULT_CANCELED) {
+                    } else if (result != null && result.getResultCode() != Activity.RESULT_CANCELED) {
                         if (getContext() != null)
                             Toast.makeText(getContext(), "Place decoding error.", Toast.LENGTH_LONG).show();
                     }

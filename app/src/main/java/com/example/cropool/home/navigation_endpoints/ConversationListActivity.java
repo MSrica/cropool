@@ -193,10 +193,10 @@ public class ConversationListActivity extends AppCompatActivity implements Navig
                 Long user2SeenAt = snapshot.child(getResources().getString(R.string.FB_RTDB_CHAT_USER_2_SEEN_AT_KEY)).getValue(Long.class);
 
                 // User to which the currentUser is talking to
-                String otherUserUID = (!currentUser.getUid().equals(user1ID.toString())) ? user1ID.toString() : user2ID.toString();
+                String otherUserUID = (currentUser == null || !currentUser.getUid().equals(user1ID.toString())) ? user1ID.toString() : user2ID.toString();
 
                 // Timestamp when the currentUser last opened the conversation
-                Long currentUserSeenAt = (currentUser.getUid().equals(user1ID.toString())) ? user1SeenAt : user2SeenAt;
+                Long currentUserSeenAt = (currentUser == null || currentUser.getUid().equals(user1ID.toString())) ? user1SeenAt : user2SeenAt;
 
                 setOtherUserInfoListener(conversationID, otherUserUID, currentUserSeenAt);
             }

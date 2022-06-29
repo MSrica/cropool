@@ -151,7 +151,7 @@ public class RoutesAdapter extends RecyclerView.Adapter<RoutesAdapter.MyViewHold
 
         // onClick, onLongClick
         holder.routeDriver.setOnClickListener(v -> {
-            if (routesType.equals(RouteType.MY)) {
+            if (routesType != null && routesType.equals(RouteType.MY)) {
                 // Current user is the driver - he shouldn't talk to himself (I guess...)
                 return;
             }
@@ -175,7 +175,7 @@ public class RoutesAdapter extends RecyclerView.Adapter<RoutesAdapter.MyViewHold
 
         showRoutePassengers(holder, route.getPassengers());
 
-        if (routesType.equals(RouteType.MY)) {
+        if (routesType != null && routesType.equals(RouteType.MY)) {
             String action1Text = "See requests";
             holder.routeAction1.setText(action1Text);
             holder.routeAction1.setTextColor(context.getResources().getColor(R.color.USER_ONLINE_COLOR));
@@ -183,7 +183,7 @@ public class RoutesAdapter extends RecyclerView.Adapter<RoutesAdapter.MyViewHold
 
             // TODO: Maybe an option to delete the route?
             holder.routeAction2.setVisibility(View.GONE);
-        } else if (routesType.equals(RouteType.SUBSCRIBED_TO)) {
+        } else if (routesType != null && routesType.equals(RouteType.SUBSCRIBED_TO)) {
             holder.routeAction1.setVisibility(View.GONE);
 
             String action2Text = "Unsubscribe";
@@ -629,9 +629,9 @@ public class RoutesAdapter extends RecyclerView.Adapter<RoutesAdapter.MyViewHold
             });
 
             passengerView.setOnLongClickListener(v -> {
-                if (routesType.equals(RouteType.SUBSCRIBED_TO) || routesType.equals(RouteType.FOUND)) {
+                if (routesType != null && routesType.equals(RouteType.SUBSCRIBED_TO) || routesType != null && routesType.equals(RouteType.FOUND)) {
                     Toast.makeText(context, passenger.getFirstName() + " " + passenger.getLastName(), Toast.LENGTH_SHORT).show();
-                } else if (routesType.equals(RouteType.MY)) {
+                } else if (routesType != null && routesType.equals(RouteType.MY)) {
                     subscriptionIDToRemove = passenger.getCheckpointID();
                     subscriptionViewToRemove = passengerView;
 

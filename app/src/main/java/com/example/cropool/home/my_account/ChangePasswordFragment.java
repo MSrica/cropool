@@ -160,7 +160,7 @@ public class ChangePasswordFragment extends Fragment {
     private boolean validateData(InputElement currentPassword, InputElement newPassword, InputElement newPasswordConfirm) {
         // Checking for nulls
         for (InputElement ie : new InputElement[]{currentPassword, newPassword, newPasswordConfirm}) {
-            if (ie.getInputLayout() == null || ie.getTextInput() == null || ie.getTextInput().getText() == null) {
+            if (ie == null || ie.getInputLayout() == null || ie.getTextInput() == null || ie.getTextInput().getText() == null) {
                 return false;
             }
 
@@ -171,19 +171,22 @@ public class ChangePasswordFragment extends Fragment {
         final Pattern PASSWORD_PATTERN = Pattern.compile("^(?=.*[A-Z])(?=.*[\\W])(?=.*[0-9])(?=.*[a-z]).{8,64}$");
         boolean isValid = true;
 
-        if (Objects.requireNonNull(currentPassword.getTextInput().getText()).toString().isEmpty()) {
+        if (currentPassword == null || currentPassword.getTextInput() == null || currentPassword.getTextInput().getText() == null || currentPassword.getTextInput().getText().toString().isEmpty()) {
             isValid = false;
-            currentPassword.getInputLayout().setError(requireContext().getResources().getString(R.string.INPUT_ERROR_PASSWORD_MISSING));
+            if (currentPassword != null && currentPassword.getInputLayout() != null)
+                currentPassword.getInputLayout().setError(requireContext().getResources().getString(R.string.INPUT_ERROR_PASSWORD_MISSING));
         }
 
-        if (!PASSWORD_PATTERN.matcher(Objects.requireNonNull(newPassword.getTextInput().getText()).toString()).matches()) {
+        if (newPassword == null || newPassword.getTextInput() == null || newPassword.getTextInput().getText() == null || !PASSWORD_PATTERN.matcher(newPassword.getTextInput().getText().toString()).matches()) {
             isValid = false;
-            newPassword.getInputLayout().setError(getResources().getString(R.string.INPUT_ERROR_PASSWORD));
+            if (newPassword != null && newPassword.getInputLayout() != null)
+                newPassword.getInputLayout().setError(getResources().getString(R.string.INPUT_ERROR_PASSWORD));
         }
 
-        if (!Objects.requireNonNull(newPasswordConfirm.getTextInput().getText()).toString().equals(Objects.requireNonNull(newPassword.getTextInput().getText()).toString())) {
+        if (newPassword == null || newPassword.getTextInput() == null || newPassword.getTextInput().getText() == null || newPasswordConfirm == null || newPasswordConfirm.getTextInput() == null || newPasswordConfirm.getTextInput().getText() == null || !newPasswordConfirm.getTextInput().getText().toString().equals(newPassword.getTextInput().getText().toString())) {
             isValid = false;
-            newPasswordConfirm.getInputLayout().setError(getResources().getString(R.string.INPUT_ERROR_PASSWORD_CONFIRM));
+            if (newPasswordConfirm != null && newPasswordConfirm.getInputLayout() != null)
+                newPasswordConfirm.getInputLayout().setError(getResources().getString(R.string.INPUT_ERROR_PASSWORD_CONFIRM));
         }
 
         return isValid;

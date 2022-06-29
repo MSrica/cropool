@@ -543,7 +543,7 @@ public class MyAccountFragment extends Fragment {
                     String displayName = accountInfo.getFirstName() + " " + accountInfo.getLastName() + "!";
                     name.setText(displayName);
 
-                    if (getContext() != null && !accountInfo.getProfilePicture().equals(requireContext().getResources().getString(R.string.FB_RTDB_DEFAULT_PICTURE_VALUE)))
+                    if (getContext() != null && accountInfo.getProfilePicture() != null && !accountInfo.getProfilePicture().equals(requireContext().getResources().getString(R.string.FB_RTDB_DEFAULT_PICTURE_VALUE)))
                         Picasso.get().load(accountInfo.getProfilePicture()).into(profilePicture);
 
                     String routesQtyText = "" + accountInfo.getNumberOfRoutes();

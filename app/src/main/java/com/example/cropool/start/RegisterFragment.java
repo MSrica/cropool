@@ -91,40 +91,46 @@ public class RegisterFragment extends Fragment {
 
     private boolean informationValid(InputElement firstName, InputElement lastName, InputElement email, InputElement password, InputElement passwordConfirm) {
         for (InputElement ie : new InputElement[]{firstName, lastName, email, password, passwordConfirm}) {
-            ie.getInputLayout().setErrorEnabled(false);
+            if (ie != null && ie.getInputLayout() != null)
+                ie.getInputLayout().setErrorEnabled(false);
         }
 
         final Pattern PASSWORD_PATTERN = Pattern.compile("^(?=.*[A-Z])(?=.*[\\W])(?=.*[0-9])(?=.*[a-z]).{8,64}$");
         boolean valid = true;
 
-        if (firstName.getTextInput() == null || Objects.requireNonNull(firstName.getTextInput().getText()).toString().isEmpty()) {
+        if (firstName == null || firstName.getTextInput() == null || firstName.getTextInput().getText() == null || firstName.getTextInput().getText().toString().isEmpty()) {
             valid = false;
-            assert firstName.getInputLayout() != null;
-            firstName.getInputLayout().setError(getResources().getString(R.string.INPUT_ERROR_FIRST_NAME));
+
+            if (firstName != null && firstName.getInputLayout() != null)
+                firstName.getInputLayout().setError(getResources().getString(R.string.INPUT_ERROR_FIRST_NAME));
         }
 
-        if (lastName.getTextInput() == null || Objects.requireNonNull(lastName.getTextInput().getText()).toString().isEmpty()) {
+        if (lastName == null || lastName.getTextInput() == null || lastName.getTextInput().getText() == null || lastName.getTextInput().getText().toString().isEmpty()) {
             valid = false;
-            assert lastName.getInputLayout() != null;
-            lastName.getInputLayout().setError(getResources().getString(R.string.INPUT_ERROR_LAST_NAME));
+
+            if (lastName != null && lastName.getInputLayout() != null)
+                lastName.getInputLayout().setError(getResources().getString(R.string.INPUT_ERROR_LAST_NAME));
         }
 
-        if (email.getTextInput() == null || !Patterns.EMAIL_ADDRESS.matcher(Objects.requireNonNull(email.getTextInput().getText()).toString()).matches()) {
+        if (email == null || email.getTextInput() == null || email.getTextInput().getText() == null || !Patterns.EMAIL_ADDRESS.matcher(email.getTextInput().getText().toString()).matches()) {
             valid = false;
-            assert email.getInputLayout() != null;
-            email.getInputLayout().setError(getResources().getString(R.string.INPUT_ERROR_EMAIL));
+
+            if (email != null && email.getInputLayout() != null)
+                email.getInputLayout().setError(getResources().getString(R.string.INPUT_ERROR_EMAIL));
         }
 
-        if (password.getTextInput() == null || !PASSWORD_PATTERN.matcher(Objects.requireNonNull(password.getTextInput().getText()).toString()).matches()) {
+        if (password == null || password.getTextInput() == null || password.getTextInput().getText() == null || !PASSWORD_PATTERN.matcher(Objects.requireNonNull(password.getTextInput().getText()).toString()).matches()) {
             valid = false;
-            assert password.getInputLayout() != null;
-            password.getInputLayout().setError(getResources().getString(R.string.INPUT_ERROR_PASSWORD));
+
+            if (password != null && password.getInputLayout() != null)
+                password.getInputLayout().setError(getResources().getString(R.string.INPUT_ERROR_PASSWORD));
         }
 
-        if (passwordConfirm.getTextInput() == null || !Objects.requireNonNull(password.getTextInput().getText()).toString().equals(Objects.requireNonNull(passwordConfirm.getTextInput().getText()).toString())) {
+        if (password == null || password.getTextInput() == null || password.getTextInput().getText() == null || passwordConfirm == null || passwordConfirm.getTextInput() == null || passwordConfirm.getTextInput().getText() == null || !password.getTextInput().getText().toString().equals(passwordConfirm.getTextInput().getText().toString())) {
             valid = false;
-            assert passwordConfirm.getInputLayout() != null;
-            passwordConfirm.getInputLayout().setError(getResources().getString(R.string.INPUT_ERROR_PASSWORD_CONFIRM));
+
+            if (passwordConfirm != null && passwordConfirm.getInputLayout() != null)
+                passwordConfirm.getInputLayout().setError(getResources().getString(R.string.INPUT_ERROR_PASSWORD_CONFIRM));
         }
 
         return valid;

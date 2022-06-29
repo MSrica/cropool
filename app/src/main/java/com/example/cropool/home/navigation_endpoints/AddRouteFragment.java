@@ -103,7 +103,7 @@ public class AddRouteFragment extends Fragment {
 
                         String placeAddress = place.getAddress();
 
-                        if (TARGET.equals(START_LOCATION_VALUE)) {
+                        if (TARGET != null && TARGET.equals(START_LOCATION_VALUE)) {
                             startLocation.getTextInput().setText(placeAddress);
                             startLatLng = place.getLatLng();
                             startLocation.getInputLayout().setEnabled(true);
