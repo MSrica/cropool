@@ -140,9 +140,11 @@ public class LoginFragment extends Fragment {
                     Tokens.save(view.getContext(),
                             response.headers().get(getResources().getString(R.string.ACCESS_TOKEN_HEADER_KEY)),
                             response.headers().get(getResources().getString(R.string.REFRESH_TOKEN_HEADER_KEY)),
-                            response.headers().get(getResources().getString(R.string.FIREBASE_TOKEN_HEADER_KEY)));
-
-                    TokenActions.changeDatabaseRegistrationToken(getContext());
+                            response.headers().get(getResources().getString(R.string.FIREBASE_TOKEN_HEADER_KEY)),
+                            () -> {
+                                TokenActions.changeDatabaseRegistrationToken(getActivity(), getContext(), true);
+                                return null;
+                            });
 
                     startActivity(new Intent(view.getContext(), HomeActivity.class));
                     requireActivity().finish();

@@ -143,8 +143,13 @@ public class RoutesAdapter extends RecyclerView.Adapter<RoutesAdapter.MyViewHold
 
         holder.routeSchedule.setText(getScheduleText(route));
 
-        // Set driver picture, onclick (chat) and onlongclick (show name)
-        Picasso.get().load(route.getOwnerProfilePicture()).into(holder.routeDriver);
+        // Set driver picture, onClick (chat) and onLongClick (show name)
+
+        // Set the picture
+        if (route.getOwnerProfilePicture() != null && !route.getOwnerProfilePicture().equals(context.getResources().getString(R.string.FB_RTDB_DEFAULT_PICTURE_VALUE)))
+            Picasso.get().load(route.getOwnerProfilePicture()).into(holder.routeDriver);
+
+        // onClick, onLongClick
         holder.routeDriver.setOnClickListener(v -> {
             if (routesType.equals(RouteType.MY)) {
                 // Current user is the driver - he shouldn't talk to himself (I guess...)
@@ -603,6 +608,8 @@ public class RoutesAdapter extends RecyclerView.Adapter<RoutesAdapter.MyViewHold
             // Set the picture
             if (passenger.getProfilePicture() != null && !passenger.getProfilePicture().equals(context.getResources().getString(R.string.FB_RTDB_DEFAULT_PICTURE_VALUE)))
                 Picasso.get().load(passenger.getProfilePicture()).into(passengerView);
+            else
+                passengerView.setImageResource(R.drawable.ic_person);
 
             // Create parameters and set them to passenger image
             float dpFactor = context.getResources().getDisplayMetrics().density;
