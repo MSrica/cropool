@@ -53,6 +53,8 @@ public class LoginFragment extends Fragment {
         Button signIn = view.findViewById(R.id.sign_in);
         TextView registerLink = view.findViewById(R.id.register_link);
 
+        TokenActions.getRegistrationToken(view.getContext());
+
         registerLink.setOnClickListener(v -> {
             FragmentManager fragmentManager = requireActivity().getSupportFragmentManager();
 
