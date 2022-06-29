@@ -68,8 +68,12 @@ public class LoginFragment extends Fragment {
             signIn.setEnabled(false);
 
             if (informationValid(email, password)) {
-                loginUser(v, Objects.requireNonNull(email.getTextInput().getText()).toString(),
-                        Objects.requireNonNull(password.getTextInput().getText()).toString(), signIn);
+                if (email == null || password == null || email.getTextInput() == null || password.getTextInput() == null || email.getTextInput().getText() == null || password.getTextInput().getText() == null) {
+                    if (getContext() != null)
+                        Toast.makeText(getContext(), "Check input.", Toast.LENGTH_LONG).show();
+                } else {
+                    loginUser(v, email.getTextInput().getText().toString(), password.getTextInput().getText().toString(), signIn);
+                }
             }
         });
 
@@ -149,7 +153,9 @@ public class LoginFragment extends Fragment {
                             });
 
                     startActivity(new Intent(view.getContext(), HomeActivity.class));
-                    requireActivity().finish();
+
+                    if (getActivity() != null)
+                        getActivity().finish();
                 } else {
                     if (view.getContext() != null)
                         Toast.makeText(view.getContext(), "Sorry, there was an error. " + feedback.getFeedback(), Toast.LENGTH_LONG).show();
