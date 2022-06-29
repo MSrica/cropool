@@ -2,6 +2,9 @@ package com.example.cropool.notifications;
 
 // https://firebase.google.com/docs/cloud-messaging/android/client#java_1
 
+import android.app.PendingIntent;
+import android.app.TaskStackBuilder;
+import android.content.Intent;
 import android.util.Log;
 
 import androidx.annotation.NonNull;
@@ -9,6 +12,7 @@ import androidx.core.app.NotificationCompat;
 import androidx.core.app.NotificationManagerCompat;
 
 import com.example.cropool.R;
+import com.example.cropool.home.HomeActivity;
 import com.google.firebase.messaging.FirebaseMessagingService;
 import com.google.firebase.messaging.RemoteMessage;
 
@@ -20,15 +24,26 @@ public class RegistrationToken extends FirebaseMessagingService {
 
     @Override
     public void onMessageReceived(RemoteMessage remoteMessage) {
+        // Create an Intent for the activity you want to start
+        Intent resultIntent = new Intent(this, HomeActivity.class);
+        // Create the TaskStackBuilder and add the intent, which inflates the back stack
+        TaskStackBuilder stackBuilder = TaskStackBuilder.create(this);
+        stackBuilder.addNextIntentWithParentStack(resultIntent);
+        // Get the PendingIntent containing the entire back stack
+        PendingIntent resultPendingIntent =
+                stackBuilder.getPendingIntent(0,
+                        PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE);
+
+
         NotificationCompat.Builder builder = new NotificationCompat.Builder(this, "notifications")
                 .setSmallIcon(R.drawable.ic_logo)
                 .setContentTitle((remoteMessage.getData().get("title") == null) ? "N/A" : remoteMessage.getData().get("title"))
                 .setContentText((remoteMessage.getData().get("body") == null) ? "N/A" : remoteMessage.getData().get("body"))
                 .setPriority(NotificationCompat.PRIORITY_HIGH)
+                .setContentIntent(resultPendingIntent)
                 .setAutoCancel(true);
 
-        // Set the intent that will fire when the user taps the notification
-        //.setContentIntent(pendingIntent)
+        // Set the intent that will fire when the user taps the notificatios
 
         NotificationManagerCompat notificationManager = NotificationManagerCompat.from(this);
 
