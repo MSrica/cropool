@@ -215,10 +215,10 @@ public class SubscriptionRequestsAdapter extends RecyclerView.Adapter<Subscripti
                                 return null;
                             });
                         } else {
-                            Toast.makeText(context, "Sorry, there was an error. " + response.code(), Toast.LENGTH_LONG).show();
+                            Toast.makeText(context, "Sorry, there was an error. Please check your maximum capacity. " + response.code(), Toast.LENGTH_LONG).show();
                         }
                     } else {
-                        Toast.makeText(context, "Sorry, there was an error. " + response.code(), Toast.LENGTH_LONG).show();
+                        Toast.makeText(context, "Sorry, there was an error. Please check your maximum capacity. " + response.code(), Toast.LENGTH_LONG).show();
                     }
 
                     return;
