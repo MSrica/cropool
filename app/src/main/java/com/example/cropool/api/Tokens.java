@@ -12,6 +12,7 @@ import androidx.annotation.NonNull;
 
 import com.example.cropool.R;
 import com.example.cropool.home.HomeActivity;
+import com.example.cropool.notifications.TokenActions;
 import com.example.cropool.start.StartActivity;
 
 import org.jetbrains.annotations.NotNull;
@@ -35,6 +36,28 @@ public abstract class Tokens {
             editor.putString(context.getResources().getString(R.string.REFRESH_TOKEN_KEY_NAME), refreshToken);
             editor.putString(context.getResources().getString(R.string.FIREBASE_TOKEN_KEY_NAME), firebaseToken);
             editor.commit();
+        } catch (Exception e) {
+            Log.e("EXCEPTION", e.getMessage());
+        }
+    }
+
+    public static void save(@NonNull Context context, String accessToken, String refreshToken, String firebaseToken, Callable<Void> postExecution) {
+        // TODO: Store in a more secure way?
+        SharedPreferences sharedPreferences = context.getSharedPreferences(context.getResources().getString(R.string.SHARED_PREFERENCES_NAME), Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+
+        try {
+            editor.putString(context.getResources().getString(R.string.ACCESS_TOKEN_KEY_NAME), accessToken);
+            editor.putString(context.getResources().getString(R.string.REFRESH_TOKEN_KEY_NAME), refreshToken);
+            editor.putString(context.getResources().getString(R.string.FIREBASE_TOKEN_KEY_NAME), firebaseToken);
+            editor.commit();
+
+            // Run the method that required refreshing access and firebase tokens again
+            try {
+                postExecution.call();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
         } catch (Exception e) {
             Log.e("EXCEPTION", e.getMessage());
         }
@@ -76,7 +99,6 @@ public abstract class Tokens {
         SharedPreferences sharedPreferences = context.getSharedPreferences(context.getResources().getString(R.string.SHARED_PREFERENCES_NAME), Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = sharedPreferences.edit();
 
-
         try {
             editor.putString(context.getResources().getString(R.string.ACCESS_TOKEN_KEY_NAME), accessToken);
             editor.commit();
@@ -109,7 +131,6 @@ public abstract class Tokens {
         }
     }
 
-    // TODO new version isSet (not -> setTokens -> isSet)
     public static boolean isAccessTokenSet(@NonNull Context context) {
         SharedPreferences sharedPreferences = context.getSharedPreferences(context.getResources().getString(R.string.SHARED_PREFERENCES_NAME), Context.MODE_PRIVATE);
 
@@ -130,6 +151,7 @@ public abstract class Tokens {
 
     public static void loginRequiredProcedure(@NonNull Context context, @NonNull Activity activity) {
         Tokens.clearAllTokens(context);
+        TokenActions.clearLocalRegistrationToken(context);
         HomeActivity.signOutCurrentFBUser();
         context.startActivity(new Intent(context, StartActivity.class));
         activity.finish();

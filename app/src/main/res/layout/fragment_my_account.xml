@@ -161,14 +161,17 @@
                     android:layout_height="match_parent"
                     android:layout_weight="0.25"
                     android:gravity="bottom"
-                    android:orientation="vertical">
+                    android:orientation="vertical"
+                    android:weightSum="1">
 
                     <TextView
                         android:id="@+id/membership_time"
                         android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
+                        android:layout_height="0dp"
                         android:layout_gravity="center"
-                        android:gravity="center"
+                        android:layout_weight="0.75"
+                        android:autoSizeTextType="uniform"
+                        android:gravity="center|bottom"
                         android:text="@string/n_a"
                         android:textColor="@color/white"
                         android:textSize="20sp"
@@ -177,8 +180,9 @@
                     <TextView
                         android:id="@+id/membership_label"
                         android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
+                        android:layout_height="0dp"
                         android:layout_gravity="center"
+                        android:layout_weight="0.25"
                         android:gravity="center"
                         android:text="@string/membership"
                         android:textColor="@color/white"
